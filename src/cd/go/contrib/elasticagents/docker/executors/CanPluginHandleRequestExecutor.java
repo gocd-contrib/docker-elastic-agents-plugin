@@ -17,6 +17,7 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.DockerContainers;
+import cd.go.contrib.elasticagents.docker.PluginSettings;
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.requests.CanPluginHandleRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
@@ -25,11 +26,14 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 public class CanPluginHandleRequestExecutor implements RequestExecutor {
 
     private final DockerContainers containers;
+    private final PluginSettings settings;
     private final CanPluginHandleRequest request;
 
-    public CanPluginHandleRequestExecutor(DockerContainers containers, CanPluginHandleRequest request) {
-        this.containers = containers;
+
+    public CanPluginHandleRequestExecutor(CanPluginHandleRequest request, DockerContainers containers, PluginSettings settings) {
         this.request = request;
+        this.containers = containers;
+        this.settings = settings;
     }
 
     @Override

@@ -16,6 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker;
 
+import cd.go.contrib.elasticagents.Request;
 import cd.go.contrib.elasticagents.docker.executors.GetPluginConfigurationExecutor;
 import cd.go.contrib.elasticagents.docker.executors.GetViewRequestExecutor;
 import cd.go.contrib.elasticagents.docker.requests.*;
@@ -44,10 +45,12 @@ public class DockerPlugin implements GoPlugin {
 
     private GoApplicationAccessor accessor;
     private DockerContainers containers;
+    private PluginSettingsRequest pluginSettingsRequest;
 
     @Load
     public void onLoad(PluginContext ctx) {
-        containers = new DockerContainers(new PluginSettingsRequest(this));
+        pluginSettingsRequest = new PluginSettingsRequest(this);
+        containers = new DockerContainers();
     }
 
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {
@@ -55,41 +58,38 @@ public class DockerPlugin implements GoPlugin {
     }
 
     public GoPluginApiResponse handle(GoPluginApiRequest goPluginApiRequest) throws UnhandledRequestTypeException {
+        PluginSettings settings = pluginSettingsRequest.getConfiguration();
         try {
-            switch (goPluginApiRequest.requestName()) {
-                case Constants.REQUEST_CAN_PLUGIN_HANDLE:
-                    return CanPluginHandleRequest.fromJSON(goPluginApiRequest.requestBody()).executor(containers).execute();
-                case Constants.REQUEST_SHOULD_ASSIGN_WORK:
-                    return ShouldAssignWorkRequest.fromJSON(goPluginApiRequest.requestBody()).executor(containers).execute();
-                case Constants.REQUEST_CREATE_AGENT:
-                    return CreateAgentRequest.fromJSON(goPluginApiRequest.requestBody()).executor(containers).execute();
-                case Constants.REQUEST_SERVER_PING:
-                    return ServerPingRequest.fromJSON(goPluginApiRequest.requestBody()).executor(containers, accessor).execute();
-                case Constants.PLUGIN_SETTINGS_GET_VIEW:
+            switch (Request.fromString(goPluginApiRequest.requestName())) {
+                case REQUEST_CAN_PLUGIN_HANDLE:
+                    return CanPluginHandleRequest.fromJSON(goPluginApiRequest.requestBody()).executor(containers, settings).execute();
+                case REQUEST_SHOULD_ASSIGN_WORK:
+                    return ShouldAssignWorkRequest.fromJSON(goPluginApiRequest.requestBody()).executor(containers, settings).execute();
+                case REQUEST_CREATE_AGENT:
+                    return CreateAgentRequest.fromJSON(goPluginApiRequest.requestBody()).executor(containers, settings).execute();
+                case REQUEST_SERVER_PING:
+                    return ServerPingRequest.fromJSON(goPluginApiRequest.requestBody()).executor(containers, settings, accessor).execute();
+                case PLUGIN_SETTINGS_GET_VIEW:
                     return new GetViewRequestExecutor().execute();
-                case Constants.PLUGIN_SETTINGS_GET_CONFIGURATION:
+                case PLUGIN_SETTINGS_GET_CONFIGURATION:
                     return new GetPluginConfigurationExecutor().execute();
-                case Constants.PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
+                case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
                     return ValidatePluginSettings.fromJSON(goPluginApiRequest.requestBody()).executor().execute();
-                case Constants.REQUEST_NOTIFY_AGENT_BUSY:
+                case REQUEST_NOTIFY_AGENT_BUSY:
                     return DefaultGoPluginApiResponse.success("");
+                case REQUEST_NOTIFY_AGENT_IDLE:
+                    return DefaultGoPluginApiResponse.success("");
+                default:
+                    throw new UnhandledRequestTypeException(goPluginApiRequest.requestName());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        throw new UnhandledRequestTypeException(goPluginApiRequest.requestName());
     }
 
 
     public GoPluginIdentifier pluginIdentifier() {
         return PLUGIN_IDENTIFIER;
-    }
-
-    public static void main(String[] args) throws Exception {
-//        DockerPlugin dockerPlugin = new DockerPlugin();
-//        dockerPlugin.onLoad(null);
-//        new CreateAgentRequest("secret", Arrays.asList("foo", "bar"), "pre-prod").executor(dockerPlugin.containers, null).execute();
     }
 
     public GoApiResponse submit(DefaultGoApiRequest request) {

@@ -17,7 +17,10 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
-import com.spotify.docker.client.*;
+import com.spotify.docker.client.ContainerNotFoundException;
+import com.spotify.docker.client.DockerClient;
+import com.spotify.docker.client.DockerException;
+import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.ContainerInfo;
@@ -50,7 +53,6 @@ public class DockerContainer {
         this.createdAt = createdAt;
     }
 
-
     public String id() {
         return id;
     }
@@ -59,7 +61,6 @@ public class DockerContainer {
         ContainerInfo containerInfo = docker.inspectContainer(containerId);
         return new DockerContainer(containerId, new DateTime(containerInfo.created()));
     }
-
 
     public void terminate(DockerClient docker) throws DockerException, InterruptedException {
         try {
@@ -71,7 +72,7 @@ public class DockerContainer {
         }
     }
 
-    public DockerContainer create(CreateAgentRequest request, PluginSettings configuration, DockerClient docker) throws InterruptedException, DockerException, IOException {
+    public static DockerContainer create(CreateAgentRequest request, PluginSettings settings, DockerClient docker) throws InterruptedException, DockerException, IOException {
         HashMap<String, String> labels = new HashMap<>();
         labels.put(CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID);
         ContainerCreation container = docker.createContainer(ContainerConfig.builder().
@@ -80,13 +81,15 @@ public class DockerContainer {
                 cmd("bash").
                 labels(labels).
                 build());
-        id = container.id();
+        String id = container.id();
 
         LOG.debug("Created container " + id);
 
         docker.startContainer(id);
 
-        execCommand(id, false, docker, "mkdir", "-p", "/go-agent/config");
+        DockerContainer dockerContainer = new DockerContainer(id, new DateTime(docker.inspectContainer(id).created()));
+
+        dockerContainer.execCommand(id, false, docker, "mkdir", "-p", "/go-agent/config");
 
         File tempDirectory = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
         File configDir = new File(tempDirectory, "config");
@@ -96,7 +99,7 @@ public class DockerContainer {
         File autoregisterPropertiesFile = new File(configDir, "autoregister.properties");
 
         try {
-            saveAutoRegisterProperties(id, autoregisterPropertiesFile, request.autoRegisterKey(), request.resources(), request.environment());
+            dockerContainer.saveAutoRegisterProperties(id, autoregisterPropertiesFile, request.autoRegisterKey(), request.resources(), request.environment());
             FileUtils.copyFile(new File("/Users/ketanpadegaonkar/projects/gocd/gocd/agent/target/agent.jar"), new File(tempDirectory, "agent.jar"));
             LOG.debug("Copying files to container " + id);
             docker.copyToContainer(tempDirectory.toPath(), id, "/go-agent");
@@ -106,9 +109,10 @@ public class DockerContainer {
         }
 
         LOG.debug("Starting agent process on container " + id);
-        execCommand(id, false, docker, "bash", "-c", "cd /go-agent && ((java -jar agent.jar https://localhost.ketanpkr.in:8154/go > agent.stdout.log 2>&1 & disown)& disown)");
+        dockerContainer.execCommand(id, false, docker, "bash", "-c", "cd /go-agent && ((java -jar agent.jar '" + settings.getGoServerUrl() + "' > agent.stdout.log 2>&1 & disown)& disown)");
         LOG.debug("Agent should now be ready in a moment...");
-        return this;
+
+        return dockerContainer;
     }
 
     @Override

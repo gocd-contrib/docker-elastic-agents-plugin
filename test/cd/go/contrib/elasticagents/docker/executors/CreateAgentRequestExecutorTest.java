@@ -18,26 +18,23 @@ package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.DockerContainers;
 import cd.go.contrib.elasticagents.docker.PluginSettings;
-import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
-import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
-import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.junit.Test;
 
-public class CreateAgentRequestExecutor implements RequestExecutor {
-    private final DockerContainers containers;
-    private final PluginSettings settings;
-    private final CreateAgentRequest request;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-    public CreateAgentRequestExecutor(CreateAgentRequest request, DockerContainers containers, PluginSettings settings) {
-        this.request = request;
-        this.containers = containers;
-        this.settings = settings;
+public class CreateAgentRequestExecutorTest {
+
+
+    @Test
+    public void shouldAskDockerContainersToCreateAnAgent() throws Exception {
+        CreateAgentRequest request = new CreateAgentRequest();
+        DockerContainers mock = mock(DockerContainers.class);
+        PluginSettings settings = new PluginSettings();
+
+        new CreateAgentRequestExecutor(request, mock, settings).execute();
+
+        verify(mock).create(request, settings);
     }
-
-    @Override
-    public GoPluginApiResponse execute() throws Exception {
-        containers.create(request, settings);
-        return DefaultGoPluginApiResponse.success("");
-    }
-
 }

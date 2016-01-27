@@ -16,6 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker;
 
+import cd.go.contrib.elasticagents.Agents;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.messages.Container;
@@ -25,70 +26,83 @@ import org.joda.time.Period;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
+
 public class DockerContainers extends ConcurrentHashMap<String, DockerContainer> {
 
-    private final PluginSettingsRequest pluginSettingsRequest;
-
-    public DockerContainers(PluginSettingsRequest pluginSettingsRequest) {
-        this.pluginSettingsRequest = pluginSettingsRequest;
+    public DockerContainers() {
     }
 
-    public DockerContainers(DockerContainers containers) {
-        super(containers);
-        this.pluginSettingsRequest = containers.pluginSettingsRequest;
-    }
-
-    public DockerContainer create(CreateAgentRequest request) throws Exception {
-        DockerContainer container = new DockerContainer().create(request, pluginSettingsRequest.getConfiguration(), pluginSettingsRequest.docker());
+    public DockerContainer create(CreateAgentRequest request, PluginSettings settings) throws Exception {
+        DockerContainer container = DockerContainer.create(request, settings, docker(settings));
         this.put(container);
         return container;
     }
 
-    public void refresh(String containerId) throws Exception {
+    public void refresh(String containerId, PluginSettings settings) throws Exception {
         if (!containsKey(containerId)) {
-            this.put(DockerContainer.find(pluginSettingsRequest.docker(), containerId));
+            this.put(DockerContainer.find(docker(settings), containerId));
         }
+    }
+
+
+    public void terminate(String containerId, PluginSettings settings) throws Exception {
+        DockerContainer dockerContainer = this.get(containerId);
+        if (dockerContainer != null) {
+            dockerContainer.terminate(docker(settings));
+        } else {
+            DockerPlugin.LOG.warn("Requested to terminate an instance that does not exist " + containerId);
+        }
+
+        this.remove(containerId);
+    }
+
+    public void terminateUnregisteredInstances(PluginSettings settings, Agents agents) throws Exception {
+        DockerContainers toTerminate = unregisteredAfterTimeout(settings, agents);
+
+        if (toTerminate.isEmpty()) {
+            return;
+        }
+
+        LOG.warn("Terminating instances that did not register " + toTerminate.keySet() + ".");
+
+        for (DockerContainer container : toTerminate.values()) {
+            terminate(container.id(), settings);
+        }
+    }
+
+
+    private void put(DockerContainer container) {
+        this.put(container.id(), container);
     }
 
     private DockerContainer dockerContainer(Container container) {
         return new DockerContainer(container.id(), new DateTime(container.created()));
     }
 
-    public DockerContainers unregisteredForMoreThan(Period period) throws Exception {
-        DockerContainers unregisteredContainers = new DockerContainers(pluginSettingsRequest);
-        List<Container> allContainers = pluginSettingsRequest.docker().listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
+    private DockerClient docker(PluginSettings settings) throws Exception {
+        return DockerClientFactory.docker(settings);
+    }
+
+    private DockerContainers unregisteredAfterTimeout(PluginSettings settings, Agents knownAgents) throws Exception {
+        Period period = settings.getAutoRegisterPeriod();
+        DockerContainers unregisteredContainers = new DockerContainers();
+        List<Container> allContainers = docker(settings).listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
 
         for (Container container : allContainers) {
-            if (!this.containsKey(container.id())) {
-                DateTime dateTimeCreated = new DateTime(container.created());
+            if (knownAgents.containsKey(container.id())) {
+                continue;
+            }
 
-                if (dateTimeCreated.plus(period).isBeforeNow()) {
-                    unregisteredContainers.put(dockerContainer(container));
-                }
+
+            DateTime dateTimeCreated = new DateTime(container.created() * 1000);
+
+            if (dateTimeCreated.plus(period).isBeforeNow()) {
+                unregisteredContainers.put(dockerContainer(container));
             }
         }
-
         return unregisteredContainers;
     }
 
-    private void put(DockerContainer container) {
-        this.put(container.id(), container);
-    }
 
-    public void terminate(String containerId) throws Exception {
-        DockerContainer dockerContainer = this.get(containerId);
-        if (dockerContainer != null) {
-            dockerContainer.terminate(pluginSettingsRequest.docker());
-        } else {
-            DockerPlugin.LOG.warn("Requested to terminate an instance that does not exist " + dockerContainer.id());
-        }
-
-        this.remove(containerId);
-    }
-
-    public void terminateAll() throws Exception {
-        for (DockerContainer offlineContainer : values()) {
-            offlineContainer.terminate(pluginSettingsRequest.docker());
-        }
-    }
 }

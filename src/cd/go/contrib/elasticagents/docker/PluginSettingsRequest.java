@@ -19,7 +19,6 @@ package cd.go.contrib.elasticagents.docker;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.spotify.docker.client.DockerClient;
 import com.thoughtworks.go.plugin.api.request.DefaultGoApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoApiResponse;
 
@@ -33,10 +32,6 @@ public class PluginSettingsRequest {
         this.dockerPlugin = dockerPlugin;
     }
 
-    public DockerClient docker() throws Exception {
-        return DockerClientFactory.docker(getConfiguration());
-    }
-
     public PluginSettings getConfiguration() {
         DefaultGoApiRequest request = new DefaultGoApiRequest(Constants.REQUEST_SERVER_GET_PLUGIN_SETTINGS, DockerPlugin.API_VERSION, DockerPlugin.PLUGIN_IDENTIFIER);
         request.setRequestBody(GSON.toJson(Collections.singletonMap("plugin-id", Constants.PLUGIN_ID)));
@@ -48,4 +43,5 @@ public class PluginSettingsRequest {
 
         return PluginSettings.fromJSON(response.responseBody());
     }
+
 }

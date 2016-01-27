@@ -16,8 +16,9 @@
 
 package cd.go.contrib.elasticagents.docker.requests;
 
-import cd.go.contrib.elasticagents.docker.executors.CanPluginHandleRequestExecutor;
 import cd.go.contrib.elasticagents.docker.DockerContainers;
+import cd.go.contrib.elasticagents.docker.PluginSettings;
+import cd.go.contrib.elasticagents.docker.executors.CanPluginHandleRequestExecutor;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -50,7 +51,7 @@ public class CanPluginHandleRequest {
         return GSON.fromJson(json, CanPluginHandleRequest.class);
     }
 
-    public CanPluginHandleRequestExecutor executor(DockerContainers containers) {
-        return new CanPluginHandleRequestExecutor(containers, this);
+    public CanPluginHandleRequestExecutor executor(DockerContainers containers, PluginSettings settings) {
+        return new CanPluginHandleRequestExecutor(this, containers, settings);
     }
 }

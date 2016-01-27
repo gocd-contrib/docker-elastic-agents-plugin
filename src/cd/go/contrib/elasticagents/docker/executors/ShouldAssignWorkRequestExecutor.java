@@ -17,6 +17,7 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.DockerContainers;
+import cd.go.contrib.elasticagents.docker.PluginSettings;
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.requests.ShouldAssignWorkRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
@@ -24,11 +25,13 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
 public class ShouldAssignWorkRequestExecutor implements RequestExecutor {
     private final DockerContainers containers;
+    private final PluginSettings settings;
     private final ShouldAssignWorkRequest request;
 
-    public ShouldAssignWorkRequestExecutor(DockerContainers containers, ShouldAssignWorkRequest request) {
-        this.containers = containers;
+    public ShouldAssignWorkRequestExecutor(ShouldAssignWorkRequest request, DockerContainers containers, PluginSettings settings) {
         this.request = request;
+        this.containers = containers;
+        this.settings = settings;
     }
 
     @Override

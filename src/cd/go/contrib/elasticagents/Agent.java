@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cd.go.contrib.elasticagents.docker;
+package cd.go.contrib.elasticagents;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;

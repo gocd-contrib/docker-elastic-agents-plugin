@@ -16,6 +16,8 @@
 
 package cd.go.contrib.elasticagents.docker.requests;
 
+import cd.go.contrib.elasticagents.Agent;
+import cd.go.contrib.elasticagents.Agents;
 import cd.go.contrib.elasticagents.docker.*;
 import cd.go.contrib.elasticagents.docker.executors.ServerPingRequestExecutor;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
@@ -39,7 +41,7 @@ public class ServerPingRequest {
         return new ServerPingRequest(new Agents(Agent.fromJSONArray(json)));
     }
 
-    public RequestExecutor executor(DockerContainers containers, GoApplicationAccessor accessor) {
-        return new ServerPingRequestExecutor(containers, this, accessor);
+    public RequestExecutor executor(DockerContainers containers, PluginSettings settings, GoApplicationAccessor accessor) {
+        return new ServerPingRequestExecutor(this, containers, settings, accessor);
     }
 }

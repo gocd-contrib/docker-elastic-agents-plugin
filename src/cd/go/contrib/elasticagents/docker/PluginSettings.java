@@ -21,41 +21,44 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import org.joda.time.Period;
 
 public class PluginSettings {
     public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).excludeFieldsWithoutExposeAnnotation().create();
 
     @Expose
     @SerializedName("resources")
-    public String resources;
+    private String resources;
 
     @Expose
     @SerializedName("environments")
-    public String environments;
+    private String environments;
 
     @Expose
     @SerializedName("go_server_url")
-    public String goServerUrl;
+    private String goServerUrl;
 
     @Expose
     @SerializedName("docker_uri")
-    public String dockerURI;
+    private String dockerURI;
 
     @Expose
     @SerializedName("auto_register_timeout")
-    public String autoRegisterTimeout;
+    private String autoRegisterTimeout;
 
     @Expose
     @SerializedName("docker_ca_cert")
-    public String dockerCACert;
+    private String dockerCACert;
 
     @Expose
     @SerializedName("docker_client_cert")
-    public String dockerClientCert;
+    private String dockerClientCert;
 
     @Expose
     @SerializedName("docker_client_key")
-    public String dockerClientKey;
+    private String dockerClientKey;
+
+    private Period autoRegisterPeriod;
 
     public static PluginSettings fromJSON(String json) {
         return GSON.fromJson(json, PluginSettings.class);
@@ -92,5 +95,63 @@ public class PluginSettings {
         result = 31 * result + (dockerClientCert != null ? dockerClientCert.hashCode() : 0);
         result = 31 * result + (dockerClientKey != null ? dockerClientKey.hashCode() : 0);
         return result;
+    }
+
+    public Period getAutoRegisterPeriod() {
+        if (this.autoRegisterPeriod == null) {
+            this.autoRegisterPeriod = new Period().withMinutes(Integer.parseInt(getAutoRegisterTimeout()));
+        }
+        return this.autoRegisterPeriod;
+    }
+
+    private String getAutoRegisterTimeout() {
+        if (autoRegisterTimeout == null) {
+            autoRegisterTimeout = "10";
+        }
+        return autoRegisterTimeout;
+    }
+
+    public String getResources() {
+        return resources;
+    }
+
+    public String getEnvironments() {
+        return environments;
+    }
+
+    public String getGoServerUrl() {
+        return goServerUrl;
+    }
+
+    public String getDockerURI() {
+        return dockerURI;
+    }
+
+    public String getDockerCACert() {
+        return dockerCACert;
+    }
+
+    public String getDockerClientCert() {
+        return dockerClientCert;
+    }
+
+    public String getDockerClientKey() {
+        return dockerClientKey;
+    }
+
+    public void setDockerCACert(String dockerCACert) {
+        this.dockerCACert = dockerCACert;
+    }
+
+    public void setDockerClientCert(String dockerClientCert) {
+        this.dockerClientCert = dockerClientCert;
+    }
+
+    public void setDockerClientKey(String dockerClientKey) {
+        this.dockerClientKey = dockerClientKey;
+    }
+
+    public void setDockerURI(String dockerURI) {
+        this.dockerURI = dockerURI;
     }
 }

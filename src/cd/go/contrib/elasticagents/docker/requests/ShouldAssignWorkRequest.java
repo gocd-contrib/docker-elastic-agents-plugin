@@ -16,8 +16,9 @@
 
 package cd.go.contrib.elasticagents.docker.requests;
 
-import cd.go.contrib.elasticagents.docker.Agent;
+import cd.go.contrib.elasticagents.Agent;
 import cd.go.contrib.elasticagents.docker.DockerContainers;
+import cd.go.contrib.elasticagents.docker.PluginSettings;
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.executors.ShouldAssignWorkRequestExecutor;
 import com.google.gson.FieldNamingPolicy;
@@ -58,7 +59,7 @@ public class ShouldAssignWorkRequest {
         return GSON.fromJson(json, ShouldAssignWorkRequest.class);
     }
 
-    public RequestExecutor executor(DockerContainers containers) {
-        return new ShouldAssignWorkRequestExecutor(containers, this);
+    public RequestExecutor executor(DockerContainers containers, PluginSettings settings) {
+        return new ShouldAssignWorkRequestExecutor(this, containers, settings);
     }
 }

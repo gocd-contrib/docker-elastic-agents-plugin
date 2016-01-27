@@ -17,12 +17,13 @@
 package cd.go.contrib.elasticagents.docker;
 
 import com.spotify.docker.client.DefaultDockerClient;
+import com.spotify.docker.client.DockerCertificateException;
 import com.spotify.docker.client.DockerCertificates;
 import com.spotify.docker.client.DockerClient;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.net.URI;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -43,23 +44,30 @@ public class DockerClientFactory {
     }
 
     private static DefaultDockerClient createClient(PluginSettings pluginSettings) throws Exception {
+        DefaultDockerClient.Builder builder = DefaultDockerClient.builder();
+
+        builder.uri(pluginSettings.getDockerURI());
+        if (pluginSettings.getDockerURI().startsWith("https://")) {
+            setupCerts(pluginSettings, builder);
+        }
+
+        DefaultDockerClient docker = builder.build();
+        String ping = docker.ping();
+        if (!"OK".equals(ping)) {
+            throw new RuntimeException("Could not ping the docker server, the server said '" + ping + "' instead of 'OK'.");
+        }
+        return docker;
+    }
+
+    private static void setupCerts(PluginSettings pluginSettings, DefaultDockerClient.Builder builder) throws IOException, DockerCertificateException {
         Path certificateDir = Files.createTempDirectory(UUID.randomUUID().toString());
         File tempDirectory = certificateDir.toFile();
 
         try {
-            FileUtils.writeStringToFile(new File(tempDirectory, DockerCertificates.DEFAULT_CA_CERT_NAME), pluginSettings.dockerCACert);
-            FileUtils.writeStringToFile(new File(tempDirectory, DockerCertificates.DEFAULT_CLIENT_CERT_NAME), pluginSettings.dockerClientCert);
-            FileUtils.writeStringToFile(new File(tempDirectory, DockerCertificates.DEFAULT_CLIENT_KEY_NAME), pluginSettings.dockerClientKey);
-
-            DefaultDockerClient docker = DefaultDockerClient.builder()
-                    .uri(URI.create(pluginSettings.dockerURI))
-                    .dockerCertificates(new DockerCertificates(certificateDir))
-                    .build();
-            String ping = docker.ping();
-            if (!"OK".equals(ping)) {
-                throw new RuntimeException("Could not ping the docker server, the server said '" + ping + "' instead of 'OK'.");
-            }
-            return docker;
+            FileUtils.writeStringToFile(new File(tempDirectory, DockerCertificates.DEFAULT_CA_CERT_NAME), pluginSettings.getDockerCACert());
+            FileUtils.writeStringToFile(new File(tempDirectory, DockerCertificates.DEFAULT_CLIENT_CERT_NAME), pluginSettings.getDockerClientCert());
+            FileUtils.writeStringToFile(new File(tempDirectory, DockerCertificates.DEFAULT_CLIENT_KEY_NAME), pluginSettings.getDockerClientKey());
+            builder.dockerCertificates(new DockerCertificates(certificateDir));
         } finally {
             FileUtils.deleteDirectory(tempDirectory);
         }

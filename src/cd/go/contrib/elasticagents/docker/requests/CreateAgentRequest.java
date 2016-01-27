@@ -17,6 +17,7 @@
 package cd.go.contrib.elasticagents.docker.requests;
 
 import cd.go.contrib.elasticagents.docker.DockerContainers;
+import cd.go.contrib.elasticagents.docker.PluginSettings;
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.executors.CreateAgentRequestExecutor;
 import com.google.gson.FieldNamingPolicy;
@@ -58,7 +59,7 @@ public class CreateAgentRequest {
         return GSON.fromJson(json, CreateAgentRequest.class);
     }
 
-    public RequestExecutor executor(DockerContainers containers) {
-        return new CreateAgentRequestExecutor(containers, this);
+    public RequestExecutor executor(DockerContainers containers, PluginSettings settings) {
+        return new CreateAgentRequestExecutor(this, containers, settings);
     }
 }
