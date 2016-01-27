@@ -19,7 +19,6 @@ package cd.go.contrib.elasticagents.docker;
 public interface Constants {
     String PLUGIN_ID = "cd.go.contrib.elastic-agents.docker";
 
-
     String EXTENSION_NAME = "elastic-agent";
 
     String REQUEST_PREFIX = "go.cd.elastic-agent";
@@ -30,9 +29,19 @@ public interface Constants {
     String REQUEST_SHOULD_ASSIGN_WORK = REQUEST_PREFIX + ".should-assign-work";
     String REQUEST_NOTIFY_AGENT_BUSY = REQUEST_PREFIX + ".notify-agent-busy";
 
-    String REQUEST_SERVER_DISABLE_AGENT = "go.processor.elasticagent.disable-agent";
-    String REQUEST_SERVER_DELETE_AGENT = "go.processor.elasticagent.delete-agent";
+    // requests that the plugin makes to the server
+    String REQUEST_SERVER_PREFIX = "go.processor";
+    String REQUEST_SERVER_DISABLE_AGENT = REQUEST_SERVER_PREFIX + ".elasticagent.disable-agent";
+    String REQUEST_SERVER_DELETE_AGENT = REQUEST_SERVER_PREFIX + ".elasticagent.delete-agent";
+    String REQUEST_SERVER_GET_PLUGIN_SETTINGS = REQUEST_SERVER_PREFIX + ".plugin-settings.get";
+
+    // settings related requests that the server makes to the plugin
+    String GO_PLUGIN_SETTINGS_PREFIX = "go.plugin-settings";
+    String PLUGIN_SETTINGS_GET_CONFIGURATION = GO_PLUGIN_SETTINGS_PREFIX + ".get-configuration";
+    String PLUGIN_SETTINGS_GET_VIEW = GO_PLUGIN_SETTINGS_PREFIX + ".get-view";
+    String PLUGIN_SETTINGS_VALIDATE_CONFIGURATION = GO_PLUGIN_SETTINGS_PREFIX + ".validate-configuration";
 
     // internal use only
     String CREATED_BY_LABEL_KEY = "Elastic-Agent-Created-By";
+
 }

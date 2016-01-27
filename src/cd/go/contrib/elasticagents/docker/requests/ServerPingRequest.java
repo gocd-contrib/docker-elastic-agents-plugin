@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package cd.go.contrib.elasticagents.docker;
+package cd.go.contrib.elasticagents.docker.requests;
 
+import cd.go.contrib.elasticagents.docker.*;
+import cd.go.contrib.elasticagents.docker.executors.ServerPingRequestExecutor;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 
 public class ServerPingRequest {

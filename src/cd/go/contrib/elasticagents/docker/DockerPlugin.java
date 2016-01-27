@@ -16,9 +16,9 @@
 
 package cd.go.contrib.elasticagents.docker;
 
-import com.spotify.docker.client.DefaultDockerClient;
-import com.spotify.docker.client.DockerCertificateException;
-import com.spotify.docker.client.DockerCertificates;
+import cd.go.contrib.elasticagents.docker.executors.GetPluginConfigurationExecutor;
+import cd.go.contrib.elasticagents.docker.executors.GetViewRequestExecutor;
+import cd.go.contrib.elasticagents.docker.requests.*;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
 import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
@@ -27,12 +27,12 @@ import com.thoughtworks.go.plugin.api.annotation.Load;
 import com.thoughtworks.go.plugin.api.exceptions.UnhandledRequestTypeException;
 import com.thoughtworks.go.plugin.api.info.PluginContext;
 import com.thoughtworks.go.plugin.api.logging.Logger;
+import com.thoughtworks.go.plugin.api.request.DefaultGoApiRequest;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
+import com.thoughtworks.go.plugin.api.response.GoApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-import java.net.URI;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 @Extension
@@ -42,20 +42,12 @@ public class DockerPlugin implements GoPlugin {
 
     public static final Logger LOG = Logger.getLoggerFor(DockerPlugin.class);
 
-    private DockerContainers containers;
     private GoApplicationAccessor accessor;
+    private DockerContainers containers;
 
     @Load
     public void onLoad(PluginContext ctx) {
-        try {
-            DefaultDockerClient docker = DefaultDockerClient.builder()
-                    .uri(URI.create("https://172.16.37.139:2376"))
-                    .dockerCertificates(new DockerCertificates(Paths.get("/Users/ketanpadegaonkar/.docker/machine/machines/default")))
-                    .build();
-            containers = new DockerContainers(docker);
-        } catch (DockerCertificateException e) {
-            throw new RuntimeException(e);
-        }
+        containers = new DockerContainers(new PluginSettingsRequest(this));
     }
 
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {
@@ -73,6 +65,12 @@ public class DockerPlugin implements GoPlugin {
                     return CreateAgentRequest.fromJSON(goPluginApiRequest.requestBody()).executor(containers).execute();
                 case Constants.REQUEST_SERVER_PING:
                     return ServerPingRequest.fromJSON(goPluginApiRequest.requestBody()).executor(containers, accessor).execute();
+                case Constants.PLUGIN_SETTINGS_GET_VIEW:
+                    return new GetViewRequestExecutor().execute();
+                case Constants.PLUGIN_SETTINGS_GET_CONFIGURATION:
+                    return new GetPluginConfigurationExecutor().execute();
+                case Constants.PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
+                    return ValidatePluginSettings.fromJSON(goPluginApiRequest.requestBody()).executor().execute();
                 case Constants.REQUEST_NOTIFY_AGENT_BUSY:
                     return DefaultGoPluginApiResponse.success("");
             }
@@ -89,8 +87,12 @@ public class DockerPlugin implements GoPlugin {
     }
 
     public static void main(String[] args) throws Exception {
-        DockerPlugin dockerPlugin = new DockerPlugin();
-        dockerPlugin.onLoad(null);
-        new CreateAgentRequest("secret", Arrays.asList("foo", "bar"), "pre-prod").executor(dockerPlugin.containers).execute();
+//        DockerPlugin dockerPlugin = new DockerPlugin();
+//        dockerPlugin.onLoad(null);
+//        new CreateAgentRequest("secret", Arrays.asList("foo", "bar"), "pre-prod").executor(dockerPlugin.containers, null).execute();
+    }
+
+    public GoApiResponse submit(DefaultGoApiRequest request) {
+        return accessor.submit(request);
     }
 }

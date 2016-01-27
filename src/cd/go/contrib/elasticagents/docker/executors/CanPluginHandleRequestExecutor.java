@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package cd.go.contrib.elasticagents.docker;
+package cd.go.contrib.elasticagents.docker.executors;
 
+import cd.go.contrib.elasticagents.docker.DockerContainers;
+import cd.go.contrib.elasticagents.docker.RequestExecutor;
+import cd.go.contrib.elasticagents.docker.requests.CanPluginHandleRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-public class CreateAgentRequestExecutor implements RequestExecutor {
-    private final DockerContainers containers;
-    private final CreateAgentRequest request;
+public class CanPluginHandleRequestExecutor implements RequestExecutor {
 
-    public CreateAgentRequestExecutor(DockerContainers containers, CreateAgentRequest request) {
+    private final DockerContainers containers;
+    private final CanPluginHandleRequest request;
+
+    public CanPluginHandleRequestExecutor(DockerContainers containers, CanPluginHandleRequest request) {
         this.containers = containers;
         this.request = request;
     }
 
     @Override
-    public GoPluginApiResponse execute() throws Exception {
-        containers.create(request);
-        return DefaultGoPluginApiResponse.success("");
+    public GoPluginApiResponse execute() {
+        return DefaultGoPluginApiResponse.success("true");
     }
-
 }

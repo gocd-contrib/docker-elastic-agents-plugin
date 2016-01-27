@@ -14,33 +14,28 @@
  * limitations under the License.
  */
 
-package cd.go.contrib.elasticagents.docker;
+package cd.go.contrib.elasticagents.docker.requests;
 
+import cd.go.contrib.elasticagents.docker.executors.CanPluginHandleRequestExecutor;
+import cd.go.contrib.elasticagents.docker.DockerContainers;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.Collection;
 
-public class CreateAgentRequest {
+public class CanPluginHandleRequest {
     public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-    private String autoRegisterKey;
     private Collection<String> resources;
     private String environment;
 
-
-    public CreateAgentRequest() {
+    public CanPluginHandleRequest() {
 
     }
 
-    public CreateAgentRequest(String autoRegisterKey, Collection<String> resources, String environment) {
-        this.autoRegisterKey = autoRegisterKey;
+    public CanPluginHandleRequest(Collection<String> resources, String environment) {
         this.resources = resources;
         this.environment = environment;
-    }
-
-    public String autoRegisterKey() {
-        return autoRegisterKey;
     }
 
     public Collection<String> resources() {
@@ -51,12 +46,11 @@ public class CreateAgentRequest {
         return environment;
     }
 
-    public static CreateAgentRequest fromJSON(String json) {
-        return GSON.fromJson(json, CreateAgentRequest.class);
+    public static CanPluginHandleRequest fromJSON(String json) {
+        return GSON.fromJson(json, CanPluginHandleRequest.class);
     }
 
-
-    public RequestExecutor executor(DockerContainers containers) {
-        return new CreateAgentRequestExecutor(containers, this);
+    public CanPluginHandleRequestExecutor executor(DockerContainers containers) {
+        return new CanPluginHandleRequestExecutor(containers, this);
     }
 }

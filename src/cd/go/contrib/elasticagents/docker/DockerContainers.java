@@ -16,49 +16,47 @@
 
 package cd.go.contrib.elasticagents.docker;
 
-import com.spotify.docker.client.DefaultDockerClient;
+import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.spotify.docker.client.DockerClient;
-import com.spotify.docker.client.DockerException;
 import com.spotify.docker.client.messages.Container;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DockerContainers extends ConcurrentHashMap<String, DockerContainer> {
 
-    private final DefaultDockerClient docker;
+    private final PluginSettingsRequest pluginSettingsRequest;
 
-    public DockerContainers(DefaultDockerClient docker) {
-        this.docker = docker;
+    public DockerContainers(PluginSettingsRequest pluginSettingsRequest) {
+        this.pluginSettingsRequest = pluginSettingsRequest;
     }
 
     public DockerContainers(DockerContainers containers) {
         super(containers);
-        this.docker = containers.docker;
+        this.pluginSettingsRequest = containers.pluginSettingsRequest;
     }
 
-    public DockerContainer create(CreateAgentRequest request) throws InterruptedException, DockerException, IOException {
-        DockerContainer container = new DockerContainer(docker).initialize(request.autoRegisterKey(), request.resources(), request.environment());
+    public DockerContainer create(CreateAgentRequest request) throws Exception {
+        DockerContainer container = new DockerContainer().create(request, pluginSettingsRequest.getConfiguration(), pluginSettingsRequest.docker());
         this.put(container);
         return container;
     }
 
-    public void refresh(String containerId) throws DockerException, InterruptedException {
+    public void refresh(String containerId) throws Exception {
         if (!containsKey(containerId)) {
-            this.put(DockerContainer.find(docker, containerId));
+            this.put(DockerContainer.find(pluginSettingsRequest.docker(), containerId));
         }
     }
 
     private DockerContainer dockerContainer(Container container) {
-        return new DockerContainer(docker, container.id(), new DateTime(container.created()));
+        return new DockerContainer(container.id(), new DateTime(container.created()));
     }
 
-    public DockerContainers unregisteredForMoreThan(Period period) throws DockerException, InterruptedException {
-        DockerContainers unregisteredContainers = new DockerContainers(docker);
-        List<Container> allContainers = docker.listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
+    public DockerContainers unregisteredForMoreThan(Period period) throws Exception {
+        DockerContainers unregisteredContainers = new DockerContainers(pluginSettingsRequest);
+        List<Container> allContainers = pluginSettingsRequest.docker().listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
 
         for (Container container : allContainers) {
             if (!this.containsKey(container.id())) {
@@ -77,15 +75,20 @@ public class DockerContainers extends ConcurrentHashMap<String, DockerContainer>
         this.put(container.id(), container);
     }
 
-    public void terminate(String containerId) throws DockerException, InterruptedException {
-        this.get(containerId).terminate();
+    public void terminate(String containerId) throws Exception {
+        DockerContainer dockerContainer = this.get(containerId);
+        if (dockerContainer != null) {
+            dockerContainer.terminate(pluginSettingsRequest.docker());
+        } else {
+            DockerPlugin.LOG.warn("Requested to terminate an instance that does not exist " + dockerContainer.id());
+        }
 
         this.remove(containerId);
     }
 
-    public void terminateAll() throws DockerException, InterruptedException {
+    public void terminateAll() throws Exception {
         for (DockerContainer offlineContainer : values()) {
-            offlineContainer.terminate();
+            offlineContainer.terminate(pluginSettingsRequest.docker());
         }
     }
 }

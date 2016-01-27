@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package cd.go.contrib.elasticagents.docker;
+package cd.go.contrib.elasticagents.docker.executors;
 
+import cd.go.contrib.elasticagents.docker.*;
+import cd.go.contrib.elasticagents.docker.requests.ServerPingRequest;
 import com.spotify.docker.client.ContainerNotFoundException;
-import com.spotify.docker.client.DockerException;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.request.DefaultGoApiRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
@@ -70,7 +71,7 @@ public class ServerPingRequestExecutor implements RequestExecutor {
         }
     }
 
-    private void terminateDisabledAgents() throws DockerException, InterruptedException {
+    private void terminateDisabledAgents() throws Exception {
         Collection<Agent> toBeDeleted = agents.findInstancesToTerminate();
         for (Agent agent : toBeDeleted) {
             containers.terminate(agent.elasticAgentId());
@@ -85,7 +86,7 @@ public class ServerPingRequestExecutor implements RequestExecutor {
         }
     }
 
-    private void terminateInstancesThatNeverRegistered() throws DockerException, InterruptedException {
+    private void terminateInstancesThatNeverRegistered() throws Exception {
         DockerContainers toTerminate = containers.unregisteredForMoreThan(new Period().withMinutes(1));
 
         if (toTerminate.isEmpty()) {

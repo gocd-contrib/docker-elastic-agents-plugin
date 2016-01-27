@@ -30,6 +30,7 @@ public class Agents extends HashMap<String, Agent> {
             return agentState.equals("Idle") || agentState.equals("Missing") || agentState.equals("LostContact");
         }
     };
+
     private static final Predicate<Agent> AGENT_DISABLED_PREDICATE = new Predicate<Agent>() {
         @Override
         public boolean apply(Agent metadata) {
@@ -43,11 +44,11 @@ public class Agents extends HashMap<String, Agent> {
         }
     }
 
-    Collection<Agent> findInstancesToDisable() {
+    public Collection<Agent> findInstancesToDisable() {
         return Collections2.filter(values(), AGENT_IDLE_PREDICATE);
     }
 
-    Collection<Agent> findInstancesToTerminate() {
+    public Collection<Agent> findInstancesToTerminate() {
         return Collections2.filter(values(), AGENT_DISABLED_PREDICATE);
     }
 }

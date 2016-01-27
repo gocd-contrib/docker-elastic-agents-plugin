@@ -16,6 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker;
 
+import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.spotify.docker.client.*;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
@@ -39,41 +40,28 @@ import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 public class DockerContainer {
     private String id;
     private DateTime createdAt;
-    private DockerClient docker;
 
-    public DockerContainer(DockerClient docker) {
-        this.docker = docker;
+    public DockerContainer() {
+
     }
 
-    public DockerContainer(DockerClient docker, String id) {
-        this.docker = docker;
-        this.id = id;
-    }
-
-    public DockerContainer(DefaultDockerClient docker, String id, DateTime createdAt) {
-        this.docker = docker;
+    public DockerContainer(String id, DateTime createdAt) {
         this.id = id;
         this.createdAt = createdAt;
     }
 
-    public DateTime createdAt() throws DockerException, InterruptedException {
-        if (this.createdAt == null) {
-            this.createdAt = new DateTime(docker.inspectContainer(id).created());
-        }
-
-        return this.createdAt;
-    }
 
     public String id() {
         return id;
     }
 
-    public static DockerContainer find(DefaultDockerClient docker, String containerId) throws DockerException, InterruptedException {
+    public static DockerContainer find(DockerClient docker, String containerId) throws DockerException, InterruptedException {
         ContainerInfo containerInfo = docker.inspectContainer(containerId);
-        return new DockerContainer(docker, containerId, new DateTime(containerInfo.created()));
+        return new DockerContainer(containerId, new DateTime(containerInfo.created()));
     }
 
-    public void terminate() throws DockerException, InterruptedException {
+
+    public void terminate(DockerClient docker) throws DockerException, InterruptedException {
         try {
             LOG.debug("Terminating instance " + this.id() + ".");
             docker.stopContainer(id, 2);
@@ -83,7 +71,7 @@ public class DockerContainer {
         }
     }
 
-    public DockerContainer initialize(String autoRegisterKey, Collection<String> resources, String environment) throws DockerException, InterruptedException, IOException {
+    public DockerContainer create(CreateAgentRequest request, PluginSettings configuration, DockerClient docker) throws InterruptedException, DockerException, IOException {
         HashMap<String, String> labels = new HashMap<>();
         labels.put(CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID);
         ContainerCreation container = docker.createContainer(ContainerConfig.builder().
@@ -98,7 +86,7 @@ public class DockerContainer {
 
         docker.startContainer(id);
 
-        execCommand(id, false, "mkdir", "-p", "/go-agent/config");
+        execCommand(id, false, docker, "mkdir", "-p", "/go-agent/config");
 
         File tempDirectory = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
         File configDir = new File(tempDirectory, "config");
@@ -108,7 +96,7 @@ public class DockerContainer {
         File autoregisterPropertiesFile = new File(configDir, "autoregister.properties");
 
         try {
-            saveAutoRegisterProperties(id, autoregisterPropertiesFile, autoRegisterKey, resources, environment);
+            saveAutoRegisterProperties(id, autoregisterPropertiesFile, request.autoRegisterKey(), request.resources(), request.environment());
             FileUtils.copyFile(new File("/Users/ketanpadegaonkar/projects/gocd/gocd/agent/target/agent.jar"), new File(tempDirectory, "agent.jar"));
             LOG.debug("Copying files to container " + id);
             docker.copyToContainer(tempDirectory.toPath(), id, "/go-agent");
@@ -118,7 +106,7 @@ public class DockerContainer {
         }
 
         LOG.debug("Starting agent process on container " + id);
-        execCommand(id, false, "bash", "-c", "cd /go-agent && ((java -jar agent.jar https://localhost.ketanpkr.in:8154/go > agent.stdout.log 2>&1 & disown)& disown)");
+        execCommand(id, false, docker, "bash", "-c", "cd /go-agent && ((java -jar agent.jar https://localhost.ketanpkr.in:8154/go > agent.stdout.log 2>&1 & disown)& disown)");
         LOG.debug("Agent should now be ready in a moment...");
         return this;
     }
@@ -158,7 +146,7 @@ public class DockerContainer {
         fileWriter.close();
     }
 
-    private void execCommand(String containerId, boolean detach, String... cmd) throws DockerException, InterruptedException {
+    private void execCommand(String containerId, boolean detach, DockerClient docker, String... cmd) throws DockerException, InterruptedException {
         String execId = docker.execCreate(containerId, cmd);
         if (detach) {
             docker.execStart(execId, DockerClient.ExecStartParameter.DETACH);

@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package cd.go.contrib.elasticagents.docker;
+package cd.go.contrib.elasticagents.docker.executors;
 
+import cd.go.contrib.elasticagents.docker.RequestExecutor;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.apache.commons.io.IOUtils;
 
-public class CanPluginHandleRequestExecutor implements RequestExecutor {
-
-    private final DockerContainers containers;
-    private final CanPluginHandleRequest request;
-
-    public CanPluginHandleRequestExecutor(DockerContainers containers, CanPluginHandleRequest request) {
-        this.containers = containers;
-        this.request = request;
-    }
+public class GetViewRequestExecutor implements RequestExecutor {
 
     @Override
-    public GoPluginApiResponse execute() {
-        return DefaultGoPluginApiResponse.success("true");
+    public GoPluginApiResponse execute() throws Exception {
+        DefaultGoPluginApiResponse defaultGoPluginApiResponse = new DefaultGoPluginApiResponse(200);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("template", IOUtils.toString(getClass().getResourceAsStream("/plugin-settings.template.html"), "utf-8"));
+        defaultGoPluginApiResponse.setResponseBody(new Gson().toJson(jsonObject));
+        return defaultGoPluginApiResponse;
     }
 }
