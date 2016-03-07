@@ -45,10 +45,10 @@ public class DockerContainer {
     private DateTime createdAt;
 
     public DockerContainer() {
-
     }
 
     public DockerContainer(String id, DateTime createdAt) {
+        this();
         this.id = id;
         this.createdAt = createdAt;
     }
@@ -137,8 +137,6 @@ public class DockerContainer {
         if (StringUtils.isNotBlank(autoRegisterKey)) {
             properties.put("agent.auto.register.key", autoRegisterKey);
         }
-
-        properties.put("agent.auto.register.resources", StringUtils.join(resources, ", "));
 
         if (StringUtils.isNotBlank(environment)) {
             properties.put("agent.auto.register.environments", environment);

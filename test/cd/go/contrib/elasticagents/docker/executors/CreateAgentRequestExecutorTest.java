@@ -17,24 +17,23 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.DockerContainers;
+import cd.go.contrib.elasticagents.docker.PluginRequest;
 import cd.go.contrib.elasticagents.docker.PluginSettings;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class CreateAgentRequestExecutorTest {
-
-
     @Test
     public void shouldAskDockerContainersToCreateAnAgent() throws Exception {
         CreateAgentRequest request = new CreateAgentRequest();
-        DockerContainers mock = mock(DockerContainers.class);
-        PluginSettings settings = new PluginSettings();
+        DockerContainers containers = mock(DockerContainers.class);
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        PluginSettings settings = mock(PluginSettings.class);
+        when(pluginRequest.getConfiguration()).thenReturn(settings);
+        new CreateAgentRequestExecutor(request, containers, pluginRequest).execute();
 
-        new CreateAgentRequestExecutor(request, mock, settings).execute();
-
-        verify(mock).create(request, settings);
+        verify(containers).create(request, settings);
     }
 }

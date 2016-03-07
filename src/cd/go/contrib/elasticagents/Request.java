@@ -19,11 +19,8 @@ package cd.go.contrib.elasticagents;
 public enum Request {
     // elastic agent related requests that the server makes to the plugin
     REQUEST_CREATE_AGENT(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".create-agent"),
-    REQUEST_CAN_PLUGIN_HANDLE(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".can-plugin-handle"),
     REQUEST_SERVER_PING(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".server-ping"),
     REQUEST_SHOULD_ASSIGN_WORK(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".should-assign-work"),
-    REQUEST_NOTIFY_AGENT_BUSY(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".notify-agent-busy"),
-    REQUEST_NOTIFY_AGENT_IDLE(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".notify-agent-idle"),
 
     // settings related requests that the server makes to the plugin
     PLUGIN_SETTINGS_GET_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-configuration"),

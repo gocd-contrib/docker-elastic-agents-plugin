@@ -35,13 +35,13 @@ public class DockerContainers extends ConcurrentHashMap<String, DockerContainer>
 
     public DockerContainer create(CreateAgentRequest request, PluginSettings settings) throws Exception {
         DockerContainer container = DockerContainer.create(request, settings, docker(settings));
-        this.put(container);
+        register(container);
         return container;
     }
 
     public void refresh(String containerId, PluginSettings settings) throws Exception {
         if (!containsKey(containerId)) {
-            this.put(DockerContainer.find(docker(settings), containerId));
+            register(DockerContainer.find(docker(settings), containerId));
         }
     }
 
@@ -72,7 +72,7 @@ public class DockerContainers extends ConcurrentHashMap<String, DockerContainer>
     }
 
 
-    private void put(DockerContainer container) {
+    private void register(DockerContainer container) {
         this.put(container.id(), container);
     }
 
@@ -98,7 +98,7 @@ public class DockerContainers extends ConcurrentHashMap<String, DockerContainer>
             DateTime dateTimeCreated = new DateTime(container.created() * 1000);
 
             if (dateTimeCreated.plus(period).isBeforeNow()) {
-                unregisteredContainers.put(dockerContainer(container));
+                unregisteredContainers.register(dockerContainer(container));
             }
         }
         return unregisteredContainers;

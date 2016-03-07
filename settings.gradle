@@ -14,15 +14,4 @@
  * limitations under the License.
  */
 
-package cd.go.contrib.elasticagents.docker.requests;
-
-import cd.go.contrib.elasticagents.docker.DockerContainers;
-import cd.go.contrib.elasticagents.docker.PluginRequest;
-import cd.go.contrib.elasticagents.docker.RequestExecutor;
-import cd.go.contrib.elasticagents.docker.executors.ServerPingRequestExecutor;
-
-public class ServerPingRequest {
-    public RequestExecutor executor(DockerContainers containers, PluginRequest pluginRequest) {
-        return new ServerPingRequestExecutor(this, containers, pluginRequest);
-    }
-}
+rootProject.name = 'docker-elastic-agents'

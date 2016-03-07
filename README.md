@@ -1,6 +1,9 @@
 # GoCD Elastic agent plugin for Docker
 
-This is still a WIP.
+
+## Building the code base
+
+To build the jar, run `./gradlew clean test assemble`
 
 ## License
 

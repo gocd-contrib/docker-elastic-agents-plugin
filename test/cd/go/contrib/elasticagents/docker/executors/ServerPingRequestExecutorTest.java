@@ -21,22 +21,13 @@ import cd.go.contrib.elasticagents.Agents;
 import cd.go.contrib.elasticagents.docker.*;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import cd.go.contrib.elasticagents.docker.requests.ServerPingRequest;
-import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
-import com.thoughtworks.go.plugin.api.request.GoApiRequest;
-import com.thoughtworks.go.plugin.api.response.DefaultGoApiResponse;
 import org.joda.time.Period;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.skyscreamer.jsonassert.JSONAssert;
+import org.mockito.ArgumentMatcher;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class ServerPingRequestExecutorTest extends BaseTest {
@@ -44,41 +35,43 @@ public class ServerPingRequestExecutorTest extends BaseTest {
     @Test
     public void testShouldDisableIdleAgents() throws Exception {
         String agentId = UUID.randomUUID().toString();
-        Agents agents = new Agents(Arrays.asList(new Agent(agentId, "Idle", "Idle", "Enabled")));
-
+        final Agents agents = new Agents(Arrays.asList(new Agent(agentId, "Idle", "Idle", "Enabled")));
         DockerContainers containers = new DockerContainers();
-        GoApplicationAccessor goAccessor = mock(GoApplicationAccessor.class);
-        when(goAccessor.submit(any(GoApiRequest.class))).thenReturn(DefaultGoApiResponse.success(""));
-        new ServerPingRequestExecutor(new ServerPingRequest(agents), containers, createSettings(), goAccessor).execute();
-        ArgumentCaptor<GoApiRequest> captor = ArgumentCaptor.forClass(GoApiRequest.class);
-        verify(goAccessor).submit(captor.capture());
 
-        assertEquals("go.processor.elasticagent.disable-agent", captor.getValue().api());
-        assertEquals("1.0", captor.getValue().apiVersion());
-        JSONAssert.assertEquals("[{\"agent_id\":\"" + agentId + "\",\"agent_state\":\"Idle\",\"build_state\":\"Idle\",\"config_state\":\"Enabled\"}]", captor.getValue().requestBody(), true);
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getConfiguration()).thenReturn(createSettings());
+        when(pluginRequest.getAgents()).thenReturn(agents);
+        verifyNoMoreInteractions(pluginRequest);
 
-        assertTrue(captor.getValue().requestHeaders().isEmpty());
-        assertTrue(captor.getValue().requestParameters().isEmpty());
+        final Collection<Agent> values = agents.values();
+        new ServerPingRequestExecutor(new ServerPingRequest(), containers, pluginRequest).execute();
+        verify(pluginRequest).disable(argThat(collectionMatches(values)));
+
+    }
+
+    private ArgumentMatcher<Collection<Agent>> collectionMatches(final Collection<Agent> values) {
+        return new ArgumentMatcher<Collection<Agent>>() {
+            @Override
+            public boolean matches(Object argument) {
+                return new ArrayList<>((Collection) argument).equals(new ArrayList(values));
+            }
+        };
     }
 
     @Test
     public void testShouldTerminateDisabledAgents() throws Exception {
         String agentId = UUID.randomUUID().toString();
-        Agents agents = new Agents(Arrays.asList(new Agent(agentId, "Idle", "Idle", "Disabled")));
-
+        final Agents agents = new Agents(Arrays.asList(new Agent(agentId, "Idle", "Idle", "Disabled")));
         DockerContainers containers = new DockerContainers();
-        GoApplicationAccessor goAccessor = mock(GoApplicationAccessor.class);
-        when(goAccessor.submit(any(GoApiRequest.class))).thenReturn(DefaultGoApiResponse.success(""));
-        new ServerPingRequestExecutor(new ServerPingRequest(agents), containers, createSettings(), goAccessor).execute();
-        ArgumentCaptor<GoApiRequest> captor = ArgumentCaptor.forClass(GoApiRequest.class);
-        verify(goAccessor).submit(captor.capture());
 
-        assertEquals("go.processor.elasticagent.delete-agent", captor.getValue().api());
-        assertEquals("1.0", captor.getValue().apiVersion());
-        JSONAssert.assertEquals("[{\"agent_id\":\"" + agentId + "\",\"agent_state\":\"Idle\",\"build_state\":\"Idle\",\"config_state\":\"Disabled\"}]", captor.getValue().requestBody(), true);
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getConfiguration()).thenReturn(createSettings());
+        when(pluginRequest.getAgents()).thenReturn(agents);
+        verifyNoMoreInteractions(pluginRequest);
 
-        assertTrue(captor.getValue().requestHeaders().isEmpty());
-        assertTrue(captor.getValue().requestParameters().isEmpty());
+        new ServerPingRequestExecutor(new ServerPingRequest(), containers, pluginRequest).execute();
+        final Collection<Agent> values = agents.values();
+        verify(pluginRequest).delete(argThat(collectionMatches(values)));
     }
 
     @Test
@@ -86,11 +79,16 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         PluginSettings settings = spy(createSettings());
         when(settings.getAutoRegisterPeriod()).thenReturn(new Period().withMinutes(0));
 
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getConfiguration()).thenReturn(settings);
+        when(pluginRequest.getAgents()).thenReturn(new Agents());
+        verifyNoMoreInteractions(pluginRequest);
+
         DockerContainers dockerContainers = new DockerContainers();
         DockerContainer container = dockerContainers.create(new CreateAgentRequest(null, new HashSet<String>(), null), settings);
         containers.add(container.id());
 
-        ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(new ServerPingRequest(new Agents()), dockerContainers, settings, null);
+        ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(new ServerPingRequest(), dockerContainers, pluginRequest);
         serverPingRequestExecutor.execute();
 
         assertFalse(dockerContainers.containsKey(container.id()));

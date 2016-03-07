@@ -18,35 +18,36 @@ package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.Agent;
 import cd.go.contrib.elasticagents.Agents;
-import cd.go.contrib.elasticagents.docker.*;
+import cd.go.contrib.elasticagents.docker.DockerContainers;
+import cd.go.contrib.elasticagents.docker.PluginRequest;
+import cd.go.contrib.elasticagents.docker.PluginSettings;
+import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.requests.ServerPingRequest;
 import com.spotify.docker.client.ContainerNotFoundException;
-import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
-import com.thoughtworks.go.plugin.api.request.DefaultGoApiRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
-import com.thoughtworks.go.plugin.api.response.GoApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
 import java.util.Collection;
 
-import static cd.go.contrib.elasticagents.docker.DockerPlugin.*;
+import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 
 public class ServerPingRequestExecutor implements RequestExecutor {
 
+    private final ServerPingRequest request;
     private final DockerContainers containers;
+    private final PluginRequest pluginRequest;
     private final PluginSettings settings;
-    private final GoApplicationAccessor accessor;
-    private final Agents agents;
 
-    public ServerPingRequestExecutor(ServerPingRequest request, DockerContainers containers, PluginSettings settings, GoApplicationAccessor accessor) {
+    public ServerPingRequestExecutor(ServerPingRequest request, DockerContainers containers, PluginRequest pluginRequest) {
+        this.request = request;
         this.containers = containers;
-        this.settings = settings;
-        this.accessor = accessor;
-        this.agents = request.agents();
+        this.pluginRequest = pluginRequest;
+        this.settings = pluginRequest.getConfiguration();
     }
 
     @Override
     public GoPluginApiResponse execute() throws Exception {
+        Agents agents = pluginRequest.getAgents();
         for (String containerId : agents.keySet()) {
             try {
                 containers.refresh(containerId, settings);
@@ -55,48 +56,27 @@ public class ServerPingRequestExecutor implements RequestExecutor {
             }
         }
 
-        disableIdleAgents();
-        terminateDisabledAgents();
+        disableIdleAgents(agents);
 
+        agents = pluginRequest.getAgents();
+        terminateDisabledAgents(agents);
         containers.terminateUnregisteredInstances(settings, agents);
 
         return DefaultGoPluginApiResponse.success("");
     }
 
-    private void disableIdleAgents() {
-        Collection<Agent> toBeDisabled = agents.findInstancesToDisable();
-
-        if (toBeDisabled.isEmpty()) {
-            return;
-        }
-
-        DefaultGoApiRequest request = new DefaultGoApiRequest(Constants.REQUEST_SERVER_DISABLE_AGENT, API_VERSION, PLUGIN_IDENTIFIER);
-        request.setRequestBody(Agent.toJSONArray(toBeDisabled));
-        GoApiResponse response = this.accessor.submit(request);
-
-        if (response.responseCode() != 200) {
-            LOG.error("The server sent an unexpected status code " + response.responseCode() + " with the response body " + response.responseBody());
-        }
+    private void disableIdleAgents(Agents agents) {
+        this.pluginRequest.disable(agents.findInstancesToDisable());
     }
 
-    private void terminateDisabledAgents() throws Exception {
+    private void terminateDisabledAgents(Agents agents) throws Exception {
         Collection<Agent> toBeDeleted = agents.findInstancesToTerminate();
-
-        if (toBeDeleted.isEmpty()) {
-            return;
-        }
 
         for (Agent agent : toBeDeleted) {
             containers.terminate(agent.elasticAgentId(), settings);
         }
 
-        DefaultGoApiRequest request = new DefaultGoApiRequest(Constants.REQUEST_SERVER_DELETE_AGENT, API_VERSION, PLUGIN_IDENTIFIER);
-        request.setRequestBody(Agent.toJSONArray(toBeDeleted));
-        GoApiResponse response = this.accessor.submit(request);
-
-        if (response.responseCode() != 200) {
-            LOG.error("The server sent an unexpected status code " + response.responseCode() + " with the response body " + response.responseBody());
-        }
+        this.pluginRequest.delete(toBeDeleted);
     }
 
 }

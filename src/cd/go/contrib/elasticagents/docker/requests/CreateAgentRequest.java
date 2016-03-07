@@ -17,7 +17,7 @@
 package cd.go.contrib.elasticagents.docker.requests;
 
 import cd.go.contrib.elasticagents.docker.DockerContainers;
-import cd.go.contrib.elasticagents.docker.PluginSettings;
+import cd.go.contrib.elasticagents.docker.PluginRequest;
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.executors.CreateAgentRequestExecutor;
 import com.google.gson.FieldNamingPolicy;
@@ -25,11 +25,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.Collection;
+import java.util.Map;
 
 public class CreateAgentRequest {
     public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     private String autoRegisterKey;
     private Collection<String> resources;
+    private Map<String, String> properties;
     private String environment;
 
 
@@ -51,6 +53,10 @@ public class CreateAgentRequest {
         return resources;
     }
 
+    public Map<String, String> properties() {
+        return properties;
+    }
+
     public String environment() {
         return environment;
     }
@@ -59,7 +65,7 @@ public class CreateAgentRequest {
         return GSON.fromJson(json, CreateAgentRequest.class);
     }
 
-    public RequestExecutor executor(DockerContainers containers, PluginSettings settings) {
-        return new CreateAgentRequestExecutor(this, containers, settings);
+    public RequestExecutor executor(DockerContainers containers, PluginRequest pluginRequest) {
+        return new CreateAgentRequestExecutor(this, containers, pluginRequest);
     }
 }

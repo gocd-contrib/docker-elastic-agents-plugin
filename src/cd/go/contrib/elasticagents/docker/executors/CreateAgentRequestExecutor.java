@@ -16,28 +16,26 @@
 
 package cd.go.contrib.elasticagents.docker.executors;
 
-import cd.go.contrib.elasticagents.docker.DockerContainers;
-import cd.go.contrib.elasticagents.docker.PluginSettings;
-import cd.go.contrib.elasticagents.docker.RequestExecutor;
+import cd.go.contrib.elasticagents.docker.*;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
 public class CreateAgentRequestExecutor implements RequestExecutor {
     private final DockerContainers containers;
-    private final PluginSettings settings;
+    private final PluginRequest pluginRequest;
     private final CreateAgentRequest request;
 
-    public CreateAgentRequestExecutor(CreateAgentRequest request, DockerContainers containers, PluginSettings settings) {
+    public CreateAgentRequestExecutor(CreateAgentRequest request, DockerContainers containers, PluginRequest pluginRequest) {
         this.request = request;
         this.containers = containers;
-        this.settings = settings;
+        this.pluginRequest = pluginRequest;
     }
 
     @Override
     public GoPluginApiResponse execute() throws Exception {
-        containers.create(request, settings);
-        return DefaultGoPluginApiResponse.success("");
+        containers.create(request, pluginRequest.getConfiguration());
+        return new DefaultGoPluginApiResponse(200);
     }
 
 }

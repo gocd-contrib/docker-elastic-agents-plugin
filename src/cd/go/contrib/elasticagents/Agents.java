@@ -17,7 +17,7 @@
 package cd.go.contrib.elasticagents;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
+import com.google.common.collect.FluentIterable;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -51,10 +51,10 @@ public class Agents extends HashMap<String, Agent> {
 
 
     public Collection<Agent> findInstancesToDisable() {
-        return Collections2.filter(values(), AGENT_IDLE_PREDICATE);
+        return FluentIterable.from(values()).filter(AGENT_IDLE_PREDICATE).toList();
     }
 
     public Collection<Agent> findInstancesToTerminate() {
-        return Collections2.filter(values(), AGENT_DISABLED_PREDICATE);
+        return FluentIterable.from(values()).filter(AGENT_DISABLED_PREDICATE).toList();
     }
 }
