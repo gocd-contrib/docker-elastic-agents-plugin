@@ -24,13 +24,11 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.Collection;
 import java.util.Map;
 
 public class CreateAgentRequest {
     public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     private String autoRegisterKey;
-    private Collection<String> resources;
     private Map<String, String> properties;
     private String environment;
 
@@ -39,18 +37,14 @@ public class CreateAgentRequest {
 
     }
 
-    public CreateAgentRequest(String autoRegisterKey, Collection<String> resources, String environment) {
+    public CreateAgentRequest(String autoRegisterKey, Map<String, String> properties, String environment) {
         this.autoRegisterKey = autoRegisterKey;
-        this.resources = resources;
+        this.properties = properties;
         this.environment = environment;
     }
 
     public String autoRegisterKey() {
         return autoRegisterKey;
-    }
-
-    public Collection<String> resources() {
-        return resources;
     }
 
     public Map<String, String> properties() {

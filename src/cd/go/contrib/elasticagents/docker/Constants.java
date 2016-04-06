@@ -23,10 +23,10 @@ public interface Constants {
 
     // requests that the plugin makes to the server
     String REQUEST_SERVER_PREFIX = "go.processor";
-    String REQUEST_SERVER_DISABLE_AGENT = REQUEST_SERVER_PREFIX + ".elasticagent.disable-agents";
-    String REQUEST_SERVER_DELETE_AGENT = REQUEST_SERVER_PREFIX + ".elasticagent.delete-agents";
+    String REQUEST_SERVER_DISABLE_AGENT = REQUEST_SERVER_PREFIX + ".elastic-agents.disable-agents";
+    String REQUEST_SERVER_DELETE_AGENT = REQUEST_SERVER_PREFIX + ".elastic-agents.delete-agents";
     String REQUEST_SERVER_GET_PLUGIN_SETTINGS = REQUEST_SERVER_PREFIX + ".plugin-settings.get";
-    String REQUEST_SERVER_LIST_AGENTS = REQUEST_SERVER_PREFIX + ".elasticagent.list-agents";
+    String REQUEST_SERVER_LIST_AGENTS = REQUEST_SERVER_PREFIX + ".elastic-agents.list-agents";
 
     // internal use only
     String CREATED_BY_LABEL_KEY = "Elastic-Agent-Created-By";

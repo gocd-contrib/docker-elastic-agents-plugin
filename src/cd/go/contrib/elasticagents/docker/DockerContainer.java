@@ -32,7 +32,6 @@ import org.joda.time.DateTime;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.UUID;
@@ -99,7 +98,7 @@ public class DockerContainer {
         File autoregisterPropertiesFile = new File(configDir, "autoregister.properties");
 
         try {
-            dockerContainer.saveAutoRegisterProperties(id, autoregisterPropertiesFile, request.autoRegisterKey(), request.resources(), request.environment());
+            dockerContainer.saveAutoRegisterProperties(id, autoregisterPropertiesFile, request.autoRegisterKey(), request.environment());
             FileUtils.copyFile(new File("/Users/ketanpadegaonkar/projects/gocd/gocd/agent/target/agent.jar"), new File(tempDirectory, "agent.jar"));
             LOG.debug("Copying files to container " + id);
             docker.copyToContainer(tempDirectory.toPath(), id, "/go-agent");
@@ -130,7 +129,7 @@ public class DockerContainer {
         return id != null ? id.hashCode() : 0;
     }
 
-    private void saveAutoRegisterProperties(String containerId, File autoregisterPropertiesFile, String autoRegisterKey, Collection<String> resources, String environment) throws IOException {
+    private void saveAutoRegisterProperties(String containerId, File autoregisterPropertiesFile, String autoRegisterKey, String environment) throws IOException {
         FileWriter fileWriter = new FileWriter(autoregisterPropertiesFile);
 
         Properties properties = new Properties();
