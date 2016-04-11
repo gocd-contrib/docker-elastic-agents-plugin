@@ -21,6 +21,7 @@ import cd.go.contrib.elasticagents.Agents;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.request.DefaultGoApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoApiResponse;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Collection;
 
@@ -40,7 +41,11 @@ public class PluginRequest {
         if (response.responseCode() != 200) {
             LOG.error("The server sent an unexpected status code " + response.responseCode() + " with the response body " + response.responseBody());
         }
-
+        if (StringUtils.isBlank(response.responseBody())) {
+            String message = "Plugin settings is required for this plugin. Please set that up on the server.";
+            LOG.error(message);
+            throw new RuntimeException(message);
+        }
         return PluginSettings.fromJSON(response.responseBody());
     }
 
@@ -52,7 +57,7 @@ public class PluginRequest {
             LOG.error("The server sent an unexpected status code " + response.responseCode() + " with the response body " + response.responseBody());
         }
 
-        LOG.error("The server said " + response.responseBody());
+        LOG.debug("The server said " + response.responseBody());
 
         return new Agents(Agent.fromJSONArray(response.responseBody()));
     }

@@ -67,7 +67,7 @@ public class DockerContainers extends ConcurrentHashMap<String, DockerContainer>
         LOG.warn("Terminating instances that did not register " + toTerminate.keySet() + ".");
 
         for (DockerContainer container : toTerminate.values()) {
-            terminate(container.id(), settings);
+            toTerminate.terminate(container.id(), settings);
         }
     }
 
