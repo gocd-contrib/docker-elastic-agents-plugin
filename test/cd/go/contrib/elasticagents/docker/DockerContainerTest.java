@@ -20,7 +20,7 @@ import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,7 +30,7 @@ public class DockerContainerTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {
-        request = new CreateAgentRequest("key", Arrays.asList("centos", "java"), "production");
+        request = new CreateAgentRequest("key", new HashMap<String, String>(), "production");
     }
 
     @Test

@@ -75,7 +75,7 @@ public class DockerContainer {
         HashMap<String, String> labels = new HashMap<>();
         labels.put(CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID);
         ContainerCreation container = docker.createContainer(ContainerConfig.builder().
-                image("gocd/ubuntu-docker-elastic-agent").
+                image("gocdcontrib/ubuntu-docker-elastic-agent").
                 openStdin(true).
                 cmd("bash").
                 labels(labels).

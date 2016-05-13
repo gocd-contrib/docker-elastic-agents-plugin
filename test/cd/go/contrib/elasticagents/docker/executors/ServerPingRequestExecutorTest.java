@@ -85,7 +85,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         verifyNoMoreInteractions(pluginRequest);
 
         DockerContainers dockerContainers = new DockerContainers();
-        DockerContainer container = dockerContainers.create(new CreateAgentRequest(null, new HashSet<String>(), null), settings);
+        DockerContainer container = dockerContainers.create(new CreateAgentRequest(null, null, null), settings);
         containers.add(container.id());
 
         ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(new ServerPingRequest(), dockerContainers, pluginRequest);

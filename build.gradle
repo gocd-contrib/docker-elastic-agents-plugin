@@ -29,7 +29,7 @@ buildDir = "${projectDir}/target"
 
 repositories {
   mavenLocal()
-  mavenCentral()
+  jcenter()
 }
 
 configurations {
@@ -56,7 +56,7 @@ sourceSets {
 }
 
 dependencies {
-  provided group: 'com.thoughtworks.go', name: 'go-plugin-api', version: '16.3.0'
+  provided group: 'cd.go.plugin', name: 'go-plugin-api', version: '16.4.0'
   compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
   compile group: 'com.spotify', name: 'docker-client', version: '3.6.3'
   compile group: 'com.google.guava', name: 'guava', version: '19.0'

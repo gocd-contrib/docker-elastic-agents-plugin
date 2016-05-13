@@ -21,7 +21,7 @@ import com.spotify.docker.client.ContainerNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -34,7 +34,7 @@ public class DockerContainersTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {
-        request = new CreateAgentRequest("key", Arrays.asList("centos", "java"), "production");
+        request = new CreateAgentRequest("key", new HashMap<String, String>(), "production");
         dockerContainers = new DockerContainers();
         settings = createSettings();
     }
