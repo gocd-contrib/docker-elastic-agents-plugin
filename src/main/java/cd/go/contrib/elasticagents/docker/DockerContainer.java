@@ -17,10 +17,10 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
-import com.spotify.docker.client.ContainerNotFoundException;
 import com.spotify.docker.client.DockerClient;
-import com.spotify.docker.client.DockerException;
 import com.spotify.docker.client.LogStream;
+import com.spotify.docker.client.exceptions.ContainerNotFoundException;
+import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.ExecState;
@@ -87,7 +87,7 @@ public class DockerContainer {
 
         try {
             FileUtils.write(autoregisterPropertiesFile, request.autoregisterPropertiesAsString(id));
-            FileUtils.copyFile(new File("/Users/ketanpadegaonkar/projects/gocd/gocd/agent/target/agent.jar"), new File(tempDirectory, "agent.jar"));
+            FileUtils.copyFile(new File("agent.jar"), new File(tempDirectory, "agent.jar"));
             LOG.debug("Copying files to container " + id);
             docker.copyToContainer(tempDirectory.toPath(), id, "/go-agent");
             LOG.debug("Done copying files to container " + id);

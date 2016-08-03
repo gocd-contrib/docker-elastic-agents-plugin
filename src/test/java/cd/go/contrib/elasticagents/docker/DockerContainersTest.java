@@ -17,7 +17,7 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
-import com.spotify.docker.client.ContainerNotFoundException;
+import com.spotify.docker.client.exceptions.ContainerNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 

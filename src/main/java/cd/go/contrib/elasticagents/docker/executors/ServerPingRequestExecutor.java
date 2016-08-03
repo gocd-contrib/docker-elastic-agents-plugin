@@ -16,9 +16,8 @@
 
 package cd.go.contrib.elasticagents.docker.executors;
 
-import cd.go.contrib.elasticagents.docker.ServerRequestFailedException;
 import cd.go.contrib.elasticagents.docker.*;
-import com.spotify.docker.client.ContainerNotFoundException;
+import com.spotify.docker.client.exceptions.ContainerNotFoundException;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 

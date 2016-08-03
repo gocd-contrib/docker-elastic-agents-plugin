@@ -16,10 +16,10 @@
 
 package cd.go.contrib.elasticagents.docker;
 
-import com.spotify.docker.client.ContainerNotFoundException;
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerCertificates;
-import com.spotify.docker.client.DockerException;
+import com.spotify.docker.client.exceptions.ContainerNotFoundException;
+import com.spotify.docker.client.exceptions.DockerException;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
