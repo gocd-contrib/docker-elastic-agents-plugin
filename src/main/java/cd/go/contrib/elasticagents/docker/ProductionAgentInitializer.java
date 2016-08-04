@@ -48,7 +48,7 @@ public class ProductionAgentInitializer implements AgentInitializer {
             File startupScript = new File(tempDirectory, "docker-agent-start.sh");
             FileUtils.write(startupScript, "#!/bin/bash\n" +
                     "cd /var/lib/go-agent\n" +
-                    "DAEMON=Y GO_SERVER_URL='" + goServerUrl + "' ./agent.sh", StandardCharsets.UTF_8);
+                    "AGENT_WORK_DIR=/var/lib/go-agent DAEMON=Y GO_SERVER_URL='" + goServerUrl + "' /usr/share/go-agent/agent.sh\n", StandardCharsets.UTF_8);
 
             FileUtils.write(autoregisterPropertiesFile, autoregisterProperties, StandardCharsets.UTF_8);
             docker.copyToContainer(tempDirectory.toPath(), dockerContainer.id(), "/var/lib/go-agent");
@@ -59,6 +59,6 @@ public class ProductionAgentInitializer implements AgentInitializer {
 
     @Override
     public void startAgent() throws DockerException, InterruptedException {
-        dockerContainer.execCommand(dockerContainer.id(), false, docker, "bash", "/go-agent/docker-agent-start.sh");
+        dockerContainer.execCommand(dockerContainer.id(), false, docker, "bash", "/var/lib/go-agent/docker-agent-start.sh");
     }
 }

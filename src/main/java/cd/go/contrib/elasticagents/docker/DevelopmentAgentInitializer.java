@@ -47,7 +47,7 @@ public class DevelopmentAgentInitializer implements AgentInitializer {
             File startupScript = new File(tempDirectory, "docker-agent-start.sh");
             FileUtils.write(startupScript, "#!/bin/bash\n" +
                     "\n" +
-                    "cd /go-agent && curl -k '" + goServerUrl + "/admin/agent' > agent.jar && ((java -jar agent.jar -serverUrl '" + goServerUrl + "' > agent.stdout.log 2>&1 & disown) & disown)", StandardCharsets.UTF_8);
+                    "cd /go-agent && curl -k '" + goServerUrl + "/admin/agent' > agent.jar && ((java -jar agent.jar -serverUrl '" + goServerUrl + "' > agent.stdout.log 2>&1 & disown) & disown)\n", StandardCharsets.UTF_8);
 
             FileUtils.write(autoregisterPropertiesFile, autoregisterProperties, StandardCharsets.UTF_8);
             dockerContainer.execCommand(dockerContainer.id(), false, docker, "mkdir", "-p", "/go-agent/config");
