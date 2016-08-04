@@ -1,9 +1,17 @@
 # GoCD Elastic agent plugin for Docker
 
-
 ## Building the code base
 
 To build the jar, run `./gradlew clean test assemble`
+
+## Configuring
+
+### Mac OsX
+
+Assuming you're using docker for mac (https://docs.docker.com/docker-for-mac/) —
+
+* Setup the server url to https://host:8154/go. Where host is the ipaddress of your default interface (`ipconfig getifaddr en0` or `ipconfig getifaddr en1`)
+* Setup the Docker URI to `unix:///var/run/docker.sock`
 
 ## License
 
