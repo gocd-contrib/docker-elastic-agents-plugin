@@ -16,13 +16,13 @@
 
 package cd.go.contrib.elasticagents.docker;
 
-import com.google.common.base.Charsets;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.DockerException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class ProductionAgentInitializer implements AgentInitializer {
@@ -48,9 +48,9 @@ public class ProductionAgentInitializer implements AgentInitializer {
             File startupScript = new File(tempDirectory, "docker-agent-start.sh");
             FileUtils.write(startupScript, "#!/bin/bash\n" +
                     "cd /var/lib/go-agent\n" +
-                    "DAEMON=Y GO_SERVER_URL='" + goServerUrl + "' ./agent.sh", Charsets.UTF_8);
+                    "DAEMON=Y GO_SERVER_URL='" + goServerUrl + "' ./agent.sh", StandardCharsets.UTF_8);
 
-            FileUtils.write(autoregisterPropertiesFile, autoregisterProperties, Charsets.UTF_8);
+            FileUtils.write(autoregisterPropertiesFile, autoregisterProperties, StandardCharsets.UTF_8);
             docker.copyToContainer(tempDirectory.toPath(), dockerContainer.id(), "/var/lib/go-agent");
         } finally {
             FileUtils.deleteDirectory(tempDirectory);

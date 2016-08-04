@@ -16,13 +16,13 @@
 
 package cd.go.contrib.elasticagents.docker;
 
-import com.google.common.base.Charsets;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.DockerException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class DevelopmentAgentInitializer implements AgentInitializer {
@@ -47,9 +47,9 @@ public class DevelopmentAgentInitializer implements AgentInitializer {
             File startupScript = new File(tempDirectory, "docker-agent-start.sh");
             FileUtils.write(startupScript, "#!/bin/bash\n" +
                     "\n" +
-                    "cd /go-agent && curl -k '" + goServerUrl + "/admin/agent' > agent.jar && ((java -jar agent.jar -serverUrl '" + goServerUrl + "' > agent.stdout.log 2>&1 & disown) & disown)", Charsets.UTF_8);
+                    "cd /go-agent && curl -k '" + goServerUrl + "/admin/agent' > agent.jar && ((java -jar agent.jar -serverUrl '" + goServerUrl + "' > agent.stdout.log 2>&1 & disown) & disown)", StandardCharsets.UTF_8);
 
-            FileUtils.write(autoregisterPropertiesFile, autoregisterProperties, Charsets.UTF_8);
+            FileUtils.write(autoregisterPropertiesFile, autoregisterProperties, StandardCharsets.UTF_8);
             dockerContainer.execCommand(dockerContainer.id(), false, docker, "mkdir", "-p", "/go-agent/config");
             docker.copyToContainer(tempDirectory.toPath(), dockerContainer.id(), "/go-agent");
         } finally {
