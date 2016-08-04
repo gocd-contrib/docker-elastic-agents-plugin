@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker ps -a -q | xargs --max-procs=10 -I CONTAINER_ID docker stop --time=2 CONTAINER_ID
+docker rm $(docker ps -a -q)

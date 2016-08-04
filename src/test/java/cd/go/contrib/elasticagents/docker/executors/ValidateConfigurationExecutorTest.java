@@ -43,18 +43,6 @@ public class ValidateConfigurationExecutorTest {
                 "  {\n" +
                 "    \"message\": \"Agent auto-register Timeout (in minutes) must be a positive integer.\",\n" +
                 "    \"key\": \"auto_register_timeout\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"message\": \"Docker CA Certificate must not be blank.\",\n" +
-                "    \"key\": \"docker_ca_cert\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"message\": \"Docker Client Key must not be blank.\",\n" +
-                "    \"key\": \"docker_client_key\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"message\": \"Docker Client Certificate must not be blank.\",\n" +
-                "    \"key\": \"docker_client_cert\"\n" +
                 "  }\n" +
                 "]\n", response.responseBody(), true);
     }

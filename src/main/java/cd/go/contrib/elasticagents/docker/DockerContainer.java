@@ -24,12 +24,9 @@ import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.ExecState;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.UUID;
 
 import static cd.go.contrib.elasticagents.docker.Constants.CREATED_BY_LABEL_KEY;
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
@@ -76,30 +73,22 @@ public class DockerContainer {
 
         DockerContainer dockerContainer = new DockerContainer(id);
 
-        dockerContainer.execCommand(id, false, docker, "mkdir", "-p", "/go-agent/config");
-
-        File tempDirectory = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
-        File configDir = new File(tempDirectory, "config");
-
-        tempDirectory.mkdirs();
-        configDir.mkdirs();
-        File autoregisterPropertiesFile = new File(configDir, "autoregister.properties");
-
-        try {
-            FileUtils.write(autoregisterPropertiesFile, request.autoregisterPropertiesAsString(id));
-            FileUtils.copyFile(new File("agent.jar"), new File(tempDirectory, "agent.jar"));
-            LOG.debug("Copying files to container " + id);
-            docker.copyToContainer(tempDirectory.toPath(), id, "/go-agent");
-            LOG.debug("Done copying files to container " + id);
-        } finally {
-            FileUtils.deleteDirectory(tempDirectory);
-        }
-
-        LOG.debug("Starting agent process on container " + id);
-        dockerContainer.execCommand(id, false, docker, "bash", "-c", "cd /go-agent && ((java -jar agent.jar '" + settings.getGoServerUrl() + "' > agent.stdout.log 2>&1 & disown)& disown)");
-        LOG.debug("Agent should now be ready in a moment...");
+        dockerContainer.initialize(request, settings.getGoServerUrl(), docker);
+        dockerContainer.startAgent(docker);
 
         return dockerContainer;
+    }
+
+    private void startAgent(DockerClient docker) throws DockerException, InterruptedException {
+        LOG.debug("Starting agent process on container " + id);
+        AgentInitializerFactory.create(this, docker).startAgent();
+        LOG.debug("Agent should now be ready in a moment...");
+    }
+
+    private void initialize(CreateAgentRequest request, String goServerUrl, DockerClient docker) throws InterruptedException, DockerException, IOException {
+        LOG.debug("Initializing container " + id);
+        AgentInitializerFactory.create(this, docker).initialize(goServerUrl, request.autoregisterPropertiesAsString(id));
+        LOG.debug("Done initializing container " + id);
     }
 
     @Override
@@ -117,7 +106,7 @@ public class DockerContainer {
         return id != null ? id.hashCode() : 0;
     }
 
-    private void execCommand(String containerId, boolean detach, DockerClient docker, String... cmd) throws DockerException, InterruptedException {
+    void execCommand(String containerId, boolean detach, DockerClient docker, String... cmd) throws DockerException, InterruptedException {
         String execId = docker.execCreate(containerId, cmd);
         if (detach) {
             docker.execStart(execId, DockerClient.ExecStartParameter.DETACH);

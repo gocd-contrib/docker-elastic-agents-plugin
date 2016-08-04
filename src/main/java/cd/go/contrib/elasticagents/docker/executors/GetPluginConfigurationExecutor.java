@@ -32,9 +32,9 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
     public static final Field GO_SERVER_URL = new NonBlankField("go_server_url", "Go Server URL", null, true, false, "0");
     public static final Field DOCKER_URL = new NonBlankField("docker_uri", "Docker URI", null, true, false, "1");
     public static final Field AUTOREGISTER_TIMEOUT = new PositiveNumberField("auto_register_timeout", "Agent auto-register Timeout (in minutes)", "10", true, false, "2");
-    public static final Field DOCKER_CA_CERT = new NonBlankField("docker_ca_cert", "Docker CA Certificate", null, false, true, "3");
-    public static final Field DOCKER_CLIENT_KEY = new NonBlankField("docker_client_key", "Docker Client Key", null, false, true, "4");
-    public static final Field DOCKER_CLIENT_CERT = new NonBlankField("docker_client_cert", "Docker Client Certificate", null, false, true, "5");
+    public static final Field DOCKER_CA_CERT = new Field("docker_ca_cert", "Docker CA Certificate", null, false, true, "3");
+    public static final Field DOCKER_CLIENT_KEY = new Field("docker_client_key", "Docker Client Key", null, false, true, "4");
+    public static final Field DOCKER_CLIENT_CERT = new Field("docker_client_cert", "Docker Client Certificate", null, false, true, "5");
 
     public static final Map<String, Field> FIELDS = new LinkedHashMap<>();
 
