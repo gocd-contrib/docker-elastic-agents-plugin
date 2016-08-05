@@ -22,6 +22,8 @@ import com.spotify.docker.client.messages.Container;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -72,12 +74,24 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
         }
     }
 
-    private void register(DockerContainer container) {
-        containers.put(container.id(), container);
+    @Override
+    public Agents agentsCreatedBeforeTimeout(PluginSettings settings, Agents agents) {
+        ArrayList<Agent> oldAgents = new ArrayList<>();
+        for (Agent agent : agents.agents()) {
+            DockerContainer container = containers.get(agent.elasticAgentId());
+            if (container == null) {
+                continue;
+            }
+
+            if (container.createdAt().plus(settings.getAutoRegisterPeriod()).isAfterNow()) {
+                oldAgents.add(agent);
+            }
+        }
+        return new Agents(oldAgents);
     }
 
-    private DockerContainer dockerContainer(Container container) {
-        return new DockerContainer(container.id());
+    private void register(DockerContainer container) {
+        containers.put(container.id(), container);
     }
 
     private DockerClient docker(PluginSettings settings) throws Exception {
@@ -97,7 +111,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
             DateTime dateTimeCreated = new DateTime(container.created() * 1000);
 
             if (dateTimeCreated.plus(period).isBeforeNow()) {
-                unregisteredContainers.register(dockerContainer(container));
+                unregisteredContainers.register(new DockerContainer(container.id(), new Date(container.created())));
             }
         }
         return unregisteredContainers;

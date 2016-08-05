@@ -57,7 +57,7 @@ public interface AgentInstances<T> {
     void terminate(String agentId, PluginSettings settings) throws Exception;
 
     /**
-     * This message is sent via from the {@link cd.go.contrib.elasticagents.docker.executors.ServerPingRequestExecutor}
+     * This message is sent from the {@link cd.go.contrib.elasticagents.docker.executors.ServerPingRequestExecutor}
      * to terminate instances that did not register with the server after a timeout. The timeout may be configurable and
      * set via the {@link PluginSettings} instance that is passed in.
      *
@@ -65,4 +65,15 @@ public interface AgentInstances<T> {
      * @param agents   the list of all the agents
      */
     void terminateUnregisteredInstances(PluginSettings settings, Agents agents) throws Exception;
+
+    /**
+     * This message is sent from the {@link cd.go.contrib.elasticagents.docker.executors.ServerPingRequestExecutor}
+     * to filter out any new agents, that have registered before the timeout period. The timeout may be configurable and
+     * set via the {@link PluginSettings} instance that is passed in.
+     *
+     * @param settings the plugin settings object
+     * @param agents   the list of all the agents (this object must not be mutated)
+     * @return a list of agents which were created after {@link PluginSettings#getAutoRegisterPeriod()} ago.
+     */
+    Agents agentsCreatedBeforeTimeout(PluginSettings settings, Agents agents);
 }

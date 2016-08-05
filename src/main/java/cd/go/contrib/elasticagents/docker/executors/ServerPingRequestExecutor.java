@@ -47,6 +47,7 @@ public class ServerPingRequestExecutor implements RequestExecutor {
             }
         }
 
+//        agents = agentInstances.agentsCreatedBeforeTimeout(pluginSettings, agents);
         disableIdleAgents(agents);
 
         agents = pluginRequest.listAgents();

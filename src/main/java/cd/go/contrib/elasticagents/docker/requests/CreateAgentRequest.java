@@ -16,7 +16,10 @@
 
 package cd.go.contrib.elasticagents.docker.requests;
 
-import cd.go.contrib.elasticagents.docker.*;
+import cd.go.contrib.elasticagents.docker.AgentInstances;
+import cd.go.contrib.elasticagents.docker.Constants;
+import cd.go.contrib.elasticagents.docker.PluginRequest;
+import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.executors.CreateAgentRequestExecutor;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;

@@ -23,27 +23,38 @@ import com.spotify.docker.client.exceptions.ContainerNotFoundException;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
+import com.spotify.docker.client.messages.ContainerInfo;
 import com.spotify.docker.client.messages.ExecState;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static cd.go.contrib.elasticagents.docker.Constants.CREATED_BY_LABEL_KEY;
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 
 public class DockerContainer {
+    private final DateTime createdAt;
     private String id;
 
-    public DockerContainer(String id) {
+    public DockerContainer(String id, Date createdAt) {
         this.id = id;
+        this.createdAt = new DateTime(createdAt);
     }
 
     public String id() {
         return id;
     }
 
+    public DateTime createdAt() {
+        return createdAt;
+    }
+
     public static DockerContainer find(DockerClient docker, String containerId) throws DockerException, InterruptedException {
-        return new DockerContainer(docker.inspectContainer(containerId).id());
+        ContainerInfo container = docker.inspectContainer(containerId);
+        return new DockerContainer(container.id(), container.created());
     }
 
     public void terminate(DockerClient docker) throws DockerException, InterruptedException {
@@ -58,37 +69,26 @@ public class DockerContainer {
 
     public static DockerContainer create(CreateAgentRequest request, PluginSettings settings, DockerClient docker) throws InterruptedException, DockerException, IOException {
         HashMap<String, String> labels = new HashMap<>();
+        String containerName = UUID.randomUUID().toString();
         labels.put(CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID);
         ContainerCreation container = docker.createContainer(ContainerConfig.builder().
                 image("gocdcontrib/ubuntu-docker-elastic-agent").
-                openStdin(true).
-                cmd("bash").
                 labels(labels).
-                build());
+                env(
+                        "MODE=" + mode(),
+                        "GO_SERVER_URL=" + settings.getGoServerUrl(),
+                        "AUTO_REGISTER_CONTENTS=" + request.autoregisterPropertiesAsString(containerName)
+                ).
+                build(), containerName);
         String id = container.id();
+
+        ContainerInfo containerInfo = docker.inspectContainer(id);
 
         LOG.debug("Created container " + id);
 
         docker.startContainer(id);
 
-        DockerContainer dockerContainer = new DockerContainer(id);
-
-        dockerContainer.initialize(request, settings.getGoServerUrl(), docker);
-        dockerContainer.startAgent(docker);
-
-        return dockerContainer;
-    }
-
-    private void startAgent(DockerClient docker) throws DockerException, InterruptedException {
-        LOG.debug("Starting agent process on container " + id);
-        AgentInitializerFactory.create(this, docker).startAgent();
-        LOG.debug("Agent should now be ready in a moment...");
-    }
-
-    private void initialize(CreateAgentRequest request, String goServerUrl, DockerClient docker) throws InterruptedException, DockerException, IOException {
-        LOG.debug("Initializing container " + id);
-        AgentInitializerFactory.create(this, docker).initialize(goServerUrl, request.autoregisterPropertiesAsString(id));
-        LOG.debug("Done initializing container " + id);
+        return new DockerContainer(id, containerInfo.created());
     }
 
     @Override
@@ -130,5 +130,16 @@ public class DockerContainer {
         }
     }
 
+    private static String mode() {
+        if ("false".equals(System.getProperty("rails.use.compressed.js"))) {
+            return "dev";
+        }
+
+        if ("true".equalsIgnoreCase(System.getProperty("rails.use.compressed.js"))) {
+            return "prod";
+        }
+
+        return "";
+    }
 
 }
