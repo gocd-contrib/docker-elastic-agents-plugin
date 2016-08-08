@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 
 import static java.lang.System.getenv;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 public abstract class BaseTest {
@@ -77,6 +78,10 @@ public abstract class BaseTest {
         } catch (ContainerNotFoundException expected) {
 
         }
+    }
+
+    protected void assertContainerExist(String id) throws DockerException, InterruptedException {
+        assertNotNull(docker.inspectContainer(id));
     }
 
 }

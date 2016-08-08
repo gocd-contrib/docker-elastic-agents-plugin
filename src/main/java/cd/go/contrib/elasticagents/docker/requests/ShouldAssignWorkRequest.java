@@ -29,9 +29,18 @@ import java.util.Map;
  */
 public class ShouldAssignWorkRequest {
     public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-    private String environment;
     private Agent agent;
+    private String environment;
     private Map<String, String> properties;
+
+    public ShouldAssignWorkRequest(Agent agent, String environment, Map<String, String> properties) {
+        this.agent = agent;
+        this.environment = environment;
+        this.properties = properties;
+    }
+
+    public ShouldAssignWorkRequest() {
+    }
 
     public Agent agent() {
         return agent;

@@ -42,5 +42,7 @@ public interface Constants {
 
     // internal use only
     String CREATED_BY_LABEL_KEY = "Elastic-Agent-Created-By";
+    String ENVIRONMENT_LABEL_KEY = "Elastic-Agent-Environment-Name";
+    String CONFIGURATION_LABEL_KEY = "Elastic-Agent-Configuration";
 
 }

@@ -19,11 +19,11 @@ package cd.go.contrib.elasticagents.docker;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.messages.Container;
+import com.spotify.docker.client.messages.ContainerInfo;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,6 +32,8 @@ import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 public class DockerContainers implements AgentInstances<DockerContainer> {
 
     private final ConcurrentHashMap<String, DockerContainer> containers = new ConcurrentHashMap<>();
+    private boolean refreshed;
+    public Clock clock = Clock.DEFAULT;
 
     @Override
     public DockerContainer create(CreateAgentRequest request, PluginSettings settings) throws Exception {
@@ -67,15 +69,15 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
             return;
         }
 
-        LOG.warn("Terminating instances that did not register " + toTerminate.containers.keySet() + ".");
+        LOG.warn("Terminating instances that did not register " + toTerminate.containers.keySet());
 
         for (DockerContainer container : toTerminate.containers.values()) {
-            terminate(container.id(), settings);
+            terminate(container.name(), settings);
         }
     }
 
     @Override
-    public Agents agentsCreatedBeforeTimeout(PluginSettings settings, Agents agents) {
+    public Agents instancesCreatedAfterTimeout(PluginSettings settings, Agents agents) {
         ArrayList<Agent> oldAgents = new ArrayList<>();
         for (Agent agent : agents.agents()) {
             DockerContainer container = containers.get(agent.elasticAgentId());
@@ -83,15 +85,27 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
                 continue;
             }
 
-            if (container.createdAt().plus(settings.getAutoRegisterPeriod()).isAfterNow()) {
+            if (container.createdAt().plus(settings.getAutoRegisterPeriod()).isAfter(clock.now())) {
                 oldAgents.add(agent);
             }
         }
         return new Agents(oldAgents);
     }
 
+    @Override
+    public void refreshAll(PluginRequest pluginRequest) throws Exception {
+        if (!refreshed) {
+            DockerClient docker = docker(pluginRequest.getPluginSettings());
+            List<Container> containers = docker.listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
+            for (Container container : containers) {
+                register(DockerContainer.fromContainerInfo(docker.inspectContainer(container.id())));
+            }
+            refreshed = true;
+        }
+    }
+
     private void register(DockerContainer container) {
-        containers.put(container.id(), container);
+        containers.put(container.name(), container);
     }
 
     private DockerClient docker(PluginSettings settings) throws Exception {
@@ -101,17 +115,17 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     private DockerContainers unregisteredAfterTimeout(PluginSettings settings, Agents knownAgents) throws Exception {
         Period period = settings.getAutoRegisterPeriod();
         DockerContainers unregisteredContainers = new DockerContainers();
-        List<Container> allContainers = docker(settings).listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
 
-        for (Container container : allContainers) {
-            if (knownAgents.containsAgentWithId(container.id())) {
+        for (String containerName : containers.keySet()) {
+            if (knownAgents.containsAgentWithId(containerName)) {
                 continue;
             }
 
-            DateTime dateTimeCreated = new DateTime(container.created() * 1000);
+            ContainerInfo containerInfo = docker(settings).inspectContainer(containerName);
+            DateTime dateTimeCreated = new DateTime(containerInfo.created());
 
-            if (dateTimeCreated.plus(period).isBeforeNow()) {
-                unregisteredContainers.register(new DockerContainer(container.id(), new Date(container.created())));
+            if (dateTimeCreated.plus(period).isBefore(clock.now())) {
+                unregisteredContainers.register(DockerContainer.fromContainerInfo(containerInfo));
             }
         }
         return unregisteredContainers;
@@ -119,5 +133,10 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
 
     public boolean hasContainer(String agentId) {
         return containers.containsKey(agentId);
+    }
+
+    @Override
+    public DockerContainer find(String agentId) {
+        return containers.get(agentId);
     }
 }

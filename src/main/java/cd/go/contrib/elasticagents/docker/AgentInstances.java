@@ -27,9 +27,9 @@ public interface AgentInstances<T> {
     /**
      * This message is sent to request creation of an agent instance.
      * Implementations may, at their discretion choose to not spin up an agent instance.
-     *
-     * So that instances created are auto-registered with the server, the agent instance should have an
-     * <code>autoregister.properties</code>.
+     * <p>
+     * So that instances created are auto-registered with the server, the agent instance MUST have an
+     * <code>autoregister.properties</code> file.
      *
      * @param request   the request object
      * @param settings  the plugin settings object
@@ -72,8 +72,22 @@ public interface AgentInstances<T> {
      * set via the {@link PluginSettings} instance that is passed in.
      *
      * @param settings the plugin settings object
-     * @param agents   the list of all the agents (this object must not be mutated)
-     * @return a list of agents which were created after {@link PluginSettings#getAutoRegisterPeriod()} ago.
+     * @param agents   the list of all the agents
+     * @return a list of agent instances which were created after {@link PluginSettings#getAutoRegisterPeriod()} ago.
      */
-    Agents agentsCreatedBeforeTimeout(PluginSettings settings, Agents agents);
+    Agents instancesCreatedAfterTimeout(PluginSettings settings, Agents agents);
+
+    /**
+     * This message is sent after plugin initialization time so that the plugin may connect to the cloud provider
+     * and fetch a list of all instances that have been spun up by this plugin (before the server was shut down).
+     * @param pluginRequest the plugin request object
+     */
+    void refreshAll(PluginRequest pluginRequest) throws Exception;
+
+    /**
+     * This
+     * Returns an agent instance with the specified <code>id</code> or <code>null</code>, if the agent is not found.
+     * @param agentId the elastic agent id
+     */
+    T find(String agentId);
 }

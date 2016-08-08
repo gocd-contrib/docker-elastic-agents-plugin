@@ -9,3 +9,5 @@ if [[ "${MODE}" == 'prod' ]]; then
   unset MODE
   exec /go-agent-prod.sh
 fi
+
+exec sleep 100

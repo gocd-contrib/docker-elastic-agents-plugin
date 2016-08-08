@@ -17,14 +17,17 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
-import com.spotify.docker.client.exceptions.ContainerNotFoundException;
+import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DockerContainersTest extends BaseTest {
 
@@ -42,46 +45,111 @@ public class DockerContainersTest extends BaseTest {
     @Test
     public void shouldCreateADockerInstance() throws Exception {
         DockerContainer container = dockerContainers.create(request, settings);
-        containers.add(container.id());
-
-        docker.inspectContainer(container.id());
+        containers.add(container.name());
+        assertContainerExist(container.name());
     }
 
-    @Test(expected = ContainerNotFoundException.class)
+    @Test
     public void shouldTerminateAnExistingContainer() throws Exception {
         DockerContainer container = dockerContainers.create(request, settings);
-        containers.add(container.id());
+        containers.add(container.name());
 
-        dockerContainers.terminate(container.id(), settings);
+        dockerContainers.terminate(container.name(), settings);
 
-        docker.inspectContainer(container.id());
+        assertContainerDoesNotExist(container.name());
     }
-
 
     @Test
     public void shouldRefreshADockerContainer() throws Exception {
         DockerContainer container = DockerContainer.create(request, settings, docker);
-        containers.add(container.id());
+        containers.add(container.name());
 
-        assertFalse(dockerContainers.hasContainer(container.id()));
-        dockerContainers.refresh(container.id(), settings);
-        assertTrue(dockerContainers.hasContainer(container.id()));
+        assertFalse(dockerContainers.hasContainer(container.name()));
+        dockerContainers.refresh(container.name(), settings);
+        assertTrue(dockerContainers.hasContainer(container.name()));
     }
 
-//    @Test
-//    public void shouldTerminateAllContainers() throws Exception {
-//        DockerContainer container1 = dockerContainers.create(request, settings);
-//        DockerContainer container2 = dockerContainers.create(request, settings);
-//
-//        containers.add(container1.id());
-//        containers.add(container2.id());
-//
-//        dockerContainers.terminateAll(settings);
-//
-//        assertTrue(dockerContainers.isEmpty());
-//
-//        assertContainerDoesNotExist(container1.id());
-//        assertContainerDoesNotExist(container2.id());
-//    }
+    @Test
+    public void shouldRefreshAllAgentInstancesAtStartUp() throws Exception {
+        DockerContainer container = DockerContainer.create(request, settings, docker);
+        containers.add(container.name());
 
+        DockerContainers dockerContainers = new DockerContainers();
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
+        dockerContainers.refreshAll(pluginRequest);
+        assertThat(dockerContainers.find(container.name()), is(container));
+    }
+
+    @Test
+    public void shouldNotRefreshAllAgentInstancesAgainAfterTheStartUp() throws Exception {
+        DockerContainers dockerContainers = new DockerContainers();
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
+        dockerContainers.refreshAll(pluginRequest);
+
+        DockerContainer container = DockerContainer.create(request, settings, docker);
+        containers.add(container.name());
+
+        dockerContainers.refreshAll(pluginRequest);
+
+        assertEquals(dockerContainers.find(container.name()), null);
+    }
+
+    @Test
+    public void shouldListTheContainerIfItIsCreatedBeforeTimeout() throws Exception {
+        dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(9));
+
+        DockerContainer container = DockerContainer.create(request, settings, docker);
+        containers.add(container.name());
+
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
+
+        dockerContainers.refreshAll(pluginRequest);
+
+        Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createSettings(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
+
+        assertTrue(filteredDockerContainers.containsAgentWithId(container.name()));
+    }
+
+    @Test
+    public void shouldNotListTheContainerIfItIsNotCreatedBeforeTimeout() throws Exception {
+        dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
+
+        DockerContainer container = DockerContainer.create(request, settings, docker);
+        containers.add(container.name());
+
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
+
+        dockerContainers.refreshAll(pluginRequest);
+
+        Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createSettings(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
+
+        assertFalse(filteredDockerContainers.containsAgentWithId(container.name()));
+    }
+
+    @Test
+    public void shouldTerminateUnregistredContainersAfterTimeout() throws Exception {
+        DockerContainer container = dockerContainers.create(request, settings);
+
+        assertTrue(dockerContainers.hasContainer(container.name()));
+        dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
+        dockerContainers.terminateUnregisteredInstances(createSettings(), new Agents());
+        assertFalse(dockerContainers.hasContainer(container.name()));
+        assertContainerDoesNotExist(container.name());
+    }
+
+    @Test
+    public void shouldNotTerminateUnregistredContainersBeforeTimeout() throws Exception {
+        DockerContainer container = dockerContainers.create(request, settings);
+
+        assertTrue(dockerContainers.hasContainer(container.name()));
+        dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(9));
+        dockerContainers.terminateUnregisteredInstances(createSettings(), new Agents());
+        assertTrue(dockerContainers.hasContainer(container.name()));
+        assertContainerExist(container.name());
+
+    }
 }

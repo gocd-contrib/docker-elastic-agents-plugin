@@ -17,6 +17,7 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
+import com.google.gson.Gson;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.exceptions.ContainerNotFoundException;
@@ -25,45 +26,63 @@ import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.ContainerInfo;
 import com.spotify.docker.client.messages.ExecState;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-import static cd.go.contrib.elasticagents.docker.Constants.CREATED_BY_LABEL_KEY;
+import static cd.go.contrib.elasticagents.docker.Constants.*;
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 
 public class DockerContainer {
     private final DateTime createdAt;
-    private String id;
+    private final Map<String, String> properties;
+    private final String environment;
+    private String name;
 
-    public DockerContainer(String id, Date createdAt) {
-        this.id = id;
+    public DockerContainer(String name, Date createdAt, Map<String, String> properties, String environment) {
+        this.name = name;
         this.createdAt = new DateTime(createdAt);
+        this.properties = properties;
+        this.environment = environment;
     }
 
-    public String id() {
-        return id;
+    public String name() {
+        return name;
     }
 
     public DateTime createdAt() {
         return createdAt;
     }
 
+    public String environment() {
+        return environment;
+    }
+
+    public Map<String, String> properties() {
+        return properties;
+    }
+
     public static DockerContainer find(DockerClient docker, String containerId) throws DockerException, InterruptedException {
-        ContainerInfo container = docker.inspectContainer(containerId);
-        return new DockerContainer(container.id(), container.created());
+        return fromContainerInfo(docker.inspectContainer(containerId));
+    }
+
+    public static DockerContainer fromContainerInfo(ContainerInfo container) {
+        Map<String, String> labels = container.config().labels();
+        return new DockerContainer(container.name().substring(1), container.created(), new Gson().fromJson(labels.get(Constants.CONFIGURATION_LABEL_KEY), HashMap.class), labels.get(Constants.ENVIRONMENT_LABEL_KEY));
     }
 
     public void terminate(DockerClient docker) throws DockerException, InterruptedException {
         try {
-            LOG.debug("Terminating instance " + this.id() + ".");
-            docker.stopContainer(id, 2);
-            docker.removeContainer(id);
+            LOG.debug("Terminating instance " + this.name());
+            docker.stopContainer(name, 2);
+            docker.removeContainer(name);
         } catch (ContainerNotFoundException ignore) {
-            LOG.warn("Cannot terminate a container that does not exist " + id);
+            LOG.warn("Cannot terminate a container that does not exist " + name);
         }
     }
 
@@ -71,6 +90,11 @@ public class DockerContainer {
         HashMap<String, String> labels = new HashMap<>();
         String containerName = UUID.randomUUID().toString();
         labels.put(CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID);
+        if (StringUtils.isNotBlank(request.environment())) {
+            labels.put(ENVIRONMENT_LABEL_KEY, request.environment());
+        }
+        labels.put(CONFIGURATION_LABEL_KEY, new Gson().toJson(request.properties()));
+
         ContainerCreation container = docker.createContainer(ContainerConfig.builder().
                 image("gocdcontrib/ubuntu-docker-elastic-agent").
                 labels(labels).
@@ -84,11 +108,10 @@ public class DockerContainer {
 
         ContainerInfo containerInfo = docker.inspectContainer(id);
 
-        LOG.debug("Created container " + id);
+        LOG.debug("Created container " + containerName);
+        docker.startContainer(containerName);
 
-        docker.startContainer(id);
-
-        return new DockerContainer(id, containerInfo.created());
+        return new DockerContainer(containerName, containerInfo.created(), request.properties(), request.environment());
     }
 
     @Override
@@ -98,12 +121,12 @@ public class DockerContainer {
 
         DockerContainer that = (DockerContainer) o;
 
-        return id != null ? id.equals(that.id) : that.id == null;
+        return name != null ? name.equals(that.name) : that.name == null;
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return name != null ? name.hashCode() : 0;
     }
 
     void execCommand(String containerId, boolean detach, DockerClient docker, String... cmd) throws DockerException, InterruptedException {

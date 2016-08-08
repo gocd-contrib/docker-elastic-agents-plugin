@@ -17,7 +17,6 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.*;
-import com.spotify.docker.client.exceptions.ContainerNotFoundException;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
@@ -38,22 +37,26 @@ public class ServerPingRequestExecutor implements RequestExecutor {
     @Override
     public GoPluginApiResponse execute() throws Exception {
         PluginSettings pluginSettings = pluginRequest.getPluginSettings();
-        Agents agents = pluginRequest.listAgents();
-        for (String containerId : agents.agentIds()) {
-            try {
-                agentInstances.refresh(containerId, pluginSettings);
-            } catch (ContainerNotFoundException e) {
-                LOG.warn("Was expecting a container with id " + containerId + " but it was missing!");
+
+        Agents allAgents = pluginRequest.listAgents();
+        Agents missingAgents = new Agents();
+
+        for (Agent agent : allAgents.agents()) {
+            if (agentInstances.find(agent.elasticAgentId()) == null) {
+                LOG.warn("Was expecting a container with name " + agent.elasticAgentId() + ", but it was missing!");
+                missingAgents.add(agent);
             }
         }
 
-//        agents = agentInstances.agentsCreatedBeforeTimeout(pluginSettings, agents);
-        disableIdleAgents(agents);
+        Agents agentsToDisable = this.agentInstances.instancesCreatedAfterTimeout(pluginSettings, allAgents);
+        agentsToDisable.addAll(missingAgents);
 
-        agents = pluginRequest.listAgents();
-        terminateDisabledAgents(agents, pluginSettings);
+        disableIdleAgents(agentsToDisable);
 
-        agentInstances.terminateUnregisteredInstances(pluginSettings, agents);
+        allAgents = pluginRequest.listAgents();
+        terminateDisabledAgents(allAgents, pluginSettings);
+
+        this.agentInstances.terminateUnregisteredInstances(pluginSettings, allAgents);
 
         return DefaultGoPluginApiResponse.success("");
     }

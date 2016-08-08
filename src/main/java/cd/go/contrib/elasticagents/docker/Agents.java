@@ -50,9 +50,17 @@ public class Agents {
     }
 
     public Agents(Collection<Agent> toCopy) {
-        for (Agent agent : toCopy) {
-            agents.put(agent.elasticAgentId(), agent);
+        addAll(toCopy);
+    }
+
+    public void addAll(Collection<Agent> toAdd) {
+        for (Agent agent : toAdd) {
+            add(agent);
         }
+    }
+
+    public void addAll(Agents agents) {
+        addAll(agents.agents());
     }
 
     public Collection<Agent> findInstancesToDisable() {
@@ -74,4 +82,10 @@ public class Agents {
     public Collection<Agent> agents() {
         return new ArrayList<>(agents.values());
     }
+
+    public void add(Agent agent) {
+        agents.put(agent.elasticAgentId(), agent);
+    }
+
+
 }

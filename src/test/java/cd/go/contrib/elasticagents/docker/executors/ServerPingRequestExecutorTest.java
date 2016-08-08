@@ -76,21 +76,31 @@ public class ServerPingRequestExecutorTest extends BaseTest {
 
     @Test
     public void testShouldTerminateInstancesThatNeverAutoRegistered() throws Exception {
-        PluginSettings settings = spy(createSettings());
-        when(settings.getAutoRegisterPeriod()).thenReturn(new Period().withMinutes(0));
-
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
         when(pluginRequest.listAgents()).thenReturn(new Agents());
         verifyNoMoreInteractions(pluginRequest);
 
         DockerContainers dockerContainers = new DockerContainers();
-        DockerContainer container = dockerContainers.create(new CreateAgentRequest(null, null, null), settings);
-        containers.add(container.id());
+        dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
+        DockerContainer container = dockerContainers.create(new CreateAgentRequest(null, null, null), createSettings());
+        containers.add(container.name());
 
         ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(dockerContainers, pluginRequest);
         serverPingRequestExecutor.execute();
 
-        assertFalse(dockerContainers.hasContainer(container.id()));
+        assertFalse(dockerContainers.hasContainer(container.name()));
+    }
+
+    @Test
+    public void shouldDeleteAgentFromConfigWhenCorrespondingContainerIsNotPresent() throws Exception {
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
+        when(pluginRequest.listAgents()).thenReturn(new Agents(Arrays.asList(new Agent("foo", Agent.AgentState.Idle, Agent.BuildState.Idle, Agent.ConfigState.Enabled))));
+        verifyNoMoreInteractions(pluginRequest);
+
+        DockerContainers dockerContainers = new DockerContainers();
+        ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(dockerContainers, pluginRequest);
+        serverPingRequestExecutor.execute();
     }
 }

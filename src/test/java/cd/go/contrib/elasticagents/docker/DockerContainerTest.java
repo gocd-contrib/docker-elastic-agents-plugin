@@ -36,27 +36,27 @@ public class DockerContainerTest extends BaseTest {
     @Test
     public void shouldCreateContainer() throws Exception {
         DockerContainer container = DockerContainer.create(request, createSettings(), docker);
-        this.containers.add(container.id());
-        docker.inspectContainer(container.id());
+        this.containers.add(container.name());
+        assertContainerExist(container.name());
     }
 
 
     @Test
     public void shouldTerminateAnExistingContainer() throws Exception {
         DockerContainer container = DockerContainer.create(request, createSettings(), docker);
-        this.containers.add(container.id());
+        this.containers.add(container.name());
 
         container.terminate(docker);
 
-        assertContainerDoesNotExist(container.id());
+        assertContainerDoesNotExist(container.name());
     }
 
     @Test
     public void shouldFindAnExistingContainer() throws Exception {
         DockerContainer container = DockerContainer.create(request, createSettings(), docker);
-        this.containers.add(container.id());
+        this.containers.add(container.name());
 
-        DockerContainer dockerContainer = DockerContainer.find(docker, container.id());
+        DockerContainer dockerContainer = DockerContainer.find(docker, container.name());
 
         assertEquals(container, dockerContainer);
     }

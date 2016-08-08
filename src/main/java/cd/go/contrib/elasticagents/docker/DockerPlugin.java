@@ -52,10 +52,13 @@ public class DockerPlugin implements GoPlugin {
         try {
             switch (Request.fromString(request.requestName())) {
                 case REQUEST_SHOULD_ASSIGN_WORK:
+                    refreshInstances();
                     return ShouldAssignWorkRequest.fromJSON(request.requestBody()).executor(agentInstances, pluginRequest).execute();
                 case REQUEST_CREATE_AGENT:
+                    refreshInstances();
                     return CreateAgentRequest.fromJSON(request.requestBody()).executor(agentInstances, pluginRequest).execute();
                 case REQUEST_SERVER_PING:
+                    refreshInstances();
                     return new ServerPingRequestExecutor(agentInstances, pluginRequest).execute();
                 case PLUGIN_SETTINGS_GET_VIEW:
                     return new GetViewRequestExecutor().execute();
@@ -66,6 +69,14 @@ public class DockerPlugin implements GoPlugin {
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void refreshInstances() {
+        try {
+            agentInstances.refreshAll(pluginRequest);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
