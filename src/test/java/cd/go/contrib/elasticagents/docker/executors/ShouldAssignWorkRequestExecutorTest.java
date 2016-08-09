@@ -10,7 +10,7 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,12 +22,13 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
     private DockerContainers agentInstances;
     private DockerContainer dockerContainer;
     private final String environment = "production";
-    private final Map<String, String> properties = Collections.singletonMap("foo", "bar");
+    private Map<String, String> properties = new HashMap<>();
 
     @Before
     public void setUp() throws Exception {
         agentInstances = new DockerContainers();
-
+        properties.put("foo", "bar");
+        properties.put("Image", "gocdcontrib/ubuntu-docker-elastic-agent");
         dockerContainer = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment), createSettings());
         containers.add(dockerContainer.name());
     }

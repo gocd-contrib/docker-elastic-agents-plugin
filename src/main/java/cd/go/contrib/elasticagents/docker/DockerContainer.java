@@ -22,6 +22,7 @@ import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.exceptions.ContainerNotFoundException;
 import com.spotify.docker.client.exceptions.DockerException;
+import com.spotify.docker.client.exceptions.ImageNotFoundException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.ContainerInfo;
@@ -37,6 +38,7 @@ import java.util.UUID;
 
 import static cd.go.contrib.elasticagents.docker.Constants.*;
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class DockerContainer {
     private final DateTime createdAt;
@@ -87,16 +89,20 @@ public class DockerContainer {
     }
 
     public static DockerContainer create(CreateAgentRequest request, PluginSettings settings, DockerClient docker) throws InterruptedException, DockerException, IOException {
-        HashMap<String, String> labels = new HashMap<>();
         String containerName = UUID.randomUUID().toString();
-        labels.put(CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID);
-        if (StringUtils.isNotBlank(request.environment())) {
-            labels.put(ENVIRONMENT_LABEL_KEY, request.environment());
+
+        HashMap<String, String> labels = labelsFrom(request);
+        String imageName = image(request.properties());
+
+        try {
+            docker.inspectImage(imageName);
+        } catch (ImageNotFoundException ex) {
+            LOG.info("Image " + imageName + " not found, attempting to download.");
+            docker.pull(imageName);
         }
-        labels.put(CONFIGURATION_LABEL_KEY, new Gson().toJson(request.properties()));
 
         ContainerCreation container = docker.createContainer(ContainerConfig.builder().
-                image("gocdcontrib/ubuntu-docker-elastic-agent").
+                image(imageName).
                 labels(labels).
                 env(
                         "MODE=" + mode(),
@@ -112,6 +118,17 @@ public class DockerContainer {
         docker.startContainer(containerName);
 
         return new DockerContainer(containerName, containerInfo.created(), request.properties(), request.environment());
+    }
+
+    private static HashMap<String, String> labelsFrom(CreateAgentRequest request) {
+        HashMap<String, String> labels = new HashMap<>();
+
+        labels.put(CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID);
+        if (StringUtils.isNotBlank(request.environment())) {
+            labels.put(ENVIRONMENT_LABEL_KEY, request.environment());
+        }
+        labels.put(CONFIGURATION_LABEL_KEY, new Gson().toJson(request.properties()));
+        return labels;
     }
 
     @Override
@@ -164,5 +181,19 @@ public class DockerContainer {
 
         return "";
     }
+
+    private static String image(Map<String, String> properties) {
+        String image = properties.get("Image");
+
+        if (isBlank(image)) {
+            throw new IllegalArgumentException("Must provide `Image` attribute.");
+        }
+
+        if (!image.contains(":")) {
+            return image + ":latest";
+        }
+        return image;
+    }
+
 
 }

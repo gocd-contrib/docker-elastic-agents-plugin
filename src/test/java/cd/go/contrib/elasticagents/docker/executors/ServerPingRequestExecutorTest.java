@@ -22,10 +22,7 @@ import org.joda.time.Period;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 
 import static cd.go.contrib.elasticagents.docker.Agent.ConfigState.Disabled;
 import static org.junit.Assert.assertFalse;
@@ -83,7 +80,9 @@ public class ServerPingRequestExecutorTest extends BaseTest {
 
         DockerContainers dockerContainers = new DockerContainers();
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
-        DockerContainer container = dockerContainers.create(new CreateAgentRequest(null, null, null), createSettings());
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "gocdcontrib/ubuntu-docker-elastic-agent");
+        DockerContainer container = dockerContainers.create(new CreateAgentRequest(null, properties, null), createSettings());
         containers.add(container.name());
 
         ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(dockerContainers, pluginRequest);
