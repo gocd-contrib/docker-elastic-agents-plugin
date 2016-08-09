@@ -107,4 +107,7 @@ jar {
   from(configurations.compile) {
     into "lib/"
   }
+  from(sourceSets.main.java) {
+    into "/"
+  }
 }
