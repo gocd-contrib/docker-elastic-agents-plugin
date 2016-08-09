@@ -1,4 +1,4 @@
-# GoCD Elastic agent plugin for Docker
+# GoCD Elastic agent plugin for Docker [![Build Status](https://snap-ci.com/gocd-contrib/docker-elastic-agents/branch/master/build_image)](https://snap-ci.com/gocd-contrib/docker-elastic-agents/branch/master)
 
 ## Building the code base
 
