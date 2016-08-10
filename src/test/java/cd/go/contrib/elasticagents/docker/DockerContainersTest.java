@@ -62,16 +62,6 @@ public class DockerContainersTest extends BaseTest {
     }
 
     @Test
-    public void shouldRefreshADockerContainer() throws Exception {
-        DockerContainer container = DockerContainer.create(request, settings, docker);
-        containers.add(container.name());
-
-        assertFalse(dockerContainers.hasContainer(container.name()));
-        dockerContainers.refresh(container.name(), settings);
-        assertTrue(dockerContainers.hasContainer(container.name()));
-    }
-
-    @Test
     public void shouldRefreshAllAgentInstancesAtStartUp() throws Exception {
         DockerContainer container = DockerContainer.create(request, settings, docker);
         containers.add(container.name());

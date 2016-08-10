@@ -16,7 +16,6 @@
 
 package cd.go.contrib.elasticagents.docker;
 
-import cd.go.contrib.elasticagents.docker.executors.AgentNotFoundException;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 
 /**
@@ -37,22 +36,10 @@ public interface AgentInstances<T> {
     T create(CreateAgentRequest request, PluginSettings settings) throws Exception;
 
     /**
-     * This message is sent to assist the plugin to refresh any metadata about the agent.
-     * The implementation is expected to connect to the cloud provider
-     * and make a call to check if the instance is alive and operating well.
-     *
-     * @param agentId  the elastic agent id
-     * @param settings the plugin settings object
-     * @throws AgentNotFoundException if there was an error refreshing, or finding the agent
-     */
-    void refresh(String agentId, PluginSettings settings) throws Exception;
-
-    /**
      * This message is sent when the plugin needs to terminate the agent instance.
      *
      * @param agentId  the elastic agent id
      * @param settings the plugin settings object
-     * @throws AgentNotFoundException if the agent instance could not be found
      */
     void terminate(String agentId, PluginSettings settings) throws Exception;
 

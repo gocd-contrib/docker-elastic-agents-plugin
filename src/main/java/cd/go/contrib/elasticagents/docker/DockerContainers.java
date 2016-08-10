@@ -43,13 +43,6 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     }
 
     @Override
-    public void refresh(String containerId, PluginSettings settings) throws Exception {
-        if (!containers.containsKey(containerId)) {
-            register(DockerContainer.find(docker(settings), containerId));
-        }
-    }
-
-    @Override
     public void terminate(String containerId, PluginSettings settings) throws Exception {
         DockerContainer dockerContainer = containers.get(containerId);
         if (dockerContainer != null) {

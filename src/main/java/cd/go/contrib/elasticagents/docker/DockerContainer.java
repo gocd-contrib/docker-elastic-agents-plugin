@@ -146,30 +146,6 @@ public class DockerContainer {
         return name != null ? name.hashCode() : 0;
     }
 
-    void execCommand(String containerId, boolean detach, DockerClient docker, String... cmd) throws DockerException, InterruptedException {
-        String execId = docker.execCreate(containerId, cmd);
-        if (detach) {
-            docker.execStart(execId, DockerClient.ExecStartParameter.DETACH);
-            return;
-        }
-
-        LogStream logStream = docker.execStart(execId);
-
-        ExecState execState;
-        while (true) {
-            execState = docker.execInspect(execId);
-            if (execState.running()) {
-                Thread.sleep(100);
-            } else {
-                break;
-            }
-        }
-
-        if (execState.exitCode() != 0) {
-            throw new RuntimeException("Could not execute command. The status code was " + execState.exitCode() + ". The output was: " + logStream.readFully());
-        }
-    }
-
     private static String mode() {
         if ("false".equals(System.getProperty("rails.use.compressed.js"))) {
             return "dev";
