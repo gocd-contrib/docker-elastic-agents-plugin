@@ -42,15 +42,15 @@ public class ShouldAssignWorkRequestExecutor implements RequestExecutor {
 
     @Override
     public GoPluginApiResponse execute() {
-        DockerContainer dockerContainer = agentInstances.find(request.agent().elasticAgentId());
+        DockerContainer instance = agentInstances.find(request.agent().elasticAgentId());
 
-        if (dockerContainer == null) {
+        if (instance == null) {
             return DefaultGoPluginApiResponse.success("false");
         }
 
-        boolean environmentMatches = stripToEmpty(request.environment()).equalsIgnoreCase(stripToEmpty(dockerContainer.environment()));
+        boolean environmentMatches = stripToEmpty(request.environment()).equalsIgnoreCase(stripToEmpty(instance.environment()));
 
-        Map<String, String> containerProperties = dockerContainer.properties() == null ? new HashMap<String, String>() : dockerContainer.properties();
+        Map<String, String> containerProperties = instance.properties() == null ? new HashMap<String, String>() : instance.properties();
         Map<String, String> requestProperties = request.properties() == null ? new HashMap<String, String>() : request.properties();
 
         boolean propertiesMatch = requestProperties.equals(containerProperties);

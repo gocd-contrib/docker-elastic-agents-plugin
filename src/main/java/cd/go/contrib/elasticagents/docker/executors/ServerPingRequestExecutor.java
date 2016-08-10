@@ -48,7 +48,7 @@ public class ServerPingRequestExecutor implements RequestExecutor {
             }
         }
 
-        Agents agentsToDisable = this.agentInstances.instancesCreatedAfterTimeout(pluginSettings, allAgents);
+        Agents agentsToDisable = agentInstances.instancesCreatedAfterTimeout(pluginSettings, allAgents);
         agentsToDisable.addAll(missingAgents);
 
         disableIdleAgents(agentsToDisable);
@@ -56,13 +56,13 @@ public class ServerPingRequestExecutor implements RequestExecutor {
         allAgents = pluginRequest.listAgents();
         terminateDisabledAgents(allAgents, pluginSettings);
 
-        this.agentInstances.terminateUnregisteredInstances(pluginSettings, allAgents);
+        agentInstances.terminateUnregisteredInstances(pluginSettings, allAgents);
 
         return DefaultGoPluginApiResponse.success("");
     }
 
     private void disableIdleAgents(Agents agents) throws ServerRequestFailedException {
-        this.pluginRequest.disableAgents(agents.findInstancesToDisable());
+        pluginRequest.disableAgents(agents.findInstancesToDisable());
     }
 
     private void terminateDisabledAgents(Agents agents, PluginSettings pluginSettings) throws Exception {
@@ -72,7 +72,7 @@ public class ServerPingRequestExecutor implements RequestExecutor {
             agentInstances.terminate(agent.elasticAgentId(), pluginSettings);
         }
 
-        this.pluginRequest.deleteAgents(toBeDeleted);
+        pluginRequest.deleteAgents(toBeDeleted);
     }
 
 }

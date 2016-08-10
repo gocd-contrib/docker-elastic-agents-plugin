@@ -28,6 +28,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Represents an Agent.
+ * See https://plugin-api.go.cd/current/elastic-agents/#the-elastic-agent-object for more details.
+ */
 public class Agent {
 
     public enum AgentState {

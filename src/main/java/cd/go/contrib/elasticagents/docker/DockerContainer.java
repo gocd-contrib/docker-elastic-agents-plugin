@@ -19,14 +19,12 @@ package cd.go.contrib.elasticagents.docker;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.google.gson.Gson;
 import com.spotify.docker.client.DockerClient;
-import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.exceptions.ContainerNotFoundException;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.exceptions.ImageNotFoundException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.ContainerInfo;
-import com.spotify.docker.client.messages.ExecState;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
@@ -69,15 +67,6 @@ public class DockerContainer {
         return properties;
     }
 
-    public static DockerContainer find(DockerClient docker, String containerId) throws DockerException, InterruptedException {
-        return fromContainerInfo(docker.inspectContainer(containerId));
-    }
-
-    public static DockerContainer fromContainerInfo(ContainerInfo container) {
-        Map<String, String> labels = container.config().labels();
-        return new DockerContainer(container.name().substring(1), container.created(), new Gson().fromJson(labels.get(Constants.CONFIGURATION_LABEL_KEY), HashMap.class), labels.get(Constants.ENVIRONMENT_LABEL_KEY));
-    }
-
     public void terminate(DockerClient docker) throws DockerException, InterruptedException {
         try {
             LOG.debug("Terminating instance " + this.name());
@@ -86,6 +75,15 @@ public class DockerContainer {
         } catch (ContainerNotFoundException ignore) {
             LOG.warn("Cannot terminate a container that does not exist " + name);
         }
+    }
+
+    public static DockerContainer find(DockerClient docker, String containerId) throws DockerException, InterruptedException {
+        return fromContainerInfo(docker.inspectContainer(containerId));
+    }
+
+    public static DockerContainer fromContainerInfo(ContainerInfo container) {
+        Map<String, String> labels = container.config().labels();
+        return new DockerContainer(container.name().substring(1), container.created(), new Gson().fromJson(labels.get(Constants.CONFIGURATION_LABEL_KEY), HashMap.class), labels.get(Constants.ENVIRONMENT_LABEL_KEY));
     }
 
     public static DockerContainer create(CreateAgentRequest request, PluginSettings settings, DockerClient docker) throws InterruptedException, DockerException, IOException {
@@ -170,6 +168,5 @@ public class DockerContainer {
         }
         return image;
     }
-
 
 }

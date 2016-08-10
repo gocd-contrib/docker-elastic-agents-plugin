@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
 public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
 
     private DockerContainers agentInstances;
-    private DockerContainer dockerContainer;
+    private DockerContainer instance;
     private final String environment = "production";
     private Map<String, String> properties = new HashMap<>();
 
@@ -45,13 +45,13 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
         agentInstances = new DockerContainers();
         properties.put("foo", "bar");
         properties.put("Image", "gocdcontrib/ubuntu-docker-elastic-agent");
-        dockerContainer = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment), createSettings());
-        containers.add(dockerContainer.name());
+        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment), createSettings());
+        containers.add(instance.name());
     }
 
     @Test
     public void shouldAssignWorkToContainerWithMatchingEnvironmentNameAndProperties() throws Exception {
-        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent(dockerContainer.name(), null, null, null), environment, properties);
+        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent(instance.name(), null, null, null), environment, properties);
         GoPluginApiResponse response = new ShouldAssignWorkRequestExecutor(request, agentInstances, null).execute();
         assertThat(response.responseCode(), is(200));
         assertThat(response.responseBody(), is("true"));
@@ -59,7 +59,7 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
 
     @Test
     public void shouldNotAssignWorkToContainerWithDifferentEnvironmentName() throws Exception {
-        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent(dockerContainer.name(), null, null, null), "FooEnv", properties);
+        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent(instance.name(), null, null, null), "FooEnv", properties);
         GoPluginApiResponse response = new ShouldAssignWorkRequestExecutor(request, agentInstances, null).execute();
         assertThat(response.responseCode(), is(200));
         assertThat(response.responseBody(), is("false"));
@@ -67,7 +67,7 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
 
     @Test
     public void shouldNotAssignWorkToContainerWithDifferentProperties() throws Exception {
-        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent(dockerContainer.name(), null, null, null), environment, null);
+        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent(instance.name(), null, null, null), environment, null);
         GoPluginApiResponse response = new ShouldAssignWorkRequestExecutor(request, agentInstances, null).execute();
         assertThat(response.responseCode(), is(200));
         assertThat(response.responseBody(), is("false"));
