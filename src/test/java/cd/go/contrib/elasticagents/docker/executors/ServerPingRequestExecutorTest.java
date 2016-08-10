@@ -34,7 +34,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
     public void testShouldDisableIdleAgents() throws Exception {
         String agentId = UUID.randomUUID().toString();
         final Agents agents = new Agents(Arrays.asList(new Agent(agentId, Agent.AgentState.Idle, Agent.BuildState.Idle, Agent.ConfigState.Enabled)));
-        DockerContainers containers = new DockerContainers();
+        DockerContainers agentInstances = new DockerContainers();
 
         PluginRequest pluginRequest = mock(PluginRequest.class);
         when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
@@ -42,7 +42,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         verifyNoMoreInteractions(pluginRequest);
 
         final Collection<Agent> values = agents.agents();
-        new ServerPingRequestExecutor(containers, pluginRequest).execute();
+        new ServerPingRequestExecutor(agentInstances, pluginRequest).execute();
         verify(pluginRequest).disableAgents(argThat(collectionMatches(values)));
     }
 
@@ -59,14 +59,14 @@ public class ServerPingRequestExecutorTest extends BaseTest {
     public void testShouldTerminateDisabledAgents() throws Exception {
         String agentId = UUID.randomUUID().toString();
         final Agents agents = new Agents(Arrays.asList(new Agent(agentId, Agent.AgentState.Idle, Agent.BuildState.Idle, Disabled)));
-        DockerContainers containers = new DockerContainers();
+        AgentInstances agentInstances = new DockerContainers();
 
         PluginRequest pluginRequest = mock(PluginRequest.class);
         when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
         when(pluginRequest.listAgents()).thenReturn(agents);
         verifyNoMoreInteractions(pluginRequest);
 
-        new ServerPingRequestExecutor(containers, pluginRequest).execute();
+        new ServerPingRequestExecutor(agentInstances, pluginRequest).execute();
         final Collection<Agent> values = agents.agents();
         verify(pluginRequest).deleteAgents(argThat(collectionMatches(values)));
     }
@@ -78,17 +78,17 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         when(pluginRequest.listAgents()).thenReturn(new Agents());
         verifyNoMoreInteractions(pluginRequest);
 
-        DockerContainers dockerContainers = new DockerContainers();
-        dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
+        DockerContainers agentInstances = new DockerContainers();
+        agentInstances.clock = new Clock.TestClock().forward(Period.minutes(11));
         Map<String, String> properties = new HashMap<>();
         properties.put("Image", "gocdcontrib/ubuntu-docker-elastic-agent");
-        DockerContainer container = dockerContainers.create(new CreateAgentRequest(null, properties, null), createSettings());
+        DockerContainer container = agentInstances.create(new CreateAgentRequest(null, properties, null), createSettings());
         containers.add(container.name());
 
-        ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(dockerContainers, pluginRequest);
+        ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(agentInstances, pluginRequest);
         serverPingRequestExecutor.execute();
 
-        assertFalse(dockerContainers.hasContainer(container.name()));
+        assertFalse(agentInstances.hasContainer(container.name()));
     }
 
     @Test
@@ -98,8 +98,8 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         when(pluginRequest.listAgents()).thenReturn(new Agents(Arrays.asList(new Agent("foo", Agent.AgentState.Idle, Agent.BuildState.Idle, Agent.ConfigState.Enabled))));
         verifyNoMoreInteractions(pluginRequest);
 
-        DockerContainers dockerContainers = new DockerContainers();
-        ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(dockerContainers, pluginRequest);
+        AgentInstances agentInstances = new DockerContainers();
+        ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(agentInstances, pluginRequest);
         serverPingRequestExecutor.execute();
     }
 }
