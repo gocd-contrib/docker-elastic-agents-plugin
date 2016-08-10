@@ -39,6 +39,7 @@ import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class DockerContainer {
+    private static final Gson GSON = new Gson();
     private final DateTime createdAt;
     private final Map<String, String> properties;
     private final String environment;
@@ -83,7 +84,7 @@ public class DockerContainer {
 
     public static DockerContainer fromContainerInfo(ContainerInfo container) {
         Map<String, String> labels = container.config().labels();
-        return new DockerContainer(container.name().substring(1), container.created(), new Gson().fromJson(labels.get(Constants.CONFIGURATION_LABEL_KEY), HashMap.class), labels.get(Constants.ENVIRONMENT_LABEL_KEY));
+        return new DockerContainer(container.name().substring(1), container.created(), GSON.fromJson(labels.get(Constants.CONFIGURATION_LABEL_KEY), HashMap.class), labels.get(Constants.ENVIRONMENT_LABEL_KEY));
     }
 
     public static DockerContainer create(CreateAgentRequest request, PluginSettings settings, DockerClient docker) throws InterruptedException, DockerException, IOException {
@@ -125,7 +126,7 @@ public class DockerContainer {
         if (StringUtils.isNotBlank(request.environment())) {
             labels.put(ENVIRONMENT_LABEL_KEY, request.environment());
         }
-        labels.put(CONFIGURATION_LABEL_KEY, new Gson().toJson(request.properties()));
+        labels.put(CONFIGURATION_LABEL_KEY, GSON.toJson(request.properties()));
         return labels;
     }
 
