@@ -78,10 +78,6 @@ public class DockerContainer {
         }
     }
 
-    public static DockerContainer find(DockerClient docker, String containerId) throws DockerException, InterruptedException {
-        return fromContainerInfo(docker.inspectContainer(containerId));
-    }
-
     public static DockerContainer fromContainerInfo(ContainerInfo container) {
         Map<String, String> labels = container.config().labels();
         return new DockerContainer(container.name().substring(1), container.created(), GSON.fromJson(labels.get(Constants.CONFIGURATION_LABEL_KEY), HashMap.class), labels.get(Constants.ENVIRONMENT_LABEL_KEY));

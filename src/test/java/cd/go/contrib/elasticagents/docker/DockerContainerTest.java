@@ -99,7 +99,7 @@ public class DockerContainerTest extends BaseTest {
         DockerContainer container = DockerContainer.create(request, createSettings(), docker);
         containers.add(container.name());
 
-        DockerContainer dockerContainer = DockerContainer.find(docker, container.name());
+        DockerContainer dockerContainer = DockerContainer.fromContainerInfo(docker.inspectContainer(container.name()));
 
         assertEquals(container, dockerContainer);
     }
