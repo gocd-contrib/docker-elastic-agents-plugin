@@ -76,7 +76,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
                 continue;
             }
 
-            if (instance.createdAt().plus(settings.getAutoRegisterPeriod()).isAfter(clock.now())) {
+            if (clock.now().isAfter(instance.createdAt().plus(settings.getAutoRegisterPeriod()))) {
                 oldAgents.add(agent);
             }
         }
@@ -115,7 +115,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
             ContainerInfo containerInfo = docker(settings).inspectContainer(containerName);
             DateTime dateTimeCreated = new DateTime(containerInfo.created());
 
-            if (dateTimeCreated.plus(period).isBefore(clock.now())) {
+            if (clock.now().isAfter(dateTimeCreated.plus(period))) {
                 unregisteredContainers.register(DockerContainer.fromContainerInfo(containerInfo));
             }
         }

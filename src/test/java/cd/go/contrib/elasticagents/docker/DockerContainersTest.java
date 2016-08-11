@@ -89,37 +89,35 @@ public class DockerContainersTest extends BaseTest {
     }
 
     @Test
-    public void shouldListTheContainerIfItIsCreatedBeforeTimeout() throws Exception {
+    public void shouldNotListTheContainerIfItIsCreatedBeforeTimeout() throws Exception {
+        DockerContainer container = DockerContainer.create(request, settings, docker);
+        containers.add(container.name());
+
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
+
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(9));
-
-        DockerContainer container = DockerContainer.create(request, settings, docker);
-        containers.add(container.name());
-
-        PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
-
-        dockerContainers.refreshAll(pluginRequest);
-
-        Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createSettings(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
-
-        assertTrue(filteredDockerContainers.containsAgentWithId(container.name()));
-    }
-
-    @Test
-    public void shouldNotListTheContainerIfItIsNotCreatedBeforeTimeout() throws Exception {
-        dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
-
-        DockerContainer container = DockerContainer.create(request, settings, docker);
-        containers.add(container.name());
-
-        PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
-
         dockerContainers.refreshAll(pluginRequest);
 
         Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createSettings(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
 
         assertFalse(filteredDockerContainers.containsAgentWithId(container.name()));
+    }
+
+    @Test
+    public void shouldListTheContainerIfItIsNotCreatedBeforeTimeout() throws Exception {
+        DockerContainer container = DockerContainer.create(request, settings, docker);
+        containers.add(container.name());
+
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
+
+        dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
+        dockerContainers.refreshAll(pluginRequest);
+
+        Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createSettings(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
+
+        assertTrue(filteredDockerContainers.containsAgentWithId(container.name()));
     }
 
     @Test
