@@ -126,10 +126,10 @@ public class DockerContainersTest extends BaseTest {
     public void shouldTerminateUnregistredContainersAfterTimeout() throws Exception {
         DockerContainer container = dockerContainers.create(request, settings);
 
-        assertTrue(dockerContainers.hasContainer(container.name()));
+        assertTrue(dockerContainers.hasInstance(container.name()));
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
         dockerContainers.terminateUnregisteredInstances(createSettings(), new Agents());
-        assertFalse(dockerContainers.hasContainer(container.name()));
+        assertFalse(dockerContainers.hasInstance(container.name()));
         assertContainerDoesNotExist(container.name());
     }
 
@@ -137,10 +137,10 @@ public class DockerContainersTest extends BaseTest {
     public void shouldNotTerminateUnregistredContainersBeforeTimeout() throws Exception {
         DockerContainer container = dockerContainers.create(request, settings);
 
-        assertTrue(dockerContainers.hasContainer(container.name()));
+        assertTrue(dockerContainers.hasInstance(container.name()));
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(9));
         dockerContainers.terminateUnregisteredInstances(createSettings(), new Agents());
-        assertTrue(dockerContainers.hasContainer(container.name()));
+        assertTrue(dockerContainers.hasInstance(container.name()));
         assertContainerExist(container.name());
 
     }

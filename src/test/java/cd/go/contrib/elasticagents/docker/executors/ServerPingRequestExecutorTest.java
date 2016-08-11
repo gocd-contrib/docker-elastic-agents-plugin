@@ -88,7 +88,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(agentInstances, pluginRequest);
         serverPingRequestExecutor.execute();
 
-        assertFalse(agentInstances.hasContainer(container.name()));
+        assertFalse(agentInstances.hasInstance(container.name()));
     }
 
     @Test

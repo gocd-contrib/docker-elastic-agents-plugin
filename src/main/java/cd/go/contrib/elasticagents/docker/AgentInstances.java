@@ -67,6 +67,9 @@ public interface AgentInstances<T> {
     /**
      * This message is sent after plugin initialization time so that the plugin may connect to the cloud provider
      * and fetch a list of all instances that have been spun up by this plugin (before the server was shut down).
+     * This call should be should ideally remember if the agent instances are refreshed, and do nothing if instances
+     * were previously refreshed.
+     *
      * @param pluginRequest the plugin request object
      */
     void refreshAll(PluginRequest pluginRequest) throws Exception;
@@ -74,6 +77,7 @@ public interface AgentInstances<T> {
     /**
      * This
      * Returns an agent instance with the specified <code>id</code> or <code>null</code>, if the agent is not found.
+     *
      * @param agentId the elastic agent id
      */
     T find(String agentId);

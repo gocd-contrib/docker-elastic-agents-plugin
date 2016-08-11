@@ -31,7 +31,7 @@ import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 
 public class DockerContainers implements AgentInstances<DockerContainer> {
 
-    private final ConcurrentHashMap<String, DockerContainer> containers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, DockerContainer> instances = new ConcurrentHashMap<>();
     private boolean refreshed;
     public Clock clock = Clock.DEFAULT;
 
@@ -43,28 +43,26 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     }
 
     @Override
-    public void terminate(String containerId, PluginSettings settings) throws Exception {
-        DockerContainer dockerContainer = containers.get(containerId);
-        if (dockerContainer != null) {
-            dockerContainer.terminate(docker(settings));
+    public void terminate(String agentId, PluginSettings settings) throws Exception {
+        DockerContainer instance = instances.get(agentId);
+        if (instance != null) {
+            instance.terminate(docker(settings));
         } else {
-            DockerPlugin.LOG.warn("Requested to terminate an instance that does not exist " + containerId);
+            DockerPlugin.LOG.warn("Requested to terminate an instance that does not exist " + agentId);
         }
 
-        containers.remove(containerId);
+        instances.remove(agentId);
     }
 
     @Override
     public void terminateUnregisteredInstances(PluginSettings settings, Agents agents) throws Exception {
         DockerContainers toTerminate = unregisteredAfterTimeout(settings, agents);
-
-        if (toTerminate.containers.isEmpty()) {
+        if (toTerminate.instances.isEmpty()) {
             return;
         }
 
-        LOG.warn("Terminating instances that did not register " + toTerminate.containers.keySet());
-
-        for (DockerContainer container : toTerminate.containers.values()) {
+        LOG.warn("Terminating instances that did not register " + toTerminate.instances.keySet());
+        for (DockerContainer container : toTerminate.instances.values()) {
             terminate(container.name(), settings);
         }
     }
@@ -73,12 +71,12 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     public Agents instancesCreatedAfterTimeout(PluginSettings settings, Agents agents) {
         ArrayList<Agent> oldAgents = new ArrayList<>();
         for (Agent agent : agents.agents()) {
-            DockerContainer container = containers.get(agent.elasticAgentId());
-            if (container == null) {
+            DockerContainer instance = instances.get(agent.elasticAgentId());
+            if (instance == null) {
                 continue;
             }
 
-            if (container.createdAt().plus(settings.getAutoRegisterPeriod()).isAfter(clock.now())) {
+            if (instance.createdAt().plus(settings.getAutoRegisterPeriod()).isAfter(clock.now())) {
                 oldAgents.add(agent);
             }
         }
@@ -98,7 +96,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     }
 
     private void register(DockerContainer container) {
-        containers.put(container.name(), container);
+        instances.put(container.name(), container);
     }
 
     private DockerClient docker(PluginSettings settings) throws Exception {
@@ -109,7 +107,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
         Period period = settings.getAutoRegisterPeriod();
         DockerContainers unregisteredContainers = new DockerContainers();
 
-        for (String containerName : containers.keySet()) {
+        for (String containerName : instances.keySet()) {
             if (knownAgents.containsAgentWithId(containerName)) {
                 continue;
             }
@@ -124,12 +122,12 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
         return unregisteredContainers;
     }
 
-    public boolean hasContainer(String agentId) {
-        return containers.containsKey(agentId);
+    public boolean hasInstance(String agentId) {
+        return instances.containsKey(agentId);
     }
 
     @Override
     public DockerContainer find(String agentId) {
-        return containers.get(agentId);
+        return instances.get(agentId);
     }
 }
