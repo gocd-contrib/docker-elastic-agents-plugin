@@ -29,7 +29,7 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
 
     private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-    public static final Field GO_SERVER_URL = new NonBlankField("go_server_url", "Go Server URL", null, true, false, "0");
+    public static final Field GO_SERVER_URL = new GoServerURLField("go_server_url", "Go Server URL", null, true, false, "0");
     public static final Field DOCKER_URL = new NonBlankField("docker_uri", "Docker URI", null, true, false, "1");
     public static final Field AUTOREGISTER_TIMEOUT = new PositiveNumberField("auto_register_timeout", "Agent auto-register Timeout (in minutes)", "10", true, false, "2");
     public static final Field DOCKER_CA_CERT = new Field("docker_ca_cert", "Docker CA Certificate", null, false, true, "3");

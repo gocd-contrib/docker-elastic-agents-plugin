@@ -15,8 +15,8 @@
   -->
 
 <div class="form_item_block">
-  <label>Go Server URL:<span class='asterix'>*</span></label>
-  <input type="text" ng-model="go_server_url" ng-required="true"/>
+  <label>Go Server URL (this is passed to the agents, so don't use `localhost`):<span class='asterix'>*</span></label>
+  <input type="text" ng-model="go_server_url" ng-required="true" placeholder="https://ipaddress:8154/go"/>
   <span class="form_error" ng-show="GOINPUTNAME[go_server_url].$error.server">{{GOINPUTNAME[go_server_url].$error.server}}</span>
 </div>
 
@@ -24,18 +24,6 @@
   <label>Agent auto-register Timeout (in minutes)<span class='asterix'>*</span></label>
   <input type="text" ng-model="auto_register_timeout" ng-required="true"/>
   <span class="form_error" ng-show="GOINPUTNAME[auto_register_timeout].$error.server">{{GOINPUTNAME[auto_register_timeout].$error.server}}</span>
-</div>
-
-<div class="form_item_block">
-  <label>Agent Resources:</label>
-  <input type="text" ng-model="resources"/>
-  <span class="form_error" ng-show="GOINPUTNAME[resources].$error.server">{{GOINPUTNAME[resources].$error.server}}</span>
-</div>
-
-<div class="form_item_block">
-  <label>Environments:</label>
-  <input type="text" ng-model="environments"/>
-  <span class="form_error" ng-show="GOINPUTNAME[environments].$error.server">{{GOINPUTNAME[environments].$error.server}}</span>
 </div>
 
 <div class="form_item_block">
