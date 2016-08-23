@@ -86,3 +86,17 @@ Now setup the config.xml —
   </pipeline>
 </pipelines>
 ```
+
+## Troubleshooting
+
+Enabling debug level logging can help you troubleshoot an issue with the elastic agent plugin. To enable debug level logs, edit the `/etc/default/go-server` (for Linux) to add:
+
+```bash
+export GO_SERVER_SYSTEM_PROPERTIES="$GO_SERVER_SYSTEM_PROPERTIES -Dplugin.cd.go.contrib.elastic-agent.docker.log.level=debug"
+```
+
+If you're running the server via `./server.sh` script —
+
+```
+$ GO_SERVER_SYSTEM_PROPERTIES="-Dplugin.cd.go.contrib.elastic-agent.docker.log.level=debug" ./server.sh
+```
