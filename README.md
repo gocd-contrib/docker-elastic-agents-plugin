@@ -22,7 +22,7 @@ Notice how the `CREATED` and `STATUS` are several minutes apart for a recently c
 
 * Download the latest GoCD installer from https://go.cd/download
 
-    ```
+    ```shell
     $ unzip go-server-VERSION.zip
     $ mkdir -p go-server-VERSION/plugins/external
     ```
@@ -37,7 +37,7 @@ Notice how the `CREATED` and `STATUS` are several minutes apart for a recently c
   
   On linux/mac
 
-    ```
+    ```shell
     $ GO_SERVER_SYSTEM_PROPERTIES='-Dplugin.cd.go.contrib.elastic-agent.docker.log.level=debug' ./server.sh
     ```
 
@@ -75,7 +75,10 @@ Now setup the config.xml —
           </tasks>
           <agentConfig pluginId="cd.go.contrib.elastic-agent.docker">
             <property>
-              <!-- The plugin currently only supports the `Image` property, which allows you to select the docker image that the build should run with -->
+              <!-- 
+              The plugin currently only supports the `Image` property, 
+              which allows you to select the docker image that the build should run with
+              -->
               <key>Image</key>
               <value>gocdcontrib/ubuntu-docker-elastic-agent</value>
             </property>
