@@ -21,6 +21,12 @@
 </div>
 
 <div class="form_item_block">
+  <label>Environment Variables <small>(Enter one variable per line)</small></label>
+  <textarea type="text" ng-model="environment_variables" ng-required="true" rows="7" placeholder="JAVA_HOME=/opt/java&#x000A;MAVEN_HOME=/opt/maven"></textarea>
+  <span class="form_error" ng-show="GOINPUTNAME[environment_variables].$error.server">{{GOINPUTNAME[environment_variables].$error.server}}</span>
+</div>
+
+<div class="form_item_block">
   <label>Agent auto-register Timeout (in minutes)<span class='asterix'>*</span></label>
   <input type="text" ng-model="auto_register_timeout" ng-required="true"/>
   <span class="form_error" ng-show="GOINPUTNAME[auto_register_timeout].$error.server">{{GOINPUTNAME[auto_register_timeout].$error.server}}</span>

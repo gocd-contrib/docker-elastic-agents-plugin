@@ -16,12 +16,15 @@
 
 package cd.go.contrib.elasticagents.docker;
 
+import cd.go.contrib.elasticagents.docker.utils.Util;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.joda.time.Period;
+
+import java.util.Collection;
 
 public class PluginSettings {
     public static final Gson GSON = new GsonBuilder()
@@ -32,6 +35,10 @@ public class PluginSettings {
     @Expose
     @SerializedName("go_server_url")
     private String goServerUrl;
+
+    @Expose
+    @SerializedName("environment_variables")
+    private String environmentVariables;
 
     @Expose
     @SerializedName("docker_uri")
@@ -104,6 +111,10 @@ public class PluginSettings {
         return autoRegisterTimeout;
     }
 
+    public Collection<String> getEnvironmentVariables() {
+        return Util.extractEnvironmentVariables(environmentVariables);
+    }
+
     public String getGoServerUrl() {
         return goServerUrl;
     }
@@ -138,5 +149,10 @@ public class PluginSettings {
 
     public void setDockerURI(String dockerURI) {
         this.dockerURI = dockerURI;
+    }
+
+
+    public void setEnvironmentVariables(String environmentVariables) {
+        this.environmentVariables = environmentVariables;
     }
 }
