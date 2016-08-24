@@ -91,14 +91,14 @@ public class DockerContainerTest extends BaseTest {
     public void shouldStartContainerWithCorrectEnvironment() throws Exception {
         Map<String, String> properties = new HashMap<>();
         properties.put("Image", "busybox:latest");
-        properties.put("Environment", "A=B\nC=D\r\nE=F\n");
+        properties.put("Environment", "A=B\nC=D\r\nE=F\n\n\nX=Y");
 
         DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), createSettings(), docker);
         containers.add(container.name());
 
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
 
-        assertThat(containerInfo.config().env(), hasItems("A=B", "C=D", "E=F"));
+        assertThat(containerInfo.config().env(), hasItems("A=B", "C=D", "E=F", "X=Y"));
         DockerContainer dockerContainer = DockerContainer.fromContainerInfo(containerInfo);
 
         assertThat(dockerContainer.properties().get("Environment"), is(properties.get("Environment")));

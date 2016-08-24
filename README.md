@@ -6,7 +6,7 @@ To build the jar, run `./gradlew clean test assemble`
 
 ## Is this production ready?
 
-It depends. 
+It depends.
 
 The plugin, as it is currently implemented is meant to be a very simple plugin to demonstrate how to get started with GoCD [elastic agent](https://plugin-api.go.cd/current/elastic-agents) feature. This plugin terminates docker containers very aggressively (within a minute or two of the agent being idle). Depending on your usage, this may not be desirable. If this behavior is undesirable to you, you may need to fork this plugin and [tweak it a bit](https://github.com/gocd-contrib/docker-elastic-agents/blob/master/src/main/java/cd/go/contrib/elasticagents/docker/executors/ServerPingRequestExecutor.java) so the docker containers are not terminated as aggressively.
 
@@ -40,7 +40,7 @@ Notice how the `CREATED` and `STATUS` are several minutes apart for a recently c
     ```
 
 * Start the server and configure the plugin (turn on debug logging to get more logs, they're not that noisy)
-  
+
   On linux/mac
 
     ```shell
@@ -48,9 +48,9 @@ Notice how the `CREATED` and `STATUS` are several minutes apart for a recently c
     ```
 
   On windows
-  
+
     ```
-    C:> set GO_SERVER_SYSTEM_PROPERTIES='-Dplugin.cd.go.contrib.elastic-agent.docker.log.level=debug' 
+    C:> set GO_SERVER_SYSTEM_PROPERTIES='-Dplugin.cd.go.contrib.elastic-agent.docker.log.level=debug'
     C:> server.cmd
     ```
 
@@ -80,13 +80,19 @@ Now setup the config.xml —
             <exec command="ls" />
           </tasks>
           <agentConfig pluginId="cd.go.contrib.elastic-agent.docker">
+            <!-- The following properties are currently supported -->
             <property>
-              <!-- 
-              The plugin currently only supports the `Image` property, 
-              which allows you to select the docker image that the build should run with
-              -->
+              <!-- Allows you to select the docker image that the build should run with -->
               <key>Image</key>
               <value>gocdcontrib/ubuntu-docker-elastic-agent</value>
+            </property>
+            <property>
+              <!-- Allows you to set the environment variables when starting the docker container -->
+              <key>Environment</key>
+              <value>
+                JAVA_HOME=/opt/java
+                MAKE_OPTS=-j8
+              </value>
             </property>
           </agentConfig>
         </job>
