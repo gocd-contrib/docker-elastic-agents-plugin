@@ -17,8 +17,7 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
+import cd.go.contrib.elasticagents.docker.utils.Util;
 import com.google.gson.Gson;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.ContainerNotFoundException;
@@ -112,8 +111,10 @@ public class DockerContainer {
     }
 
     private static List<String> environmentFrom(CreateAgentRequest request, PluginSettings settings, String containerName) {
-        ArrayList<String> env = new ArrayList<>();
-        env.addAll(environmentFrom(request));
+        Set<String> env = new HashSet<>();
+
+        env.addAll(settings.getEnvironmentVariables());
+        env.addAll(Util.extractEnvironmentVariables(request.properties().get("Environment")));
 
         env.addAll(Arrays.asList(
                 "MODE=" + mode(),
@@ -121,22 +122,7 @@ public class DockerContainer {
                 "AUTO_REGISTER_CONTENTS=" + request.autoregisterPropertiesAsString(containerName)
         ));
 
-        return env;
-    }
-
-    private static Collection<String> environmentFrom(CreateAgentRequest request) {
-        String environmentString = request.properties().get("Environment");
-
-        if (isBlank(environmentString)) {
-            return Collections.emptyList();
-        }
-
-        return Collections2.transform(Arrays.asList(environmentString.split("[\r\n]+")), new Function<String, String>() {
-            @Override
-            public String apply(String input) {
-                return input.trim();
-            }
-        });
+        return new ArrayList<>(env);
     }
 
     private static HashMap<String, String> labelsFrom(CreateAgentRequest request) {

@@ -93,12 +93,14 @@ public class DockerContainerTest extends BaseTest {
         properties.put("Image", "busybox:latest");
         properties.put("Environment", "A=B\nC=D\r\nE=F\n\n\nX=Y");
 
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), createSettings(), docker);
+        PluginSettings settings = createSettings();
+        settings.setEnvironmentVariables("GLOBAL=something");
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), settings, docker);
         containers.add(container.name());
 
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
 
-        assertThat(containerInfo.config().env(), hasItems("A=B", "C=D", "E=F", "X=Y"));
+        assertThat(containerInfo.config().env(), hasItems("A=B", "C=D", "E=F", "X=Y", "GLOBAL=something"));
         DockerContainer dockerContainer = DockerContainer.fromContainerInfo(containerInfo);
 
         assertThat(dockerContainer.properties().get("Environment"), is(properties.get("Environment")));

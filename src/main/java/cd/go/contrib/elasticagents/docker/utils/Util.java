@@ -17,13 +17,20 @@
 package cd.go.contrib.elasticagents.docker.utils;
 
 import cd.go.contrib.elasticagents.docker.executors.GetViewRequestExecutor;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.io.CharStreams;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class Util {
 
@@ -44,5 +51,18 @@ public class Util {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Collection<String> extractEnvironmentVariables(String environmentString) {
+        if (isBlank(environmentString)) {
+            return Collections.emptyList();
+        }
+
+        return Collections2.transform(Arrays.asList(environmentString.split("[\r\n]+")), new Function<String, String>() {
+            @Override
+            public String apply(String input) {
+                return input.trim();
+            }
+        });
     }
 }
