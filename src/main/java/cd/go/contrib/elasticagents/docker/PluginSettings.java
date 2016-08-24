@@ -74,6 +74,8 @@ public class PluginSettings {
         PluginSettings that = (PluginSettings) o;
 
         if (goServerUrl != null ? !goServerUrl.equals(that.goServerUrl) : that.goServerUrl != null) return false;
+        if (environmentVariables != null ? !environmentVariables.equals(that.environmentVariables) : that.environmentVariables != null)
+            return false;
         if (dockerURI != null ? !dockerURI.equals(that.dockerURI) : that.dockerURI != null) return false;
         if (autoRegisterTimeout != null ? !autoRegisterTimeout.equals(that.autoRegisterTimeout) : that.autoRegisterTimeout != null)
             return false;
@@ -83,11 +85,13 @@ public class PluginSettings {
         if (dockerClientKey != null ? !dockerClientKey.equals(that.dockerClientKey) : that.dockerClientKey != null)
             return false;
         return autoRegisterPeriod != null ? autoRegisterPeriod.equals(that.autoRegisterPeriod) : that.autoRegisterPeriod == null;
+
     }
 
     @Override
     public int hashCode() {
         int result = goServerUrl != null ? goServerUrl.hashCode() : 0;
+        result = 31 * result + (environmentVariables != null ? environmentVariables.hashCode() : 0);
         result = 31 * result + (dockerURI != null ? dockerURI.hashCode() : 0);
         result = 31 * result + (autoRegisterTimeout != null ? autoRegisterTimeout.hashCode() : 0);
         result = 31 * result + (dockerCACert != null ? dockerCACert.hashCode() : 0);
@@ -150,7 +154,6 @@ public class PluginSettings {
     public void setDockerURI(String dockerURI) {
         this.dockerURI = dockerURI;
     }
-
 
     public void setEnvironmentVariables(String environmentVariables) {
         this.environmentVariables = environmentVariables;
