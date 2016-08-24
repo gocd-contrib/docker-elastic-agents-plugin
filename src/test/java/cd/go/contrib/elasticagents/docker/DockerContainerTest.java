@@ -18,6 +18,7 @@ package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.spotify.docker.client.exceptions.ImageNotFoundException;
+import com.spotify.docker.client.messages.ContainerInfo;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,10 +26,12 @@ import org.junit.rules.ExpectedException;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class DockerContainerTest extends BaseTest {
 
@@ -56,7 +59,7 @@ public class DockerContainerTest extends BaseTest {
         String imageName = "busybox:latest";
 
         try {
-            docker.removeImage(imageName);
+            docker.removeImage(imageName, true, false);
         } catch (ImageNotFoundException ignore) {
         }
         DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod"), createSettings(), docker);
@@ -82,6 +85,23 @@ public class DockerContainerTest extends BaseTest {
         thrown.expectMessage("Must provide `Image` attribute.");
 
         DockerContainer.create(request, createSettings(), docker);
+    }
+
+    @Test
+    public void shouldStartContainerWithCorrectEnvironment() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "busybox:latest");
+        properties.put("Environment", "A=B\nC=D\r\nE=F\n");
+
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), createSettings(), docker);
+        containers.add(container.name());
+
+        ContainerInfo containerInfo = docker.inspectContainer(container.name());
+
+        assertThat(containerInfo.config().env(), hasItems("A=B", "C=D", "E=F"));
+        DockerContainer dockerContainer = DockerContainer.fromContainerInfo(containerInfo);
+
+        assertThat(dockerContainer.properties().get("Environment"), is(properties.get("Environment")));
     }
 
     @Test

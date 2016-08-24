@@ -17,6 +17,8 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.gson.Gson;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.ContainerNotFoundException;
@@ -29,10 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static cd.go.contrib.elasticagents.docker.Constants.*;
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
@@ -88,6 +87,7 @@ public class DockerContainer {
 
         HashMap<String, String> labels = labelsFrom(request);
         String imageName = image(request.properties());
+        List<String> env = environmentFrom(request, settings, containerName);
 
         try {
             docker.inspectImage(imageName);
@@ -99,11 +99,7 @@ public class DockerContainer {
         ContainerCreation container = docker.createContainer(ContainerConfig.builder().
                 image(imageName).
                 labels(labels).
-                env(
-                        "MODE=" + mode(),
-                        "GO_SERVER_URL=" + settings.getGoServerUrl(),
-                        "AUTO_REGISTER_CONTENTS=" + request.autoregisterPropertiesAsString(containerName)
-                ).
+                env(env).
                 build(), containerName);
         String id = container.id();
 
@@ -113,6 +109,34 @@ public class DockerContainer {
         docker.startContainer(containerName);
 
         return new DockerContainer(containerName, containerInfo.created(), request.properties(), request.environment());
+    }
+
+    private static List<String> environmentFrom(CreateAgentRequest request, PluginSettings settings, String containerName) {
+        ArrayList<String> env = new ArrayList<>();
+        env.addAll(environmentFrom(request));
+
+        env.addAll(Arrays.asList(
+                "MODE=" + mode(),
+                "GO_SERVER_URL=" + settings.getGoServerUrl(),
+                "AUTO_REGISTER_CONTENTS=" + request.autoregisterPropertiesAsString(containerName)
+        ));
+
+        return env;
+    }
+
+    private static Collection<String> environmentFrom(CreateAgentRequest request) {
+        String environmentString = request.properties().get("Environment");
+
+        if (isBlank(environmentString)) {
+            return Collections.emptyList();
+        }
+
+        return Collections2.transform(Arrays.asList(environmentString.split("[\r\n]+")), new Function<String, String>() {
+            @Override
+            public String apply(String input) {
+                return input.trim();
+            }
+        });
     }
 
     private static HashMap<String, String> labelsFrom(CreateAgentRequest request) {
