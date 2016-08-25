@@ -37,6 +37,10 @@ public class ValidateConfigurationExecutorTest {
                 "    \"key\": \"go_server_url\"\n" +
                 "  },\n" +
                 "  {\n" +
+                "    \"message\": \"Maximum containers to allow must be a positive integer.\",\n" +
+                "    \"key\": \"max_docker_containers\"\n" +
+                "  }\n," +
+                "  {\n" +
                 "    \"message\": \"Docker URI must not be blank.\",\n" +
                 "    \"key\": \"docker_uri\"\n" +
                 "  },\n" +
@@ -50,6 +54,7 @@ public class ValidateConfigurationExecutorTest {
     @Test
     public void shouldValidateAGoodConfiguration() throws Exception {
         ValidatePluginSettings settings = new ValidatePluginSettings();
+        settings.put("max_docker_containers", "1");
         settings.put("docker_uri", "https://api.example.com");
         settings.put("docker_ca_cert", "some ca cert");
         settings.put("docker_client_key", "some client key");

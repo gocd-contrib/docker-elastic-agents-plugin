@@ -168,6 +168,5 @@ public class DockerContainersTest extends BaseTest {
         dockerContainers.terminateUnregisteredInstances(createSettings(), new Agents());
         assertTrue(dockerContainers.hasInstance(container.name()));
         assertContainerExist(container.name());
-
     }
 }
