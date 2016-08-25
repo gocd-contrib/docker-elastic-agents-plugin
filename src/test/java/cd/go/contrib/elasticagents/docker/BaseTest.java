@@ -61,6 +61,7 @@ public abstract class BaseTest {
 
     protected PluginSettings createSettings() throws IOException {
         PluginSettings settings = new PluginSettings();
+        settings.setMaxDockerContainers(1);
         settings.setDockerURI(builder.uri().toString());
         if (settings.getDockerURI().startsWith("https://")) {
             settings.setDockerCACert(FileUtils.readFileToString(Paths.get(getenv("DOCKER_CERT_PATH"), DockerCertificates.DEFAULT_CA_CERT_NAME).toFile(), StandardCharsets.UTF_8));
