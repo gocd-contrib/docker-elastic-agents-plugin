@@ -37,6 +37,12 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
 
     @Override
     public DockerContainer create(CreateAgentRequest request, PluginSettings settings) throws Exception {
+        synchronized (this) {
+            if (instances.size() >= settings.getMaxDockerContainers()) {
+                LOG.info("The number of containers currently running is currently at the maximum permissible limit (" + instances.size() + "). Not creating any more containers.");
+                return null;
+            }
+        }
         DockerContainer container = DockerContainer.create(request, settings, docker(settings));
         register(container);
         return container;
@@ -48,7 +54,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
         if (instance != null) {
             instance.terminate(docker(settings));
         } else {
-            DockerPlugin.LOG.warn("Requested to terminate an instance that does not exist " + agentId);
+            LOG.warn("Requested to terminate an instance that does not exist " + agentId);
         }
 
         instances.remove(agentId);
@@ -129,5 +135,10 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     @Override
     public DockerContainer find(String agentId) {
         return instances.get(agentId);
+    }
+
+    // used by test
+    protected boolean isEmpty() {
+        return instances.isEmpty();
     }
 }

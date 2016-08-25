@@ -121,6 +121,34 @@ public class DockerContainersTest extends BaseTest {
     }
 
     @Test
+    public void shouldNotCreateContainersIfMaxLimitIsReached() throws Exception {
+        PluginSettings settings = createSettings();
+
+        // do not allow any containers
+        settings.setMaxDockerContainers(0);
+
+        DockerContainer dockerContainer = dockerContainers.create(request, settings);
+        if (dockerContainer != null) {
+            containers.add(dockerContainer.name());
+        }
+        assertNull(dockerContainer);
+
+        // allow only one container
+        settings.setMaxDockerContainers(1);
+        dockerContainer = dockerContainers.create(request, settings);
+        if (dockerContainer != null) {
+            containers.add(dockerContainer.name());
+        }
+        assertNotNull(dockerContainer);
+
+        dockerContainer = dockerContainers.create(request, settings);
+        if (dockerContainer != null) {
+            containers.add(dockerContainer.name());
+        }
+        assertNull(dockerContainer);
+    }
+
+    @Test
     public void shouldTerminateUnregistredContainersAfterTimeout() throws Exception {
         DockerContainer container = dockerContainers.create(request, settings);
 

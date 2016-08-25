@@ -34,6 +34,12 @@
 
 <div class="form_item_block">
   <label>Docker URI:<span class='asterix'>*</span></label>
+  <input type="text" ng-model="max_docker_containers" ng-required="true"/>
+  <span class="form_error" ng-show="GOINPUTNAME[max_docker_containers].$error.server">{{GOINPUTNAME[max_docker_containers].$error.server}}</span>
+</div>
+
+<div class="form_item_block">
+  <label>Docker URI:<span class='asterix'>*</span></label>
   <input type="text" ng-model="docker_uri" ng-required="true"/>
   <span class="form_error" ng-show="GOINPUTNAME[docker_uri].$error.server">{{GOINPUTNAME[docker_uri].$error.server}}</span>
 </div>

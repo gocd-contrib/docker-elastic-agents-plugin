@@ -41,6 +41,10 @@ public class PluginSettings {
     private String environmentVariables;
 
     @Expose
+    @SerializedName("max_docker_containers")
+    private String maxDockerContainers;
+
+    @Expose
     @SerializedName("docker_uri")
     private String dockerURI;
 
@@ -119,6 +123,10 @@ public class PluginSettings {
         return Util.extractEnvironmentVariables(environmentVariables);
     }
 
+    public Integer getMaxDockerContainers() {
+        return Integer.valueOf(maxDockerContainers);
+    }
+
     public String getGoServerUrl() {
         return goServerUrl;
     }
@@ -157,5 +165,9 @@ public class PluginSettings {
 
     public void setEnvironmentVariables(String environmentVariables) {
         this.environmentVariables = environmentVariables;
+    }
+
+    public void setMaxDockerContainers(Integer maxDockerContainers) {
+        this.maxDockerContainers = String.valueOf(maxDockerContainers);
     }
 }
