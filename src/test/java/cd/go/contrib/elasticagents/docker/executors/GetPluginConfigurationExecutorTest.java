@@ -50,40 +50,46 @@ public class GetPluginConfigurationExecutorTest {
                 "  },\n" +
                 "  \"environment_variables\": {\n" +
                 "    \"display-name\": \"Environment Variables\",\n" +
-                "    \"required\": true,\n" +
+                "    \"required\": false,\n" +
                 "    \"secure\": false,\n" +
                 "    \"display-order\": \"1\"\n" +
+                "  },\n" +
+                "  \"max_docker_containers\": {\n" +
+                "    \"display-name\": \"Maximum containers to allow\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"2\"\n" +
                 "  },\n" +
                 "  \"docker_uri\": {\n" +
                 "    \"display-name\": \"Docker URI\",\n" +
                 "    \"required\": true,\n" +
                 "    \"secure\": false,\n" +
-                "    \"display-order\": \"2\"\n" +
+                "    \"display-order\": \"3\"\n" +
                 "  },\n" +
                 "  \"auto_register_timeout\": {\n" +
                 "    \"display-name\": \"Agent auto-register Timeout (in minutes)\",\n" +
                 "    \"default-value\": \"10\",\n" +
                 "    \"required\": true,\n" +
                 "    \"secure\": false,\n" +
-                "    \"display-order\": \"3\"\n" +
+                "    \"display-order\": \"4\"\n" +
                 "  },\n" +
                 "  \"docker_ca_cert\": {\n" +
                 "    \"display-name\": \"Docker CA Certificate\",\n" +
                 "    \"required\": false,\n" +
                 "    \"secure\": true,\n" +
-                "    \"display-order\": \"4\"\n" +
+                "    \"display-order\": \"5\"\n" +
                 "  },\n" +
                 "  \"docker_client_key\": {\n" +
                 "    \"display-name\": \"Docker Client Key\",\n" +
                 "    \"required\": false,\n" +
                 "    \"secure\": true,\n" +
-                "    \"display-order\": \"5\"\n" +
+                "    \"display-order\": \"6\"\n" +
                 "  },\n" +
                 "  \"docker_client_cert\": {\n" +
                 "    \"display-name\": \"Docker Client Certificate\",\n" +
                 "    \"required\": false,\n" +
                 "    \"secure\": true,\n" +
-                "    \"display-order\": \"6\"\n" +
+                "    \"display-order\": \"7\"\n" +
                 "  }" +
                 "}\n";
 
