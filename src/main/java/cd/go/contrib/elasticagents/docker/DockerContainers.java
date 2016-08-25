@@ -26,6 +26,7 @@ import org.joda.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 
@@ -35,17 +36,27 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     private boolean refreshed;
     public Clock clock = Clock.DEFAULT;
 
+    final Semaphore semaphore = new Semaphore(0, true);
+
     @Override
     public DockerContainer create(CreateAgentRequest request, PluginSettings settings) throws Exception {
-        synchronized (this) {
-            if (instances.size() >= settings.getMaxDockerContainers()) {
-                LOG.info("The number of containers currently running is currently at the maximum permissible limit (" + instances.size() + "). Not creating any more containers.");
-                return null;
-            }
+        final Integer maxAllowedContainers = settings.getMaxDockerContainers();
+        doWithLockOnSemaphore(new SetupSemaphore(maxAllowedContainers, instances, semaphore));
+
+        if (semaphore.tryAcquire()) {
+            DockerContainer container = DockerContainer.create(request, settings, docker(settings));
+            register(container);
+            return container;
+        } else {
+            LOG.info("The number of containers currently running is currently at the maximum permissible limit (" + instances.size() + "). Not creating any more containers.");
+            return null;
         }
-        DockerContainer container = DockerContainer.create(request, settings, docker(settings));
-        register(container);
-        return container;
+    }
+
+    private void doWithLockOnSemaphore(Runnable runnable) {
+        synchronized (semaphore) {
+            runnable.run();
+        }
     }
 
     @Override
@@ -56,6 +67,13 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
         } else {
             LOG.warn("Requested to terminate an instance that does not exist " + agentId);
         }
+
+        doWithLockOnSemaphore(new Runnable() {
+            @Override
+            public void run() {
+                semaphore.release();
+            }
+        });
 
         instances.remove(agentId);
     }
@@ -141,4 +159,5 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     protected boolean isEmpty() {
         return instances.isEmpty();
     }
+
 }
