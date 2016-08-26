@@ -2,3 +2,6 @@
 *.iml
 target/
 .gradle
+.gradletasknamecache
+.tags
+.tags1
