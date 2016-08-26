@@ -38,7 +38,7 @@ public class DockerContainersTest extends BaseTest {
     @Before
     public void setUp() throws Exception {
         HashMap<String, String> properties = new HashMap<>();
-        properties.put("Image", "gocdcontrib/ubuntu-docker-elastic-agent");
+        properties.put("Image", "busybox:latest");
         request = new CreateAgentRequest("key", properties, "production");
         dockerContainers = new DockerContainers();
         settings = createSettings();
