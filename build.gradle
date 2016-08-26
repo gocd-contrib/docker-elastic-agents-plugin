@@ -19,7 +19,6 @@ plugins {
 }
 
 apply plugin: 'java'
-apply plugin: 'maven'
 
 group = 'cd.go.contrib'
 version = '0.2'
@@ -79,6 +78,7 @@ processResources {
 }
 
 test {
+  maxParallelForks = 1
   testLogging {
     showStandardStreams = true
 
