@@ -29,6 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 public class DockerClientFactory {
 
     private static DefaultDockerClient client;
@@ -61,6 +64,11 @@ public class DockerClientFactory {
     }
 
     private static void setupCerts(PluginSettings pluginSettings, DefaultDockerClient.Builder builder) throws IOException, DockerCertificateException {
+        if (isBlank(pluginSettings.getDockerCACert()) || isBlank(pluginSettings.getDockerClientCert()) || isBlank(pluginSettings.getDockerClientKey())) {
+            LOG.warn("Missing docker certificates, will attempt to connect without certificates");
+            return;
+        }
+
         Path certificateDir = Files.createTempDirectory(UUID.randomUUID().toString());
         File tempDirectory = certificateDir.toFile();
 
