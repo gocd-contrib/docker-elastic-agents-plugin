@@ -1,3 +1,10 @@
+## 0.3.0 - 2016-09-12
+
+### Bug fixes
+
+- Do not attempt to load docker certificates if they are not specified in the configuration
+- When terminating instances that did not register after a timeout, gracefully handle a `ContainerNotFoundException`, in case the container was cleaned up by other means
+
 ## 0.2.0 - 2016-08-26
 
 ### Added
