@@ -18,6 +18,7 @@ package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.spotify.docker.client.DockerClient;
+import com.spotify.docker.client.exceptions.ContainerNotFoundException;
 import com.spotify.docker.client.messages.Container;
 import com.spotify.docker.client.messages.ContainerInfo;
 import org.joda.time.DateTime;
@@ -136,7 +137,13 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
                 continue;
             }
 
-            ContainerInfo containerInfo = docker(settings).inspectContainer(containerName);
+            ContainerInfo containerInfo;
+            try {
+                containerInfo = docker(settings).inspectContainer(containerName);
+            } catch (ContainerNotFoundException e) {
+                LOG.warn("The container " + containerName + " could not be found.");
+                continue;
+            }
             DateTime dateTimeCreated = new DateTime(containerInfo.created());
 
             if (clock.now().isAfter(dateTimeCreated.plus(period))) {
