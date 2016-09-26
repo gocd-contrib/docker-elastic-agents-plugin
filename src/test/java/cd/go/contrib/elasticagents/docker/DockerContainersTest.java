@@ -162,6 +162,7 @@ public class DockerContainersTest extends BaseTest {
     @Test
     public void shouldNotTerminateUnregistredContainersBeforeTimeout() throws Exception {
         DockerContainer container = dockerContainers.create(request, settings);
+        containers.add(container.name());
 
         assertTrue(dockerContainers.hasInstance(container.name()));
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(9));
