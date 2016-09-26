@@ -68,6 +68,29 @@ Now setup the config.xml —
 * setup a job —
 
 ```xml
+<server agentAutoRegisterKey="...">
+  <elastic>
+    <profiles>
+      <profile id="docker.unit-tests" pluginId="cd.go.contrib.elastic-agent.docker">
+        <!-- The following properties are currently supported -->
+        <property>
+          <!-- Allows you to select the docker image that the build should run with -->
+          <key>Image</key>
+          <value>gocdcontrib/ubuntu-docker-elastic-agent</value>
+        </property>
+        <property>
+          <!-- Allows you to set the environment variables when starting the docker container -->
+          <key>Environment</key>
+          <value>
+            JAVA_HOME=/opt/java
+            MAKE_OPTS=-j8
+          </value>
+        </property>
+      </profile>
+    </profiles>
+  </elastic>
+</server>
+...
 <pipelines group="defaultGroup">
   <pipeline name="Foo">
     <materials>
@@ -75,26 +98,10 @@ Now setup the config.xml —
     </materials>
     <stage name="defaultStage">
       <jobs>
-        <job name="defaultJob">
+        <job name="defaultJob" elasticProfileId="docker.unit-tests">
           <tasks>
             <exec command="ls" />
           </tasks>
-          <agentConfig pluginId="cd.go.contrib.elastic-agent.docker">
-            <!-- The following properties are currently supported -->
-            <property>
-              <!-- Allows you to select the docker image that the build should run with -->
-              <key>Image</key>
-              <value>gocdcontrib/ubuntu-docker-elastic-agent</value>
-            </property>
-            <property>
-              <!-- Allows you to set the environment variables when starting the docker container -->
-              <key>Environment</key>
-              <value>
-                JAVA_HOME=/opt/java
-                MAKE_OPTS=-j8
-              </value>
-            </property>
-          </agentConfig>
         </job>
       </jobs>
     </stage>
