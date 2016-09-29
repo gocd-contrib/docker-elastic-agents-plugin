@@ -123,10 +123,11 @@ public class DockerContainer {
         env.addAll(splitIntoLinesAndTrimSpaces(request.properties().get("Environment")));
 
         env.addAll(Arrays.asList(
-                "MODE=" + mode(),
-                "GO_SERVER_URL=" + settings.getGoServerUrl(),
-                "AUTO_REGISTER_CONTENTS=" + request.autoregisterPropertiesAsString(containerName)
+                "EA_MODE=" + mode(),
+                "GO_SERVER_URL=" + settings.getGoServerUrl()
         ));
+
+        env.addAll(request.autoregisterPropertiesAsEnvironmentVars(containerName));
 
         return new ArrayList<>(env);
     }
