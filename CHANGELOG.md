@@ -1,3 +1,30 @@
+## 0.4.0 - 2016-09-29
+
+### Changed
+
+- The `AUTO_REGISTER_CONTENTS` contents environment variable has now been split up into 4 separate variables ([details here](https://docs.go.cd/current/advanced_usage/agent_auto_register.html)) —
+  * `GO_EA_AUTO_REGISTER_KEY` - the auto-register key
+  * `GO_EA_AUTO_REGISTER_ENVIRONMENT` - the auto-register environment
+  * `GO_EA_AUTO_REGISTER_ELASTIC_AGENT_ID` - the elastic agent id
+  * `GO_EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID` — the elastic plugin id
+
+### Added
+
+- The command to execute in the docker container can now be specified using the `Command` property —
+
+    ```xml
+    <profile pluginId="cd.go.contrib.elastic-agent.docker" id="foo">
+      <property>
+        <key>Command</key>
+        <value>
+          JAVA_HOME=/opt/java
+          MAKE_OPTS=-j8
+        </value>
+      </property>
+    </profile>
+    ```
+
+
 ## 0.3.0 - 2016-09-12
 
 ### Bug fixes
@@ -12,7 +39,7 @@
 - Environment variables can be specified using the `Environment` property —
 
     ```xml
-    <agentConfig pluginId="cd.go.contrib.elastic-agent.docker">
+    <profile pluginId="cd.go.contrib.elastic-agent.docker" id="foo">
       <property>
         <key>Environment</key>
         <value>
@@ -20,7 +47,7 @@
           MAKE_OPTS=-j8
         </value>
       </property>
-    </agentConfig>
+    </profile>
     ```
 
 - If you'd like to specify environment variables globally for all containers, the plugin settings will let you do just that.
