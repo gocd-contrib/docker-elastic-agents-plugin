@@ -120,7 +120,7 @@ public class PluginSettings {
     }
 
     public Collection<String> getEnvironmentVariables() {
-        return Util.extractEnvironmentVariables(environmentVariables);
+        return Util.splitIntoLinesAndTrimSpaces(environmentVariables);
     }
 
     public Integer getMaxDockerContainers() {

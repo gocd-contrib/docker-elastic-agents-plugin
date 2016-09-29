@@ -53,12 +53,12 @@ public class Util {
         }
     }
 
-    public static Collection<String> extractEnvironmentVariables(String environmentString) {
-        if (isBlank(environmentString)) {
+    public static Collection<String> splitIntoLinesAndTrimSpaces(String lines) {
+        if (isBlank(lines)) {
             return Collections.emptyList();
         }
 
-        return Collections2.transform(Arrays.asList(environmentString.split("[\r\n]+")), new Function<String, String>() {
+        return Collections2.transform(Arrays.asList(lines.split("[\r\n]+")), new Function<String, String>() {
             @Override
             public String apply(String input) {
                 return input.trim();

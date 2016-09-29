@@ -86,6 +86,15 @@ Now setup the config.xml —
             MAKE_OPTS=-j8
           </value>
         </property>
+        <property>
+          <!-- Allows you to set the command that should be run on the container, separate executable and each args by a newline -->
+          <key>Environment</key>
+          <value>
+            ls
+            -al
+            /usr/bin
+          </value>
+        </property>
       </profile>
     </profiles>
   </elastic>
