@@ -17,7 +17,6 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
-import cd.go.contrib.elasticagents.docker.utils.Util;
 import com.google.gson.Gson;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.ContainerNotFoundException;
@@ -34,6 +33,7 @@ import java.util.*;
 
 import static cd.go.contrib.elasticagents.docker.Constants.*;
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
+import static cd.go.contrib.elasticagents.docker.utils.Util.splitIntoLinesAndTrimSpaces;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class DockerContainer {
@@ -95,11 +95,17 @@ public class DockerContainer {
             docker.pull(imageName);
         }
 
-        ContainerCreation container = docker.createContainer(ContainerConfig.builder().
+        ContainerConfig.Builder containerConfigBuilder = ContainerConfig.builder();
+        if (request.properties().containsKey("Command")) {
+            containerConfigBuilder.cmd(splitIntoLinesAndTrimSpaces(request.properties().get("Command")).toArray(new String[]{}));
+        }
+
+        ContainerConfig containerConfig = containerConfigBuilder.
                 image(imageName).
                 labels(labels).
                 env(env).
-                build(), containerName);
+                build();
+        ContainerCreation container = docker.createContainer(containerConfig, containerName);
         String id = container.id();
 
         ContainerInfo containerInfo = docker.inspectContainer(id);
@@ -114,7 +120,7 @@ public class DockerContainer {
         Set<String> env = new HashSet<>();
 
         env.addAll(settings.getEnvironmentVariables());
-        env.addAll(Util.extractEnvironmentVariables(request.properties().get("Environment")));
+        env.addAll(splitIntoLinesAndTrimSpaces(request.properties().get("Environment")));
 
         env.addAll(Arrays.asList(
                 "MODE=" + mode(),

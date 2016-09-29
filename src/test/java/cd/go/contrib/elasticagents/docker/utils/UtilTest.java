@@ -27,8 +27,8 @@ import static org.junit.Assert.assertThat;
 public class UtilTest {
 
     @Test
-    public void shouldParseEnvironmentVariables() throws Exception {
-        Collection<String> strings = Util.extractEnvironmentVariables("FOO=BAR\n" +
+    public void shouldSplitIntoLinesAndTrimSpaces() throws Exception {
+        Collection<String> strings = Util.splitIntoLinesAndTrimSpaces("FOO=BAR\n" +
                 "  X=Y\n" +
                 "\n" +
                 "  A=B\r\n" +

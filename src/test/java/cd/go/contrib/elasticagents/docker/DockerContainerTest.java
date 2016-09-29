@@ -17,6 +17,7 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
+import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.ImageNotFoundException;
 import com.spotify.docker.client.messages.ContainerInfo;
 import org.junit.Before;
@@ -24,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -101,7 +103,22 @@ public class DockerContainerTest extends BaseTest {
         assertThat(containerInfo.config().env(), hasItems("A=B", "C=D", "E=F", "X=Y", "GLOBAL=something"));
         DockerContainer dockerContainer = DockerContainer.fromContainerInfo(containerInfo);
 
-        assertThat(dockerContainer.properties().get("Environment"), is(properties.get("Environment")));
+        assertThat(dockerContainer.properties(), is(properties));
+    }
+
+    @Test
+    public void shouldStartContainerWithCorrectCommand() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "busybox:latest");
+        properties.put("Command", "cat\n/etc/hosts\n/etc/group");
+
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), createSettings(), docker);
+        containers.add(container.name());
+        ContainerInfo containerInfo = docker.inspectContainer(container.name());
+        assertThat(containerInfo.config().cmd(), is(Arrays.asList("cat", "/etc/hosts", "/etc/group")));
+        String logs = docker.logs(container.name(), DockerClient.LogsParam.stdout()).readFully();
+        assertThat(logs, containsString("127.0.0.1")); // from /etc/hosts
+        assertThat(logs, containsString("floppy:x:19:")); // from /etc/group
     }
 
     @Test
