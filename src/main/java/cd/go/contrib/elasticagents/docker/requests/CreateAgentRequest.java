@@ -24,12 +24,15 @@ import cd.go.contrib.elasticagents.docker.executors.CreateAgentRequestExecutor;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class CreateAgentRequest {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
@@ -70,11 +73,11 @@ public class CreateAgentRequest {
     public Properties autoregisterProperties(String elasticAgentId) {
         Properties properties = new Properties();
 
-        if (StringUtils.isNotBlank(autoRegisterKey)) {
+        if (isNotBlank(autoRegisterKey)) {
             properties.put("agent.auto.register.key", autoRegisterKey);
         }
 
-        if (StringUtils.isNotBlank(environment)) {
+        if (isNotBlank(environment)) {
             properties.put("agent.auto.register.environments", environment);
         }
 
@@ -98,4 +101,16 @@ public class CreateAgentRequest {
         return writer.toString();
     }
 
+    public Collection<String> autoregisterPropertiesAsEnvironmentVars(String elasticAgentId) {
+        ArrayList<String> vars = new ArrayList<>();
+        if (isNotBlank(autoRegisterKey)) {
+            vars.add("EA_AUTO_REGISTER_KEY=" + autoRegisterKey);
+        }
+        if (isNotBlank(environment)) {
+            vars.add("EA_AUTO_REGISTER_ENVIRONMENT=" + environment);
+        }
+        vars.add("EA_AUTO_REGISTER_ELASTIC_AGENT_ID=" + elasticAgentId);
+        vars.add("EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID=" + Constants.PLUGIN_ID);
+        return vars;
+    }
 }

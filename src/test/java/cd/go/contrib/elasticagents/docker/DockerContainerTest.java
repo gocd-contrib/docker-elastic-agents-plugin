@@ -107,6 +107,20 @@ public class DockerContainerTest extends BaseTest {
     }
 
     @Test
+    public void shouldStartContainerWithAutoregisterEnvironmentVariables() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "busybox:latest");
+
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), createSettings(), docker);
+        containers.add(container.name());
+        ContainerInfo containerInfo = docker.inspectContainer(container.name());
+        assertThat(containerInfo.config().env(), hasItem("EA_AUTO_REGISTER_KEY=key"));
+        assertThat(containerInfo.config().env(), hasItem("EA_AUTO_REGISTER_ENVIRONMENT=prod"));
+        assertThat(containerInfo.config().env(), hasItem("EA_AUTO_REGISTER_ELASTIC_AGENT_ID=" + container.name()));
+        assertThat(containerInfo.config().env(), hasItem("EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID=" + Constants.PLUGIN_ID));
+    }
+
+    @Test
     public void shouldStartContainerWithCorrectCommand() throws Exception {
         Map<String, String> properties = new HashMap<>();
         properties.put("Image", "busybox:latest");
