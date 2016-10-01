@@ -104,13 +104,13 @@ public class CreateAgentRequest {
     public Collection<String> autoregisterPropertiesAsEnvironmentVars(String elasticAgentId) {
         ArrayList<String> vars = new ArrayList<>();
         if (isNotBlank(autoRegisterKey)) {
-            vars.add("EA_AUTO_REGISTER_KEY=" + autoRegisterKey);
+            vars.add("GO_EA_AUTO_REGISTER_KEY=" + autoRegisterKey);
         }
         if (isNotBlank(environment)) {
-            vars.add("EA_AUTO_REGISTER_ENVIRONMENT=" + environment);
+            vars.add("GO_EA_AUTO_REGISTER_ENVIRONMENT=" + environment);
         }
-        vars.add("EA_AUTO_REGISTER_ELASTIC_AGENT_ID=" + elasticAgentId);
-        vars.add("EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID=" + Constants.PLUGIN_ID);
+        vars.add("GO_EA_AUTO_REGISTER_ELASTIC_AGENT_ID=" + elasticAgentId);
+        vars.add("GO_EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID=" + Constants.PLUGIN_ID);
         return vars;
     }
 }

@@ -114,10 +114,10 @@ public class DockerContainerTest extends BaseTest {
         DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), createSettings(), docker);
         containers.add(container.name());
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
-        assertThat(containerInfo.config().env(), hasItem("EA_AUTO_REGISTER_KEY=key"));
-        assertThat(containerInfo.config().env(), hasItem("EA_AUTO_REGISTER_ENVIRONMENT=prod"));
-        assertThat(containerInfo.config().env(), hasItem("EA_AUTO_REGISTER_ELASTIC_AGENT_ID=" + container.name()));
-        assertThat(containerInfo.config().env(), hasItem("EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID=" + Constants.PLUGIN_ID));
+        assertThat(containerInfo.config().env(), hasItem("GO_EA_AUTO_REGISTER_KEY=key"));
+        assertThat(containerInfo.config().env(), hasItem("GO_EA_AUTO_REGISTER_ENVIRONMENT=prod"));
+        assertThat(containerInfo.config().env(), hasItem("GO_EA_AUTO_REGISTER_ELASTIC_AGENT_ID=" + container.name()));
+        assertThat(containerInfo.config().env(), hasItem("GO_EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID=" + Constants.PLUGIN_ID));
     }
 
     @Test
