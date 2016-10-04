@@ -88,7 +88,7 @@ Now setup the config.xml —
         </property>
         <property>
           <!-- Allows you to set the command that should be run on the container, separate executable and each args by a newline -->
-          <key>Environment</key>
+          <key>Command</key>
           <value>
             ls
             -al
