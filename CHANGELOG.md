@@ -1,3 +1,9 @@
+## 0.5.0 - 2016-10-06
+
+### Fixed
+
+- Fix some synchronization issues that allowed more number of containers than the settings permitted
+
 ## 0.4.0 - 2016-09-29
 
 ### Changed

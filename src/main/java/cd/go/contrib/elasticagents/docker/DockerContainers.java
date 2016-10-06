@@ -42,15 +42,17 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     @Override
     public DockerContainer create(CreateAgentRequest request, PluginSettings settings) throws Exception {
         final Integer maxAllowedContainers = settings.getMaxDockerContainers();
-        doWithLockOnSemaphore(new SetupSemaphore(maxAllowedContainers, instances, semaphore));
+        synchronized (instances) {
+            doWithLockOnSemaphore(new SetupSemaphore(maxAllowedContainers, instances, semaphore));
 
-        if (semaphore.tryAcquire()) {
-            DockerContainer container = DockerContainer.create(request, settings, docker(settings));
-            register(container);
-            return container;
-        } else {
-            LOG.info("The number of containers currently running is currently at the maximum permissible limit (" + instances.size() + "). Not creating any more containers.");
-            return null;
+            if (semaphore.tryAcquire()) {
+                DockerContainer container = DockerContainer.create(request, settings, docker(settings));
+                register(container);
+                return container;
+            } else {
+                LOG.info("The number of containers currently running is currently at the maximum permissible limit (" + instances.size() + "). Not creating any more containers.");
+                return null;
+            }
         }
     }
 
@@ -76,7 +78,9 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
             }
         });
 
-        instances.remove(agentId);
+        synchronized (instances) {
+            instances.remove(agentId);
+        }
     }
 
     @Override
