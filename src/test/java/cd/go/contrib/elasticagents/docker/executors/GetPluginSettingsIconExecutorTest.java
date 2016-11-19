@@ -19,7 +19,7 @@ package cd.go.contrib.elasticagents.docker.executors;
 import cd.go.contrib.elasticagents.docker.utils.Util;
 import com.google.gson.Gson;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.glassfish.jersey.internal.util.Base64;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -35,6 +35,6 @@ public class GetPluginSettingsIconExecutorTest {
         HashMap<String, String> hashMap = new Gson().fromJson(response.responseBody(), HashMap.class);
         assertThat(hashMap.size(), is(2));
         assertThat(hashMap.get("content-type"), is("image/svg+xml"));
-        assertThat(Util.readResource("/docker-plain.svg"), is(Base64.decodeAsString(hashMap.get("data"))));
+        assertThat(Util.readResourceBytes("/docker-plain.svg"), is(Base64.decodeBase64(hashMap.get("data"))));
     }
 }
