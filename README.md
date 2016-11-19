@@ -10,6 +10,48 @@ It depends.
 
 The plugin, as it is currently implemented is meant to be a very simple plugin to demonstrate how to get started with GoCD [elastic agent](https://plugin-api.go.cd/current/elastic-agents) feature. This plugin terminates docker containers very aggressively (within a minute or two of the agent being idle). Depending on your usage, this may not be desirable. If this behavior is undesirable to you, you may need to fork this plugin and [tweak it a bit](https://github.com/gocd-contrib/docker-elastic-agents/blob/master/src/main/java/cd/go/contrib/elasticagents/docker/executors/ServerPingRequestExecutor.java) so the docker containers are not terminated as aggressively.
 
+## Customizing your docker image to run as a GoCD Elastic Agent
+
+There are two ways to customize your docker image to work with this plugin
+ 
+### Use the GoCD agent
+
+* Ensure that you have installed the go-agent for your distribution, using apt/yum or a zip file if you're using a distribution that does not support apt or yum.
+* Once the agent is installed, create a simple shell script executed via (`CMD`) that will accept the following variables and execute the agent bootstrapper process. These environment variables are passed by this plugin when performing a `docker run`. Your image is expected to use these variables to create a correct `autoregister.properties`:
+  * `GO_EA_SERVER_URL` - the URL of the GoCD server (from the plugin settings page)
+  * `GO_EA_AUTO_REGISTER_KEY` - the auto-register key
+  * `GO_EA_AUTO_REGISTER_ENVIRONMENT` - the auto-register environment
+  * `GO_EA_AUTO_REGISTER_ELASTIC_AGENT_ID` - the elastic agent id
+  * `GO_EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID` — the elastic plugin id
+
+### Use the GoCD golang bootstrapper
+
+This method is a [bit insecure (PR welcome)](https://github.com/ketan/gocd-golang-bootstrapper), but uses lesser memory and boots up and starts off a build quickly:
+ 
+```dockerfile
+FROM yourimage
+
+# install whatever packages you need, in addition to the JRE, and git
+# apt-get install openjdk-8-jre-headless git
+# yum install java-1.8.0-openjdk-headless git
+
+# Add a user to run the go agent
+RUN adduser go go -h /go -S -D
+
+# download the agent bootstrapper
+ADD https://github.com/ketan/gocd-golang-bootstrapper/releases/download/0.9/go-bootstrapper-0.9.linux.amd64 /go/go-agent
+RUN chmod 755 /go/go-agent
+
+# download tini
+ADD https://github.com/krallin/tini/releases/download/v0.10.0/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
+
+# Run the bootstrapper as the `go` user
+USER go
+CMD /go/go-agent
+``` 
+
 ## Usage instructions
 
 * Download and install Docker for your favorite OS from https://docs.docker.com/engine/installation/
@@ -130,4 +172,26 @@ If you're running the server via `./server.sh` script —
 
 ```
 $ GO_SERVER_SYSTEM_PROPERTIES="-Dplugin.cd.go.contrib.elastic-agent.docker.log.level=debug" ./server.sh
+```
+
+## Credits
+
+Thanks to @konpa for the [docker image](https://raw.githubusercontent.com/konpa/devicon/b80c6d9acb7b58b80904769015f9e0dd36fe46d2/icons/docker/docker-plain.svg) provided by the plugin.
+
+## License
+
+```plain
+Copyright 2016, ThoughtWorks, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```

@@ -1,3 +1,13 @@
+## 0.6.0 - 2016-11-19
+
+### Added
+
+- Added support for a few additional calls required by the GoCD server.
+  * `go.cd.elastic-agent.get-profile-metadata`
+  * `go.cd.elastic-agent.get-profile-view`
+  * `go.cd.elastic-agent.validate-profile`
+  * `go.cd.elastic-agent.get-icon`
+
 ## 0.5.0 - 2016-10-06
 
 ### Fixed
