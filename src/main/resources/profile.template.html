@@ -21,7 +21,7 @@
 </div>
 
 <div class="form_item_block">
-    <label ng-class="{'is-invalid-label': GOINPUTNAME[Command].$error.server}">Docker Command: <small>(Enter one variable per line)</small></label>
+    <label ng-class="{'is-invalid-label': GOINPUTNAME[Command].$error.server}">Docker Command: <small>(Enter one parameter per line)</small></label>
     <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Command].$error.server}" type="text" ng-model="Command" ng-required="true" rows="7" placeholder="ls&#x000A;-al&#x000A;/usr/bin"></textarea>
     <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Command].$error.server}" ng-show="GOINPUTNAME[Command].$error.server">{{GOINPUTNAME[Command].$error.server}}</span>
 </div>
