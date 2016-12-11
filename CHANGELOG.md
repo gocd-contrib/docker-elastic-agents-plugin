@@ -1,3 +1,9 @@
+## 0.6.1 - 2016-12-11
+
+### Changed
+
+- Changed the `go.cd.elastic-agent.get-icon` call to use underscore instead of hyphens.
+
 ## 0.6.0 - 2016-11-19
 
 ### Added
