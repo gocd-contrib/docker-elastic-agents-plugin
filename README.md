@@ -1,5 +1,18 @@
 # GoCD Elastic agent plugin for Docker [![Build Status](https://snap-ci.com/gocd-contrib/docker-elastic-agents/branch/master/build_image)](https://snap-ci.com/gocd-contrib/docker-elastic-agents/branch/master)
 
+Table of Contents
+=================
+
+  * [Building the code base](#building-the-code-base)
+  * [Is this production ready?](#is-this-production-ready)
+  * [Using your own docker image with elastic agents](#using-your-own-docker-image-with-elastic-agents)
+     * [Using the GoCD agent, installed via .deb/.rpm](#using-the-gocd-agent-installed-via-debrpm)
+     * [Use a custom bootstrapper](#use-a-custom-bootstrapper)
+  * [Usage instructions](#usage-instructions)
+  * [Troubleshooting](#troubleshooting)
+  * [Credits](#credits)
+  * [License](#license)
+
 ## Building the code base
 
 To build the jar, run `./gradlew clean test assemble`
@@ -10,47 +23,45 @@ It depends.
 
 The plugin, as it is currently implemented is meant to be a very simple plugin to demonstrate how to get started with GoCD [elastic agent](https://plugin-api.go.cd/current/elastic-agents) feature. This plugin terminates docker containers very aggressively (within a minute or two of the agent being idle). Depending on your usage, this may not be desirable. If this behavior is undesirable to you, you may need to fork this plugin and [tweak it a bit](https://github.com/gocd-contrib/docker-elastic-agents/blob/master/src/main/java/cd/go/contrib/elasticagents/docker/executors/ServerPingRequestExecutor.java) so the docker containers are not terminated as aggressively.
 
-## Customizing your docker image to run as a GoCD Elastic Agent
+## Using your own docker image with elastic agents
 
-There are two ways to customize your docker image to work with this plugin
- 
-### Use the GoCD agent
+The plugin executes the equivalent of the following docker command to start the agent —
 
-* Ensure that you have installed the go-agent for your distribution, using apt/yum or a zip file if you're using a distribution that does not support apt or yum.
-* Once the agent is installed, create a simple shell script executed via (`CMD`) that will accept the following variables and execute the agent bootstrapper process. These environment variables are passed by this plugin when performing a `docker run`. Your image is expected to use these variables to create a correct `autoregister.properties`:
-  * `GO_EA_SERVER_URL` - the URL of the GoCD server (from the plugin settings page)
-  * `GO_EA_AUTO_REGISTER_KEY` - the auto-register key
-  * `GO_EA_AUTO_REGISTER_ENVIRONMENT` - the auto-register environment
-  * `GO_EA_AUTO_REGISTER_ELASTIC_AGENT_ID` - the elastic agent id
-  * `GO_EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID` — the elastic plugin id
+```
+docker run -e GO_EA_SERVER_URL=...
+           -e GO_EA_AUTO_REGISTER_KEY=...
+           -e GO_EA_AUTO_REGISTER_ENVIRONMENT=...
+           -e GO_EA_AUTO_REGISTER_ELASTIC_AGENT_ID=...
+           -e GO_EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID=...
+           ...
+           IMAGE_ID
+```
 
-### Use the GoCD golang bootstrapper
+Your docker image is expected to contain a bootstrap program (to be executed via docker's `CMD`) that will create an [`autoregister.properties`](https://docs.gocd.io/current/advanced_usage/agent_auto_register.html) file using these variables. The `GO_EA_SERVER_URL` will point to the server url that the agent must communicate with.
 
-This method is a [bit insecure (PR welcome)](https://github.com/ketan/gocd-golang-bootstrapper), but uses lesser memory and boots up and starts off a build quickly:
- 
-```dockerfile
-FROM yourimage
+Here is an example shell script to do this —
 
-# install whatever packages you need, in addition to the JRE, and git
-# apt-get install openjdk-8-jre-headless git
-# yum install java-1.8.0-openjdk-headless git
+```bash
+# write out autoregister.properties
+(
+cat <<EOF
+agent.auto.register.key=${GO_EA_AUTO_REGISTER_KEY}
+agent.auto.register.environments=${GO_EA_AUTO_REGISTER_ENVIRONMENT}
+agent.auto.register.elasticAgent.agentId=${GO_EA_AUTO_REGISTER_ELASTIC_AGENT_ID}
+agent.auto.register.elasticAgent.pluginId=${GO_EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID}
+EOF
+) > /var/lib/go-agent/config/autoregister.properties
+```
 
-# Add a user to run the go agent
-RUN adduser go go -h /go -S -D
+### Using the GoCD agent, installed via `.deb/.rpm`
 
-# download the agent bootstrapper
-ADD https://github.com/ketan/gocd-golang-bootstrapper/releases/download/0.9/go-bootstrapper-0.9.linux.amd64 /go/go-agent
-RUN chmod 755 /go/go-agent
+See the bootstrap script and docker file here under [`contrib/scripts/bootstrap-via-installer`](contrib/scripts/bootstrap-via-installer).
 
-# download tini
-ADD https://github.com/krallin/tini/releases/download/v0.10.0/tini /tini
-RUN chmod +x /tini
-ENTRYPOINT ["/tini", "--"]
+### Use a custom bootstrapper
 
-# Run the bootstrapper as the `go` user
-USER go
-CMD /go/go-agent
-``` 
+This method uses lesser memory and boots up the agent process and starts off a build quickly:
+
+See the bootstrap script and docker file here under [`contrib/scripts/bootstrap-without-installed-agent`](contrib/scripts/bootstrap-without-installed-agent).
 
 ## Usage instructions
 
@@ -176,7 +187,7 @@ $ GO_SERVER_SYSTEM_PROPERTIES="-Dplugin.cd.go.contrib.elastic-agent.docker.log.l
 
 ## Credits
 
-Thanks to @konpa for the [docker image](https://raw.githubusercontent.com/konpa/devicon/b80c6d9acb7b58b80904769015f9e0dd36fe46d2/icons/docker/docker-plain.svg) provided by the plugin.
+Thanks to @konpa for the [docker icon](https://raw.githubusercontent.com/konpa/devicon/b80c6d9acb7b58b80904769015f9e0dd36fe46d2/icons/docker/docker-plain.svg) used by the plugin.
 
 ## License
 

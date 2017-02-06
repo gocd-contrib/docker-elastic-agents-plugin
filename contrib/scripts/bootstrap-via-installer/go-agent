@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Use this script to start up your GoCD agent process. The script assumes that
+# the agent is installed using .deb/.rpm as the case may be with your OS.
+
+die () {
+    echo
+    echo "$*"
+    echo
+    exit 1
+}
+
+if ! [[ -x /etc/init.d/go-agent && -e /etc/defaults/go-agent && -d /var/lib/go-agent ]]; then
+  echo "It looks like the agent was not installed via deb/rpm"
+  exit -1
+fi
+
+if [[ "$(whoami)" != 'go' ]]; then
+  echo "Must run this script as the `go` user"
+  exit -1
+fi
+
+mkdir -p /var/lib/go-agent/config || die "Could not create /var/lib/go-agent/config"
+
+# write out autoregister.properties
+(
+cat <<EOF
+agent.auto.register.key=${GO_EA_AUTO_REGISTER_KEY}
+agent.auto.register.environments=${GO_EA_AUTO_REGISTER_ENVIRONMENT}
+agent.auto.register.elasticAgent.agentId=${GO_EA_AUTO_REGISTER_ELASTIC_AGENT_ID}
+agent.auto.register.elasticAgent.pluginId=${GO_EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID}
+EOF
+) > /var/lib/go-agent/config/autoregister.properties
+
+# write out server url, and prevent backgrounding
+echo "GO_SERVER_URL=${GO_EA_SERVER_URL}"  > /etc/default/go-agent
+
+# prevent environment variables from leaking into the agent
+unset GO_EA_AUTO_REGISTER_KEY
+unset GO_EA_AUTO_REGISTER_ENVIRONMENT
+unset GO_EA_AUTO_REGISTER_ELASTIC_AGENT_ID
+unset GO_EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID
+unset GO_EA_SERVER_URL
+
+exec /usr/share/go-agent/agent.sh go-agent
