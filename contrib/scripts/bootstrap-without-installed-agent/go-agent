@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Use this script to start up your GoCD agent process. The script assumes that —
+# - no agent is installed via deb/rpm
+# - curl is available on $PATH
+# - user `go` exists
+
+die () {
+    echo
+    echo "$*"
+    echo
+    exit 1
+}
+
+download_file () {
+  local remote_path="$1"
+  local local_path="$2"
+  local url="${GO_EA_SERVER_URL}${remote_path}"
+
+  echo "Downloading remote file ${url} into ${local_path}."
+  curl --fail --silent --insecure "${url}" -o "${local_path}" || die "Could not fetch ${url}."
+}
+
+get_checksums () {
+  local url="${GO_EA_SERVER_URL}/admin/latest-agent.status"
+  curl --fail --silent --insecure "${url}" -D - || die "Could not fetch ${url}"
+}
+
+get_checksum () {
+  local checksums="${1}"
+  local header="${2}"
+  echo "${checksums}" | tr -d '\r' | grep "${header}" | sed -e "s/${header}: //g"
+}
+
+if [[ "$(whoami)" != 'go' ]]; then
+  echo "Must run this script as the `go` user"
+  exit -1
+fi
+
+mkdir -p /go/config || die "Could not create /go/config"
+cd /go || die "Could not chdir to /go"
+
+# write out autoregister.properties
+(
+cat <<EOF
+agent.auto.register.key=${GO_EA_AUTO_REGISTER_KEY}
+agent.auto.register.environments=${GO_EA_AUTO_REGISTER_ENVIRONMENT}
+agent.auto.register.elasticAgent.agentId=${GO_EA_AUTO_REGISTER_ELASTIC_AGENT_ID}
+agent.auto.register.elasticAgent.pluginId=${GO_EA_AUTO_REGISTER_ELASTIC_PLUGIN_ID}
+EOF
+) > ./config/autoregister.properties
+
+while true; do
+  download_file '/admin/agent' 'agent.jar'
+  download_file '/admin/agent-plugins.zip' 'agent-plugins.zip'
+  download_file '/admin/tfs-impl.jar' 'tfs-impl.jar'
+
+  checksums=$(get_checksums)
+  agent_md5=$(get_checksum "${checksums}" 'Agent-Content-MD5')
+  tfs_md5=$(get_checksum "${checksums}" 'TFS-SDK-Content-MD5')
+  plugins_md5=$(get_checksum "${checksums}" 'Agent-Plugins-Content-MD5')
+  agent_launcher_md5=$(get_checksum "${checksums}" 'Agent-Launcher-Content-MD5')
+
+  echo "Launching the GoCD Agent, and waiting for it to exit..."
+  RUN_CMD=(java -Dcruise.console.publish.interval=10 \
+            -Xms128m \
+            -Xmx256m \
+            -Djava.security.egd=file:/dev/./urandom \
+            -Dagent.plugins.md5="${plugins_md5}" \
+            -Dagent.binary.md5="${agent_md5}" \
+            -Dagent.launcher.md5="${agent_launcher_md5}" \
+            -Dagent.tfs.md5="${tfs_md5}" \
+            -jar \
+            agent.jar \
+            -serverUrl \
+            "${GO_EA_SERVER_URL}")
+  "${RUN_CMD[@]}"
+  echo "The GoCD Agent exited with code $?. Waiting 10 seconds before re-launching"
+  sleep 10
+done
