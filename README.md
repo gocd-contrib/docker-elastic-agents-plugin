@@ -129,7 +129,11 @@ Now setup the config.xml —
         <property>
           <!-- Allows you to select the docker image that the build should run with -->
           <key>Image</key>
-          <value>gocdcontrib/ubuntu-docker-elastic-agent</value>
+          <value>alpine</value>
+        </property>
+        <property>
+            <key>Command</key>
+            <value>ls</value>
         </property>
         <property>
           <!-- Allows you to set the environment variables when starting the docker container -->
