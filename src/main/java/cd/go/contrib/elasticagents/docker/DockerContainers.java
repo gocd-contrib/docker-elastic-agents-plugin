@@ -44,11 +44,9 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     public DockerContainer create(CreateAgentRequest request, PluginSettings settings) throws Exception {
         final Integer maxAllowedContainers = settings.getMaxDockerContainers();
         synchronized (instances) {
-
             doWithLockOnSemaphore(new SetupSemaphore(maxAllowedContainers, instances, semaphore));
 
             if (semaphore.tryAcquire()) {
-                LOG.debug("Number of container currently running not at the maximum ("+maxAllowedContainers+"). " + semaphore.availablePermits() + " containers could be started if necessary");
                 DockerContainer container = DockerContainer.create(request, settings, docker(settings));
                 register(container);
                 return container;
