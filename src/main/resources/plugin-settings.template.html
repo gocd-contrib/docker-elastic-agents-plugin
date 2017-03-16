@@ -45,6 +45,12 @@
 </div>
 
 <div class="form_item_block">
+  <input type="checkbox" ng-model="use_docker_auth_info" ng-required="false"/>
+  <label>Use Docker auth info</label>
+  <span class="form_error" ng-show="GOINPUTNAME[use_docker_auth_info].$error.server">{{GOINPUTNAME[use_docker_auth_info].$error.server}}</span>
+</div>
+
+<div class="form_item_block">
   <label>Docker CA Certificate:</label>
   <textarea type="text" ng-model="docker_ca_cert" rows="7"></textarea>
   <span class="form_error" ng-show="GOINPUTNAME[docker_ca_cert].$error.server">{{GOINPUTNAME[docker_ca_cert].$error.server}}</span>

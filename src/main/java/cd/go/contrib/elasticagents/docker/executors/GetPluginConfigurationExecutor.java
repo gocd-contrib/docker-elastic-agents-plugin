@@ -37,6 +37,7 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
     public static final Field DOCKER_CA_CERT = new Field("docker_ca_cert", "Docker CA Certificate", null, false, true, "5");
     public static final Field DOCKER_CLIENT_KEY = new Field("docker_client_key", "Docker Client Key", null, false, true, "6");
     public static final Field DOCKER_CLIENT_CERT = new Field("docker_client_cert", "Docker Client Certificate", null, false, true, "7");
+    public static final Field USE_DOCKER_AUTH_INFO = new Field("use_docker_auth_info", "Docker Registry Credentials", null, false, true, "7");
 
     public static final Map<String, Field> FIELDS = new LinkedHashMap<>();
 
@@ -51,6 +52,8 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
         FIELDS.put(DOCKER_CA_CERT.key(), DOCKER_CA_CERT);
         FIELDS.put(DOCKER_CLIENT_KEY.key(), DOCKER_CLIENT_KEY);
         FIELDS.put(DOCKER_CLIENT_CERT.key(), DOCKER_CLIENT_CERT);
+
+        FIELDS.put(USE_DOCKER_AUTH_INFO.key(), USE_DOCKER_AUTH_INFO);
     }
 
     public GoPluginApiResponse execute() {
