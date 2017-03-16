@@ -26,6 +26,7 @@ import org.joda.time.Period;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
@@ -33,7 +34,7 @@ import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 
 public class DockerContainers implements AgentInstances<DockerContainer> {
 
-    private final ConcurrentHashMap<String, DockerContainer> instances = new ConcurrentHashMap<>();
+    private final Map<String, DockerContainer> instances = new ConcurrentHashMap<>();
     private boolean refreshed;
     public Clock clock = Clock.DEFAULT;
 
