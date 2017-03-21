@@ -56,7 +56,7 @@ public class DockerClientFactory {
             setupCerts(pluginSettings, builder);
         }
 
-        if (pluginSettings.getUseDockerAuthInfo()) {
+        if (pluginSettings.useDockerAuthInfo()) {
             builder.authConfig(AuthConfig.fromDockerConfig().build());
         }
 

@@ -66,7 +66,7 @@ public class PluginSettings {
 
     @Expose
     @SerializedName("use_docker_auth_info")
-    private String useDockerAuthInfo;
+    private boolean useDockerAuthInfo;
 
     private Period autoRegisterPeriod;
 
@@ -92,9 +92,8 @@ public class PluginSettings {
             return false;
         if (dockerClientKey != null ? !dockerClientKey.equals(that.dockerClientKey) : that.dockerClientKey != null)
             return false;
-        if (useDockerAuthInfo != null ? !useDockerAuthInfo.equals(that.useDockerAuthInfo) : that.useDockerAuthInfo != null) return false;
+        if (useDockerAuthInfo != that.useDockerAuthInfo) return false;
         return autoRegisterPeriod != null ? autoRegisterPeriod.equals(that.autoRegisterPeriod) : that.autoRegisterPeriod == null;
-
     }
 
     @Override
@@ -107,7 +106,7 @@ public class PluginSettings {
         result = 31 * result + (dockerClientCert != null ? dockerClientCert.hashCode() : 0);
         result = 31 * result + (dockerClientKey != null ? dockerClientKey.hashCode() : 0);
         result = 31 * result + (autoRegisterPeriod != null ? autoRegisterPeriod.hashCode() : 0);
-        result = 31 * result + (useDockerAuthInfo != null ? useDockerAuthInfo.hashCode() : 0);
+        result = 31 * result + (useDockerAuthInfo?1:0);
         return result;
     }
 
@@ -153,7 +152,7 @@ public class PluginSettings {
         return dockerClientKey;
     }
 
-    public Boolean getUseDockerAuthInfo() {
+    public Boolean useDockerAuthInfo() {
         return Boolean.valueOf(useDockerAuthInfo);
     }
 
@@ -168,8 +167,6 @@ public class PluginSettings {
     public void setDockerClientKey(String dockerClientKey) {
         this.dockerClientKey = dockerClientKey;
     }
-
-    public void setUseDockerAuthInfo(Boolean useDockerAuthInfo) { this.useDockerAuthInfo = String.valueOf(useDockerAuthInfo); }
 
     public void setDockerURI(String dockerURI) {
         this.dockerURI = dockerURI;
