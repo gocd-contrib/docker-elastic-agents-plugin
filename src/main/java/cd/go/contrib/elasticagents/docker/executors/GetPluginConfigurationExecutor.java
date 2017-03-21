@@ -37,7 +37,11 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
     public static final Field DOCKER_CA_CERT = new Field("docker_ca_cert", "Docker CA Certificate", null, false, true, "5");
     public static final Field DOCKER_CLIENT_KEY = new Field("docker_client_key", "Docker Client Key", null, false, true, "6");
     public static final Field DOCKER_CLIENT_CERT = new Field("docker_client_cert", "Docker Client Certificate", null, false, true, "7");
-    public static final Field USE_DOCKER_AUTH_INFO = new Field("use_docker_auth_info", "Docker Registry Credentials", null, false, true, "7");
+    public static final Field USE_DOCKER_AUTH_INFO = new NonBlankField("use_docker_auth_info", "Use Docker Registry Credentials", "false", true, false, "8");
+    public static final Field PRIVATE_REGISTRY_SERVER = new Field("private_registry_server", "Private Registry Server", null, false, false, "9");
+    public static final Field PRIVATE_REGISTRY_USERNAME = new Field("private_registry_username", "Private Registry Username", null, false, false, "10");
+    public static final Field PRIVATE_REGISTRY_PASSWORD = new Field("private_registry_password", "Private Registry Password", null, false, true, "11");
+
 
     public static final Map<String, Field> FIELDS = new LinkedHashMap<>();
 
@@ -54,6 +58,9 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
         FIELDS.put(DOCKER_CLIENT_CERT.key(), DOCKER_CLIENT_CERT);
 
         FIELDS.put(USE_DOCKER_AUTH_INFO.key(), USE_DOCKER_AUTH_INFO);
+        FIELDS.put(PRIVATE_REGISTRY_SERVER.key(), PRIVATE_REGISTRY_SERVER);
+        FIELDS.put(PRIVATE_REGISTRY_USERNAME.key(), PRIVATE_REGISTRY_USERNAME);
+        FIELDS.put(PRIVATE_REGISTRY_PASSWORD.key(), PRIVATE_REGISTRY_PASSWORD);
     }
 
     public GoPluginApiResponse execute() {

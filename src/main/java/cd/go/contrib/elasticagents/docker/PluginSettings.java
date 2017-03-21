@@ -65,6 +65,18 @@ public class PluginSettings {
     private String dockerClientKey;
 
     @Expose
+    @SerializedName("private_registry_server")
+    private String privateRegistryServer;
+
+    @Expose
+    @SerializedName("private_registry_username")
+    private String privateRegistryUsername;
+
+    @Expose
+    @SerializedName("private_registry_password")
+    private String privateRegistryPassword;
+
+    @Expose
     @SerializedName("use_docker_auth_info")
     private boolean useDockerAuthInfo;
 
@@ -150,6 +162,18 @@ public class PluginSettings {
 
     public String getDockerClientKey() {
         return dockerClientKey;
+    }
+
+    public String getPrivateRegistryServer() {
+        return privateRegistryServer;
+    }
+
+    public String getPrivateRegistryUsername() {
+        return privateRegistryUsername;
+    }
+
+    public String getPrivateRegistryPassword() {
+        return privateRegistryPassword;
     }
 
     public Boolean useDockerAuthInfo() {

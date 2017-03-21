@@ -45,13 +45,6 @@
 </div>
 
 <div class="form_item_block">
-  <label>Use docker login credential file</label>
-  <input type="radio" ng-model="use_docker_auth_info" value="true"/> True
-  <input type="radio" ng-model="use_docker_auth_info" value="false"/> False
-  <span class="form_error" ng-show="GOINPUTNAME[use_docker_auth_info].$error.server">{{GOINPUTNAME[use_docker_auth_info].$error.server}}</span>
-</div>
-
-<div class="form_item_block">
   <label>Docker CA Certificate:</label>
   <textarea type="text" ng-model="docker_ca_cert" rows="7"></textarea>
   <span class="form_error" ng-show="GOINPUTNAME[docker_ca_cert].$error.server">{{GOINPUTNAME[docker_ca_cert].$error.server}}</span>
@@ -67,4 +60,29 @@
   <label>Docker Client Certificate:</label>
   <textarea type="text" ng-model="docker_client_cert" rows="7"></textarea>
   <span class="form_error" ng-show="GOINPUTNAME[docker_client_cert].$error.server">{{GOINPUTNAME[docker_client_cert].$error.server}}</span>
+</div>
+
+<div class="form_item_block">
+  <label>Use Private Registry</label>
+  <input type="radio" ng-model="use_docker_auth_info" value="true"/> True
+  <input type="radio" ng-model="use_docker_auth_info" value="false"/> False
+  <span class="form_error" ng-show="GOINPUTNAME[use_docker_auth_info].$error.server">{{GOINPUTNAME[use_docker_auth_info].$error.server}}</span>
+</div>
+
+<div ng-show="use_docker_auth_info">
+  <div class="form_item_block">
+    <label>Private Registry Server:</label>
+    <input type="text" ng-model="private_registry_server" ng-required="true"/>
+    <span class="form_error" ng-show="GOINPUTNAME[private_registry_server].$error.server">{{GOINPUTNAME[private_registry_server].$error.server}}</span>
+  </div>
+  <div class="form_item_block">
+    <label>Private Registry Username:</label>
+    <input type="text" ng-model="private_registry_username" ng-required="true"/>
+    <span class="form_error" ng-show="GOINPUTNAME[private_registry_username].$error.server">{{GOINPUTNAME[private_registry_username].$error.server}}</span>
+  </div>
+  <div class="form_item_block">
+    <label>Private Registry Password:</label>
+    <input type="password" ng-model="private_registry_password" ng-required="true"/>
+    <span class="form_error" ng-show="GOINPUTNAME[private_registry_password].$error.server">{{GOINPUTNAME[private_registry_password].$error.server}}</span>
+  </div>
 </div>

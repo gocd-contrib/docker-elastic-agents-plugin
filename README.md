@@ -175,12 +175,6 @@ Now setup the config.xml —
 </pipelines>
 ```
 
-### Private registries authentication
-
-To configure the plugin with private registry, set [docker login credential file](https://docs.docker.com/engine/reference/commandline/login/) to True in the plugin settings page on your GoCD server.
-
-You also have to provide a docker login file configured for your private registry and store it in /var/go/.docker/config.json
-
 ## Troubleshooting
 
 Enabling debug level logging can help you troubleshoot an issue with the elastic agent plugin. To enable debug level logs, edit the `/etc/default/go-server` (for Linux) to add:

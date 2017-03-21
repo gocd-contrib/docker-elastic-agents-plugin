@@ -57,7 +57,12 @@ public class DockerClientFactory {
         }
 
         if (pluginSettings.useDockerAuthInfo()) {
-            builder.authConfig(AuthConfig.fromDockerConfig().build());
+            AuthConfig authConfig = AuthConfig.builder()
+                    .password(pluginSettings.getPrivateRegistryPassword())
+                    .serverAddress(pluginSettings.getPrivateRegistryServer())
+                    .username(pluginSettings.getPrivateRegistryUsername())
+                    .build();
+            builder.authConfig(authConfig);
         }
 
         DefaultDockerClient docker = builder.build();
