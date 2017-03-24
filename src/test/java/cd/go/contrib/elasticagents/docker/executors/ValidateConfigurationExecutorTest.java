@@ -47,6 +47,10 @@ public class ValidateConfigurationExecutorTest {
                 "  {\n" +
                 "    \"message\": \"Agent auto-register Timeout (in minutes) must be a positive integer.\",\n" +
                 "    \"key\": \"auto_register_timeout\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"message\": \"Use Private Registry must not be blank.\",\n" +
+                "    \"key\": \"use_docker_auth_info\"\n" +
                 "  }\n" +
                 "]\n", response.responseBody(), true);
     }
@@ -60,6 +64,7 @@ public class ValidateConfigurationExecutorTest {
         settings.put("docker_client_key", "some client key");
         settings.put("docker_client_cert", "sone client cert");
         settings.put("go_server_url", "https://ci.example.com");
+        settings.put("use_docker_auth_info", "false");
         settings.put("auto_register_timeout", "10");
         GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
 

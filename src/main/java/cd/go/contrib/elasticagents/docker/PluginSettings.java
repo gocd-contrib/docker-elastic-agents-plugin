@@ -105,6 +105,12 @@ public class PluginSettings {
         if (dockerClientKey != null ? !dockerClientKey.equals(that.dockerClientKey) : that.dockerClientKey != null)
             return false;
         if (useDockerAuthInfo != that.useDockerAuthInfo) return false;
+        if(privateRegistryServer != null ? !privateRegistryServer.equals(that.privateRegistryServer) : that.privateRegistryServer != null)
+            return false;
+        if(privateRegistryUsername != null ? !privateRegistryUsername.equals(that.privateRegistryUsername) : that.privateRegistryUsername != null)
+            return false;
+        if(privateRegistryPassword != null ? !privateRegistryPassword.equals(that.privateRegistryPassword) : that.privateRegistryPassword != null)
+            return false;
         return autoRegisterPeriod != null ? autoRegisterPeriod.equals(that.autoRegisterPeriod) : that.autoRegisterPeriod == null;
     }
 
@@ -119,6 +125,9 @@ public class PluginSettings {
         result = 31 * result + (dockerClientKey != null ? dockerClientKey.hashCode() : 0);
         result = 31 * result + (autoRegisterPeriod != null ? autoRegisterPeriod.hashCode() : 0);
         result = 31 * result + (useDockerAuthInfo?1:0);
+        result = 31 * result + (privateRegistryServer != null ? privateRegistryServer.hashCode() : 0);
+        result = 31 * result + (privateRegistryPassword != null ? privateRegistryPassword.hashCode() : 0);
+        result = 31 * result + (privateRegistryUsername != null ? privateRegistryUsername.hashCode() : 0);
         return result;
     }
 
