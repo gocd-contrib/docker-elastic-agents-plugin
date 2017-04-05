@@ -16,10 +16,11 @@
 
 package cd.go.contrib.elasticagents.docker.executors;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.net.URISyntaxException;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class GoServerURLField extends Field {
 
@@ -29,7 +30,7 @@ public class GoServerURLField extends Field {
 
     @Override
     public String doValidate(String input) {
-        if (StringUtils.isBlank(input)) {
+        if (isBlank(input)) {
             return this.displayName + " must not be blank.";
         }
 
@@ -37,6 +38,10 @@ public class GoServerURLField extends Field {
         try {
             uriBuilder = new URIBuilder(input);
         } catch (URISyntaxException e) {
+            return this.displayName + " must be a valid URL (https://example.com:8154/go)";
+        }
+
+        if (isBlank(uriBuilder.getScheme())) {
             return this.displayName + " must be a valid URL (https://example.com:8154/go)";
         }
 
