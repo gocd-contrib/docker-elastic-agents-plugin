@@ -17,6 +17,8 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
+import cd.go.contrib.elasticagents.docker.requests.ValidatePluginSettings;
+import com.google.common.base.Predicate;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
@@ -37,10 +39,13 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
     public static final Field DOCKER_CA_CERT = new Field("docker_ca_cert", "Docker CA Certificate", null, false, true, "5");
     public static final Field DOCKER_CLIENT_KEY = new Field("docker_client_key", "Docker Client Key", null, false, true, "6");
     public static final Field DOCKER_CLIENT_CERT = new Field("docker_client_cert", "Docker Client Certificate", null, false, true, "7");
-    public static final Field USE_DOCKER_AUTH_INFO = new NonBlankField("use_docker_auth_info", "Use Private Registry", "false", true, false, "8");
-    public static final Field PRIVATE_REGISTRY_SERVER = new Field("private_registry_server", "Private Registry Server", null, false, false, "9");
-    public static final Field PRIVATE_REGISTRY_USERNAME = new Field("private_registry_username", "Private Registry Username", null, false, false, "10");
-    public static final Field PRIVATE_REGISTRY_PASSWORD = new Field("private_registry_password", "Private Registry Password", null, false, true, "11");
+    public static final Field ENABLE_PRIVATE_REGISTRY_AUTHENTICATION = new NonBlankField("enable_private_registry_authentication", "Use Private Registry", "false", true, false, "8");
+    private static final Predicate<ValidatePluginSettings> privateRegistryFieldsPredicate = new Predicate<ValidatePluginSettings>() {
+        @Override public boolean apply(ValidatePluginSettings settings) { return Boolean.parseBoolean(settings.get(ENABLE_PRIVATE_REGISTRY_AUTHENTICATION.key()));}
+    };
+    public static final Field PRIVATE_REGISTRY_SERVER = new ConditionalNonBlankField("private_registry_server", "Private Registry Server", null, false, false, "9", privateRegistryFieldsPredicate);
+    public static final Field PRIVATE_REGISTRY_USERNAME = new ConditionalNonBlankField("private_registry_username", "Private Registry Username", null, false, false, "10", privateRegistryFieldsPredicate);
+    public static final Field PRIVATE_REGISTRY_PASSWORD = new ConditionalNonBlankField("private_registry_password", "Private Registry Password", null, false, true, "11", privateRegistryFieldsPredicate);
 
 
     public static final Map<String, Field> FIELDS = new LinkedHashMap<>();
@@ -57,7 +62,7 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
         FIELDS.put(DOCKER_CLIENT_KEY.key(), DOCKER_CLIENT_KEY);
         FIELDS.put(DOCKER_CLIENT_CERT.key(), DOCKER_CLIENT_CERT);
 
-        FIELDS.put(USE_DOCKER_AUTH_INFO.key(), USE_DOCKER_AUTH_INFO);
+        FIELDS.put(ENABLE_PRIVATE_REGISTRY_AUTHENTICATION.key(), ENABLE_PRIVATE_REGISTRY_AUTHENTICATION);
         FIELDS.put(PRIVATE_REGISTRY_SERVER.key(), PRIVATE_REGISTRY_SERVER);
         FIELDS.put(PRIVATE_REGISTRY_USERNAME.key(), PRIVATE_REGISTRY_USERNAME);
         FIELDS.put(PRIVATE_REGISTRY_PASSWORD.key(), PRIVATE_REGISTRY_PASSWORD);

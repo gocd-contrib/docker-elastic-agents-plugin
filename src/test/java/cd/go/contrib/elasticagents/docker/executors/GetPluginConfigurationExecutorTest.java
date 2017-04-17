@@ -91,7 +91,7 @@ public class GetPluginConfigurationExecutorTest {
                 "    \"secure\": true,\n" +
                 "    \"display-order\": \"7\"\n" +
                 "  }," +
-                "  \"use_docker_auth_info\": {\n" +
+                "  \"enable_private_registry_authentication\": {\n" +
                 "    \"display-name\": \"Use Private Registry\",\n" +
                 "    \"default-value\": \"false\",\n" +
                 "    \"required\": true,\n" +

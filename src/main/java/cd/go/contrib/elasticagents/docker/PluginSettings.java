@@ -77,7 +77,7 @@ public class PluginSettings {
     private String privateRegistryPassword;
 
     @Expose
-    @SerializedName("use_docker_auth_info")
+    @SerializedName("enable_private_registry_authentication")
     private boolean useDockerAuthInfo;
 
     private Period autoRegisterPeriod;

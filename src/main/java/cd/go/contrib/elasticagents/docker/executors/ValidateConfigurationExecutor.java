@@ -36,10 +36,9 @@ public class ValidateConfigurationExecutor implements RequestExecutor {
 
     public GoPluginApiResponse execute() {
         ArrayList<Map<String, String>> result = new ArrayList<>();
-
         for (Map.Entry<String, Field> entry : GetPluginConfigurationExecutor.FIELDS.entrySet()) {
             Field field = entry.getValue();
-            Map<String, String> validationError = field.validate(settings.get(entry.getKey()));
+            Map<String, String> validationError = field.validate(settings);
 
             if (!validationError.isEmpty()) {
                 result.add(validationError);
