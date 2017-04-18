@@ -1,3 +1,9 @@
+## 0.6.2 - 2017-03-22
+
+### Added
+
+- Allow usage of a private registry for elastic agent images 
+
 ## 0.6.1 - 2016-12-11
 
 ### Changed

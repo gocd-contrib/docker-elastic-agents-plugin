@@ -90,9 +90,33 @@ public class GetPluginConfigurationExecutorTest {
                 "    \"required\": false,\n" +
                 "    \"secure\": true,\n" +
                 "    \"display-order\": \"7\"\n" +
+                "  }," +
+                "  \"enable_private_registry_authentication\": {\n" +
+                "    \"display-name\": \"Use Private Registry\",\n" +
+                "    \"default-value\": \"false\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"8\"\n" +
+                "  }," +
+                "  \"private_registry_server\": {\n" +
+                "    \"display-name\": \"Private Registry Server\",\n" +
+                "    \"required\": false,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"9\"\n" +
+                "  }," +
+                "  \"private_registry_username\": {\n" +
+                "    \"display-name\": \"Private Registry Username\",\n" +
+                "    \"required\": false,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"10\"\n" +
+                "  }," +
+                "  \"private_registry_password\": {\n" +
+                "    \"display-name\": \"Private Registry Password\",\n" +
+                "    \"required\": false,\n" +
+                "    \"secure\": true,\n" +
+                "    \"display-order\": \"11\"\n" +
                 "  }" +
                 "}\n";
-
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
     }
 }

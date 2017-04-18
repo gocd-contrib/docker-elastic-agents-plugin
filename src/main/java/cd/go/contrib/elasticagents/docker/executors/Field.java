@@ -16,6 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker.executors;
 
+import cd.go.contrib.elasticagents.docker.requests.ValidatePluginSettings;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang.StringUtils;
@@ -55,7 +56,8 @@ public class Field {
         this.displayOrder = displayOrder;
     }
 
-    public Map<String, String> validate(String input) {
+    public Map<String, String> validate(ValidatePluginSettings settings) {
+        String input = settings.get(key);
         HashMap<String, String> result = new HashMap<>();
         String validationError = doValidate(input);
         if (StringUtils.isNotBlank(validationError)) {
@@ -72,4 +74,5 @@ public class Field {
     public String key() {
         return key;
     }
+
 }

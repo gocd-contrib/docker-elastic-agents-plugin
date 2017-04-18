@@ -64,6 +64,22 @@ public class PluginSettings {
     @SerializedName("docker_client_key")
     private String dockerClientKey;
 
+    @Expose
+    @SerializedName("private_registry_server")
+    private String privateRegistryServer;
+
+    @Expose
+    @SerializedName("private_registry_username")
+    private String privateRegistryUsername;
+
+    @Expose
+    @SerializedName("private_registry_password")
+    private String privateRegistryPassword;
+
+    @Expose
+    @SerializedName("enable_private_registry_authentication")
+    private boolean useDockerAuthInfo;
+
     private Period autoRegisterPeriod;
 
     public static PluginSettings fromJSON(String json) {
@@ -88,8 +104,14 @@ public class PluginSettings {
             return false;
         if (dockerClientKey != null ? !dockerClientKey.equals(that.dockerClientKey) : that.dockerClientKey != null)
             return false;
+        if (useDockerAuthInfo != that.useDockerAuthInfo) return false;
+        if(privateRegistryServer != null ? !privateRegistryServer.equals(that.privateRegistryServer) : that.privateRegistryServer != null)
+            return false;
+        if(privateRegistryUsername != null ? !privateRegistryUsername.equals(that.privateRegistryUsername) : that.privateRegistryUsername != null)
+            return false;
+        if(privateRegistryPassword != null ? !privateRegistryPassword.equals(that.privateRegistryPassword) : that.privateRegistryPassword != null)
+            return false;
         return autoRegisterPeriod != null ? autoRegisterPeriod.equals(that.autoRegisterPeriod) : that.autoRegisterPeriod == null;
-
     }
 
     @Override
@@ -102,6 +124,10 @@ public class PluginSettings {
         result = 31 * result + (dockerClientCert != null ? dockerClientCert.hashCode() : 0);
         result = 31 * result + (dockerClientKey != null ? dockerClientKey.hashCode() : 0);
         result = 31 * result + (autoRegisterPeriod != null ? autoRegisterPeriod.hashCode() : 0);
+        result = 31 * result + (useDockerAuthInfo?1:0);
+        result = 31 * result + (privateRegistryServer != null ? privateRegistryServer.hashCode() : 0);
+        result = 31 * result + (privateRegistryPassword != null ? privateRegistryPassword.hashCode() : 0);
+        result = 31 * result + (privateRegistryUsername != null ? privateRegistryUsername.hashCode() : 0);
         return result;
     }
 
@@ -145,6 +171,22 @@ public class PluginSettings {
 
     public String getDockerClientKey() {
         return dockerClientKey;
+    }
+
+    public String getPrivateRegistryServer() {
+        return privateRegistryServer;
+    }
+
+    public String getPrivateRegistryUsername() {
+        return privateRegistryUsername;
+    }
+
+    public String getPrivateRegistryPassword() {
+        return privateRegistryPassword;
+    }
+
+    public Boolean useDockerAuthInfo() {
+        return Boolean.valueOf(useDockerAuthInfo);
     }
 
     public void setDockerCACert(String dockerCACert) {

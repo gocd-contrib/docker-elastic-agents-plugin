@@ -112,7 +112,7 @@ public class DockerContainer {
 
         LOG.debug("Created container " + containerName);
         docker.startContainer(containerName);
-
+        LOG.debug("container " + containerName + " started");
         return new DockerContainer(containerName, containerInfo.created(), request.properties(), request.environment());
     }
 
