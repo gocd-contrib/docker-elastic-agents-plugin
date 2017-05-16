@@ -27,6 +27,12 @@
 </div>
 
 <div class="form_item_block">
+  <label>Volume Mounts <small>(Enter one host:container map per line)</small></label>
+  <textarea type="text" ng-model="volume_mounts" ng-required="true" rows="7" placeholder="/path/to/godata:/godata&#x000A;/path/to/home-dir:/home/go"></textarea>
+  <span class="form_error" ng-show="GOINPUTNAME[volume_mounts].$error.server">{{GOINPUTNAME[volume_mounts].$error.server}}</span>
+</div>
+
+<div class="form_item_block">
   <label>Agent auto-register Timeout (in minutes)<span class='asterix'>*</span></label>
   <input type="text" ng-model="auto_register_timeout" ng-required="true"/>
   <span class="form_error" ng-show="GOINPUTNAME[auto_register_timeout].$error.server">{{GOINPUTNAME[auto_register_timeout].$error.server}}</span>
