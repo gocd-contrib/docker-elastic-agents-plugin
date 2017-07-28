@@ -41,6 +41,10 @@ public class PluginSettings {
     private String environmentVariables;
 
     @Expose
+    @SerializedName("volume_mounts")
+    private String volumeMounts;
+
+    @Expose
     @SerializedName("max_docker_containers")
     private String maxDockerContainers;
 
@@ -96,6 +100,8 @@ public class PluginSettings {
         if (goServerUrl != null ? !goServerUrl.equals(that.goServerUrl) : that.goServerUrl != null) return false;
         if (environmentVariables != null ? !environmentVariables.equals(that.environmentVariables) : that.environmentVariables != null)
             return false;
+        if (volumeMounts != null ? !volumeMounts.equals(that.volumeMounts) : that.volumeMounts != null)
+            return false;
         if (dockerURI != null ? !dockerURI.equals(that.dockerURI) : that.dockerURI != null) return false;
         if (autoRegisterTimeout != null ? !autoRegisterTimeout.equals(that.autoRegisterTimeout) : that.autoRegisterTimeout != null)
             return false;
@@ -118,6 +124,7 @@ public class PluginSettings {
     public int hashCode() {
         int result = goServerUrl != null ? goServerUrl.hashCode() : 0;
         result = 31 * result + (environmentVariables != null ? environmentVariables.hashCode() : 0);
+        result = 31 * result + (volumeMounts != null ? volumeMounts.hashCode() : 0);
         result = 31 * result + (dockerURI != null ? dockerURI.hashCode() : 0);
         result = 31 * result + (autoRegisterTimeout != null ? autoRegisterTimeout.hashCode() : 0);
         result = 31 * result + (dockerCACert != null ? dockerCACert.hashCode() : 0);
@@ -147,6 +154,10 @@ public class PluginSettings {
 
     public Collection<String> getEnvironmentVariables() {
         return Util.splitIntoLinesAndTrimSpaces(environmentVariables);
+    }
+
+    public Collection<String> getVolumeMounts() {
+        return Util.splitIntoLinesAndTrimSpaces(volumeMounts);
     }
 
     public Integer getMaxDockerContainers() {
@@ -207,6 +218,10 @@ public class PluginSettings {
 
     public void setEnvironmentVariables(String environmentVariables) {
         this.environmentVariables = environmentVariables;
+    }
+
+    public void setVolumeMounts(String volumeMounts) {
+        this.volumeMounts = volumeMounts;
     }
 
     public void setMaxDockerContainers(Integer maxDockerContainers) {
