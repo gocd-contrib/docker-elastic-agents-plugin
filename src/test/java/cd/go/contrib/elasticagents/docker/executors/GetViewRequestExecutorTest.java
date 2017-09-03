@@ -18,10 +18,11 @@ package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.utils.Util;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Test;
 
-import java.util.HashMap;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
@@ -33,7 +34,9 @@ public class GetViewRequestExecutorTest {
     public void shouldRenderTheTemplateInJSON() throws Exception {
         GoPluginApiResponse response = new GetViewRequestExecutor().execute();
         assertThat(response.responseCode(), is(200));
-        Map<String, String> hashSet = new Gson().fromJson(response.responseBody(), HashMap.class);
+        final Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
+        Map<String, String> hashSet = new Gson().fromJson(response.responseBody(), type);
         assertThat(hashSet, hasEntry("template", Util.readResource("/plugin-settings.template.html")));
     }
 

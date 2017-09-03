@@ -19,7 +19,9 @@ package cd.go.contrib.elasticagents.docker.requests;
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.executors.ProfileValidateRequestExecutor;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 
 public class ProfileValidateRequest {
@@ -37,7 +39,10 @@ public class ProfileValidateRequest {
     }
 
     public static ProfileValidateRequest fromJSON(String json) {
-        return new ProfileValidateRequest(GSON.fromJson(json, Map.class));
+        final Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
+        final Map<String, String> properties = GSON.fromJson(json, type);
+        return new ProfileValidateRequest(properties);
     }
 
     public RequestExecutor executor() {

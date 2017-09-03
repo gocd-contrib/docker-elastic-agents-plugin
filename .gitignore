@@ -1,7 +1,9 @@
 .idea/
 *.iml
 target/
+build
 .gradle
 .gradletasknamecache
 .tags
 .tags1
+out/

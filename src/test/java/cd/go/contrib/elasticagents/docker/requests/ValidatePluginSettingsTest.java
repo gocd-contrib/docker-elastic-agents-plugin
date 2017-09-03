@@ -18,9 +18,7 @@ package cd.go.contrib.elasticagents.docker.requests;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ValidatePluginSettingsTest {
@@ -42,10 +40,9 @@ public class ValidatePluginSettingsTest {
                 "}";
 
         ValidatePluginSettings request = ValidatePluginSettings.fromJSON(json);
-        HashMap<String, String> expectedSettings = new HashMap<>();
-        expectedSettings.put("server_url", "http://localhost");
-        expectedSettings.put("username", "bob");
-        expectedSettings.put("password", "secret");
-        assertThat(request, equalTo(expectedSettings));
+
+        assertThat(request.get("server_url"), is("http://localhost"));
+        assertThat(request.get("username"), is("bob"));
+        assertThat(request.get("password"), is("secret"));
     }
 }

@@ -16,9 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker.executors;
 
-import cd.go.contrib.elasticagents.docker.AgentInstances;
-import cd.go.contrib.elasticagents.docker.PluginRequest;
-import cd.go.contrib.elasticagents.docker.PluginSettings;
+import cd.go.contrib.elasticagents.docker.*;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import org.junit.Test;
 
@@ -28,7 +26,7 @@ public class CreateAgentRequestExecutorTest {
     @Test
     public void shouldAskDockerContainersToCreateAnAgent() throws Exception {
         CreateAgentRequest request = new CreateAgentRequest();
-        AgentInstances agentInstances = mock(AgentInstances.class);
+        AgentInstances<DockerContainer> agentInstances = mock(DockerContainers.class);
         PluginRequest pluginRequest = mock(PluginRequest.class);
         PluginSettings settings = mock(PluginSettings.class);
         when(pluginRequest.getPluginSettings()).thenReturn(settings);

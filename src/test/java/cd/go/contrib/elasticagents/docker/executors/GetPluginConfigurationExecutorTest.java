@@ -17,11 +17,13 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import java.util.HashMap;
+import java.lang.reflect.Type;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -32,7 +34,9 @@ public class GetPluginConfigurationExecutorTest {
     @Test
     public void shouldSerializeAllFields() throws Exception {
         GoPluginApiResponse response = new GetPluginConfigurationExecutor().execute();
-        HashMap hashMap = new Gson().fromJson(response.responseBody(), HashMap.class);
+        final Type type = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        Map<String, Object> hashMap = new Gson().fromJson(response.responseBody(), type);
         assertEquals(hashMap.size(), GetPluginConfigurationExecutor.FIELDS.size());
     }
 

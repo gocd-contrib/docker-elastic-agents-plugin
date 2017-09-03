@@ -66,6 +66,7 @@ public class ValidateConfigurationExecutorTest {
         settings.put("go_server_url", "https://ci.example.com");
         settings.put("enable_private_registry_authentication", "false");
         settings.put("auto_register_timeout", "10");
+
         GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
 
         assertThat(response.responseCode(), is(200));

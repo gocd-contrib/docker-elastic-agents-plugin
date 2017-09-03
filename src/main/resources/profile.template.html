@@ -14,20 +14,62 @@
   ~ limitations under the License.
   -->
 
-<div class="form_item_block">
-    <label ng-class="{'is-invalid-label': GOINPUTNAME[Image].$error.server}">Docker image:<span class='asterix'>*</span></label>
-    <input ng-class="{'is-invalid-input': GOINPUTNAME[Image].$error.server}" type="text" ng-model="Image" ng-required="true" placeholder="alpine:latest"/>
-    <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Image].$error.server}" ng-show="GOINPUTNAME[Image].$error.server">{{GOINPUTNAME[Image].$error.server}}</span>
-</div>
+<div data-plugin-style-id="docker-elastic-plugin">
 
-<div class="form_item_block">
-    <label ng-class="{'is-invalid-label': GOINPUTNAME[Command].$error.server}">Docker Command: <small>(Enter one parameter per line)</small></label>
-    <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Command].$error.server}" type="text" ng-model="Command" ng-required="true" rows="7" placeholder="ls&#x000A;-al&#x000A;/usr/bin"></textarea>
-    <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Command].$error.server}" ng-show="GOINPUTNAME[Command].$error.server">{{GOINPUTNAME[Command].$error.server}}</span>
-</div>
+    <style>
+        [data-plugin-style-id="docker-elastic-plugin"] .form-help-content {
+            color: #666;
+            font-style: italic;
+            clear: both;
+            font-size: 0.82rem;
+            margin-top: -15px;
+            margin-bottom: 10px;
+        }
 
-<div class="form_item_block">
-    <label ng-class="{'is-invalid-label': GOINPUTNAME[Environment].$error.server}">Environment Variables <small>(Enter one variable per line)</small></label>
-    <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Environment].$error.server}" type="text" ng-model="Environment" ng-required="true" rows="7" placeholder="JAVA_HOME=/opt/java&#x000A;MAVEN_HOME=/opt/maven"></textarea>
-    <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Environment].$error.server}" ng-show="GOINPUTNAME[Environment].$error.server">{{GOINPUTNAME[Environment].$error.server}}</span>
+        [data-plugin-style-id="docker-elastic-plugin"] .form-help-content .code {
+            padding: 16px;
+            overflow: auto;
+            font-size: 85%;
+            line-height: 1.45;
+            background-color: #f6f8fa;
+            border-radius: 3px;
+        }
+
+    </style>
+
+    <div class="form_item_block">
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[Image].$error.server}">Docker image:<span class='asterix'>*</span></label>
+        <input ng-class="{'is-invalid-input': GOINPUTNAME[Image].$error.server}" type="text" ng-model="Image" ng-required="true" placeholder="alpine:latest"/>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Image].$error.server}" ng-show="GOINPUTNAME[Image].$error.server">{{GOINPUTNAME[Image].$error.server}}</span>
+    </div>
+
+    <div class="form_item_block">
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[Command].$error.server}">Docker Command: <small>(Enter one parameter per line)</small></label>
+        <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Command].$error.server}" type="text" ng-model="Command" ng-required="true" rows="7" placeholder="ls&#x000A;-al&#x000A;/usr/bin"></textarea>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Command].$error.server}" ng-show="GOINPUTNAME[Command].$error.server">{{GOINPUTNAME[Command].$error.server}}</span>
+    </div>
+
+    <div class="form_item_block">
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[Environment].$error.server}">Environment Variables <small>(Enter one variable per line)</small></label>
+        <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Environment].$error.server}" type="text" ng-model="Environment" ng-required="true" rows="7" placeholder="JAVA_HOME=/opt/java&#x000A;MAVEN_HOME=/opt/maven"></textarea>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Environment].$error.server}" ng-show="GOINPUTNAME[Environment].$error.server">{{GOINPUTNAME[Environment].$error.server}}</span>
+    </div>
+
+    <div class="row">
+        <div class="columns end">
+            <label ng-class="{'is-invalid-label': GOINPUTNAME[Hosts].$error.server}">Host entries
+                <small>(Enter one host entry per line)</small>
+            </label>
+            <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Hosts].$error.server}" type="text" ng-model="Hosts" ng-required="true" rows="7"></textarea>
+            <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Hosts].$error.server}" ng-show="GOINPUTNAME[Hosts].$error.server">{{GOINPUTNAME[Hosts].$error.server}}</span>
+            <label class="form-help-content">
+                This allows users to add host entries in <code>/etc/hosts</code>. Enter one host entry per line and in below mentioned format:
+                <div class="code">
+                    IP-ADDRESS HOSTNAME-1 HOSTNAME-2...<br/>
+                    172.10.0.1 host-x<br/>
+                    172.10.0.2 host-y host-z
+                </div>
+            </label>
+        </div>
+    </div>
 </div>
