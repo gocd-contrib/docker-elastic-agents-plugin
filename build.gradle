@@ -22,7 +22,7 @@ apply plugin: 'java'
 apply from: 'plugin-common.gradle'
 
 group = 'cd.go.contrib'
-version = '0.7.0'
+version = '0.8.0'
 description = 'GoCD Docker Elastic Agents'
 
 // these values that go into plugin.xml
