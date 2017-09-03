@@ -1,3 +1,18 @@
+## 0.8.0 - 2017-09-03
+
+#### Added
+
+- User can now provide mapping for host entries in IP-ADDRESS HOSTNAME-1 HOSTNAME-2... format, which is the standard format for `/etc/hosts` file.
+
+```hosts
+10.0.0.1   host-x
+10.0.0.2   host-y   host-z
+``` 
+
+#### Changes
+
+- Updated spotify `docker-client` library to `v8.9.0`
+
 ## 0.7.0 - 2017-04-18
 
 ### Added

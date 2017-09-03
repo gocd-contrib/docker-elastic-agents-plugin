@@ -19,6 +19,7 @@ plugins {
 }
 
 apply plugin: 'java'
+apply from: 'plugin-common.gradle'
 
 group = 'cd.go.contrib'
 version = '0.7.0'
@@ -38,8 +39,6 @@ project.ext.pluginDesc = [
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-buildDir = "${projectDir}/target"
-
 repositories {
   jcenter()
   mavenLocal()
@@ -50,6 +49,7 @@ sourceSets {
     java {
       compileClasspath += configurations.compileOnly
       runtimeClasspath += configurations.compileOnly
+      resources.srcDirs += ['src/main/resource-templates']
     }
   }
 }
@@ -58,7 +58,7 @@ dependencies {
   compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '16.11.0'
 
   compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
-  compile group: 'com.spotify', name: 'docker-client', version: '8.4.0'
+  compile group: 'com.spotify', name: 'docker-client', version: '8.9.0'
   compile group: 'com.google.guava', name: 'guava', version: '19.0'
   compile group: 'joda-time', name: 'joda-time', version: '2.9.4'
   compile group: 'commons-io', name: 'commons-io', version: '2.5'
@@ -77,36 +77,11 @@ processResources {
   }
 }
 
-test {
-  maxParallelForks = 1
-  testLogging {
-    showStandardStreams = true
-
-    exceptionFormat 'full'
-
-    beforeSuite { suite ->
-      if (suite.parent) {
-        logger.quiet("Running ${suite.name}")
-      }
-    }
-
-    afterSuite { suite, result ->
-      if (suite.parent) {
-        logger.quiet("Tests run: ${result.testCount}, Failures: ${result.failedTestCount}, Skipped: ${result.skippedTestCount}, Time elapsed: ${(result.endTime - result.startTime) / 1000.00} sec")
-        if (result.resultType == TestResult.ResultType.FAILURE) {
-          logger.quiet("Test ${suite.name} FAILED")
-        }
-      } else {
-        logger.quiet("Total tests run: ${result.testCount}, Failures: ${result.failedTestCount}, Skipped: ${result.skippedTestCount}, Time elapsed: ${(result.endTime - result.startTime) / 1000.00} sec")
-      }
-    }
-  }
-}
-
 jar {
   from(configurations.compile) {
     into "lib/"
   }
+  
   from(sourceSets.main.java) {
     into "/"
   }

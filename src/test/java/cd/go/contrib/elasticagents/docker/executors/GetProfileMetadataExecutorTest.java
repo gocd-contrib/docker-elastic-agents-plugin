@@ -17,10 +17,12 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -32,7 +34,10 @@ public class GetProfileMetadataExecutorTest {
     @Test
     public void shouldSerializeAllFields() throws Exception {
         GoPluginApiResponse response = new GetProfileMetadataExecutor().execute();
-        List list = new Gson().fromJson(response.responseBody(), List.class);
+        final Type type = new TypeToken<List<Metadata>>() {
+        }.getType();
+
+        List<Metadata> list = new Gson().fromJson(response.responseBody(), type);
         assertEquals(list.size(), GetProfileMetadataExecutor.FIELDS.size());
     }
 
@@ -58,6 +63,13 @@ public class GetProfileMetadataExecutorTest {
                 "  },\n" +
                 "  {\n" +
                 "    \"key\": \"Environment\",\n" +
+                "    \"metadata\": {\n" +
+                "      \"required\": false,\n" +
+                "      \"secure\": false\n" +
+                "    }\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"key\": \"Hosts\",\n" +
                 "    \"metadata\": {\n" +
                 "      \"required\": false,\n" +
                 "      \"secure\": false\n" +

@@ -18,15 +18,14 @@ package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.utils.Util;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Test;
 
-import java.util.HashMap;
+import java.lang.reflect.Type;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class GetProfileViewExecutorTest {
@@ -34,7 +33,9 @@ public class GetProfileViewExecutorTest {
     public void shouldRenderTheTemplateInJSON() throws Exception {
         GoPluginApiResponse response = new GetProfileViewExecutor().execute();
         assertThat(response.responseCode(), is(200));
-        Map<String, String> hashSet = new Gson().fromJson(response.responseBody(), HashMap.class);
+        final Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
+        final Map<String, String> hashSet = new Gson().fromJson(response.responseBody(), type);
         assertThat(hashSet, hasEntry("template", Util.readResource("/profile.template.html")));
     }
 

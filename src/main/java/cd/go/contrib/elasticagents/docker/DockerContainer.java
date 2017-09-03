@@ -25,6 +25,7 @@ import com.spotify.docker.client.exceptions.ImageNotFoundException;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.ContainerInfo;
+import com.spotify.docker.client.messages.HostConfig;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
@@ -100,11 +101,15 @@ public class DockerContainer {
             containerConfigBuilder.cmd(splitIntoLinesAndTrimSpaces(request.properties().get("Command")).toArray(new String[]{}));
         }
 
-        ContainerConfig containerConfig = containerConfigBuilder.
-                image(imageName).
-                labels(labels).
-                env(env).
-                build();
+        final String hostConfig = request.properties().get("Hosts");
+
+        ContainerConfig containerConfig = containerConfigBuilder
+                .image(imageName)
+                .labels(labels)
+                .env(env)
+                .hostConfig(HostConfig.builder().extraHosts(new Hosts(hostConfig)).build())
+                .build();
+
         ContainerCreation container = docker.createContainer(containerConfig, containerName);
         String id = container.id();
 

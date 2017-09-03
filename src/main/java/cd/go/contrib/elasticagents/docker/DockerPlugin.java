@@ -37,7 +37,7 @@ public class DockerPlugin implements GoPlugin {
 
     public static final Logger LOG = Logger.getLoggerFor(DockerPlugin.class);
 
-    private AgentInstances agentInstances;
+    private AgentInstances<DockerContainer> agentInstances;
     private PluginRequest pluginRequest;
 
     @Override

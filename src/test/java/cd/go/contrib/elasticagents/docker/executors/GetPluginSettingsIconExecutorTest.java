@@ -18,11 +18,13 @@ package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.utils.Util;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 
-import java.util.HashMap;
+import java.lang.reflect.Type;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -32,7 +34,10 @@ public class GetPluginSettingsIconExecutorTest {
     @Test
     public void rendersIconInBase64() throws Exception {
         GoPluginApiResponse response = new GetPluginSettingsIconExecutor().execute();
-        HashMap<String, String> hashMap = new Gson().fromJson(response.responseBody(), HashMap.class);
+        final Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
+        final Map<String, String> hashMap = new Gson().fromJson(response.responseBody(), type);
+
         assertThat(hashMap.size(), is(2));
         assertThat(hashMap.get("content_type"), is("image/svg+xml"));
         assertThat(Util.readResourceBytes("/docker-plain.svg"), is(Base64.decodeBase64(hashMap.get("data"))));

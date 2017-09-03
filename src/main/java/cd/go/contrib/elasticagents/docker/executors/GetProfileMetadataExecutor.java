@@ -16,6 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker.executors;
 
+import cd.go.contrib.elasticagents.docker.HostMetadata;
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,6 +32,7 @@ public class GetProfileMetadataExecutor implements RequestExecutor {
     public static final Metadata IMAGE = new Metadata("Image", true, false);
     public static final Metadata COMMAND = new Metadata("Command", false, false);
     public static final Metadata ENVIRONMENT = new Metadata("Environment", false, false);
+    public static final Metadata HOSTS = new HostMetadata();
 
     public static final List<Metadata> FIELDS = new ArrayList<>();
 
@@ -38,6 +40,7 @@ public class GetProfileMetadataExecutor implements RequestExecutor {
         FIELDS.add(IMAGE);
         FIELDS.add(COMMAND);
         FIELDS.add(ENVIRONMENT);
+        FIELDS.add(HOSTS);
     }
 
     @Override

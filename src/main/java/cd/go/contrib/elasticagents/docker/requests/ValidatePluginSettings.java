@@ -18,29 +18,49 @@ package cd.go.contrib.elasticagents.docker.requests;
 
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.executors.ValidateConfigurationExecutor;
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.HashMap;
-import java.util.Map;
 
-public class ValidatePluginSettings extends HashMap<String, String> {
-    public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+public class ValidatePluginSettings {
+    private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    @Expose
+    @SerializedName("plugin-settings")
+    private PluginSettings pluginSettings = new PluginSettings();
 
     public static ValidatePluginSettings fromJSON(String json) {
-        ValidatePluginSettings result = new ValidatePluginSettings();
-
-        Map<String, Map<String, String>> settings = (Map<String, Map<String, String>>) GSON.fromJson(json, HashMap.class).get("plugin-settings");
-
-        for (Map.Entry<String, Map<String, String>> entry : settings.entrySet()) {
-            result.put(entry.getKey(), entry.getValue().get("value"));
-        }
-
-        return result;
+        return GSON.fromJson(json, ValidatePluginSettings.class);
     }
 
     public RequestExecutor executor() {
         return new ValidateConfigurationExecutor(this);
+    }
+
+    public String get(String key) {
+        if (pluginSettings == null || pluginSettings.get(key) == null) {
+            return null;
+        }
+
+        return pluginSettings.get(key).value;
+    }
+
+    public void put(String key, String value) {
+        pluginSettings.put(key, new Value(value));
+    }
+
+    private static class PluginSettings extends HashMap<String, Value> {
+    }
+
+    private static class Value {
+        @Expose
+        @SerializedName("value")
+        private String value;
+
+        public Value(String value) {
+            this.value = value;
+        }
     }
 }

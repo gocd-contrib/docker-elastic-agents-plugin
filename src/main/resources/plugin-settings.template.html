@@ -62,7 +62,7 @@
   <span class="form_error" ng-show="GOINPUTNAME[docker_client_cert].$error.server">{{GOINPUTNAME[docker_client_cert].$error.server}}</span>
 </div>
 
-<div class="form_item_block">
+<div class="form_item_block" ng-int="enable_private_registry_authentication = (enable_private_registry_authentication || false)">
   <label>Use Private Registry</label>
   <input type="radio" ng-model="enable_private_registry_authentication" value="true"/> True
   <input type="radio" ng-model="enable_private_registry_authentication" value="false"/> False

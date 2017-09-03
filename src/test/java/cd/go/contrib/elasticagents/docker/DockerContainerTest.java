@@ -17,6 +17,7 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
+import com.google.common.collect.ImmutableList;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.ImageNotFoundException;
 import com.spotify.docker.client.messages.ContainerInfo;
@@ -154,5 +155,28 @@ public class DockerContainerTest extends BaseTest {
         DockerContainer dockerContainer = DockerContainer.fromContainerInfo(docker.inspectContainer(container.name()));
 
         assertEquals(container, dockerContainer);
+    }
+
+    @Test
+    public void shouldStartContainerWithHostEntry() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "alpine:latest");
+        properties.put("Hosts", "127.0.0.2\tbaz \n192.168.5.1\tfoo\tbar\n127.0.0.1  gocd.local ");
+        properties.put("Command", "cat\n/etc/hosts");
+
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), createSettings(), docker);
+
+        containers.add(container.name());
+        ContainerInfo containerInfo = docker.inspectContainer(container.name());
+
+        final ImmutableList<String> extraHosts = containerInfo.hostConfig().extraHosts();
+        assertThat(extraHosts, containsInAnyOrder(
+                "baz:127.0.0.2", "foo\tbar:192.168.5.1", "gocd.local:127.0.0.1"
+        ));
+
+        String logs = docker.logs(container.name(), DockerClient.LogsParam.stdout()).readFully();
+        assertThat(logs, containsString("127.0.0.2\tbaz"));
+        assertThat(logs, containsString("192.168.5.1\tfoo"));
+        assertThat(logs, containsString("127.0.0.1\tgocd.local"));
     }
 }
