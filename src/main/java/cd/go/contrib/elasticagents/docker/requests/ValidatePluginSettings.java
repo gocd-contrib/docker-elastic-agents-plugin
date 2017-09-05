@@ -59,6 +59,9 @@ public class ValidatePluginSettings {
         @SerializedName("value")
         private String value;
 
+        public Value() {
+        }
+
         public Value(String value) {
             this.value = value;
         }
