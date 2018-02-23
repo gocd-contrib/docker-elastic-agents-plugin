@@ -52,6 +52,10 @@ public class GoServerURLField extends Field {
         if (uriBuilder.getHost().equalsIgnoreCase("localhost") || uriBuilder.getHost().equalsIgnoreCase("127.0.0.1")) {
             return this.displayName + " must not be localhost, since this gets resolved on the agents";
         }
+
+        if (!(uriBuilder.getPath().endsWith("/go") || uriBuilder.getPath().endsWith("/go/"))) {
+            return this.displayName + " must be a valid URL ending with '/go' (https://example.com:8154/go)";
+        }
         return null;
     }
 
