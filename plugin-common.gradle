@@ -1,3 +1,7 @@
+import groovy.xml.XmlUtil
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 def gitRevision = { ->
     def hashStdOut = new ByteArrayOutputStream()
     exec {
@@ -105,6 +109,87 @@ tasks.withType(Test) {
             }
         }
     }
+}
+
+task releaseNotes {
+    outputs.upToDateWhen { false }
+    def releaseNotesHTMLFile = file("${project.getBuildDir()}/release-notes.html")
+
+    inputs.property('distVersion', project.distVersion)
+    inputs.property('gitRevision', project.gitRevision)
+
+    outputs.file releaseNotesHTMLFile
+
+    doLast {
+        releaseNotesHTMLFile.getParentFile().mkdirs()
+        String previousReleaseSha = execCommand("git", "rev-list", "--tags", "--max-count=1")
+        String previousVersion = execCommand("git", "describe", "--tags", previousReleaseSha)
+        String getLogSinceLastRelease = execCommand("git", "log", "--no-merges", "--pretty=format:%h %H %s", "${previousReleaseSha}..${rootProject.gitRevision}")
+        String gitContributors = execCommand("git", 'shortlog', "-s", "--no-merges", "${previousReleaseSha}..${rootProject.gitRevision}")
+
+        def collaborators = gitContributors.readLines().collect { line -> line.trim().split(/\s+/, 2).last() }
+
+        releaseNotesHTMLFile.withWriter { html ->
+            def bugfixes = new StringWriter()
+            Pattern pattern = Pattern.compile(/#(\d+)/)
+            getLogSinceLastRelease.eachLine { line ->
+                def (String shortSha, String sha, String message) = line.split(/ /, 3)
+                message = XmlUtil.escapeXml(message)
+                bugfixes.write("<p>")
+                bugfixes.write("""<a href="https://www.github.com/gocd/gocd/commit/${sha}"><code>${
+                    shortSha
+                }</code></a>""")
+                bugfixes.write(" ")
+                Matcher matcher = pattern.matcher(message)
+                if (matcher.find()) {
+                    bugfixes.write(matcher.replaceAll("""<a href="https://www.github.com/gocd/gocd/issues/\$1">#\$1</a>"""))
+                } else {
+                    bugfixes.write(message)
+                }
+                bugfixes.write("</p>")
+                bugfixes.println("")
+            }
+
+            html.println("""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Release Notes</title>
+  <style>
+    .release-notes p {
+      margin: 1px;
+      font-family:monospace;
+    }
+  </style>
+</head>
+<body>
+<div class='release-notes'>
+<h1>Issues and Bug fixes</h1>
+${bugfixes}
+<h1>Contributors</h1>
+${collaborators.join(", ")}
+</div>
+</body>
+</html>
+""")
+            html.println()
+        }
+    }
+}
+
+private String execCommand(String... cmd) {
+    println String.join(" ", cmd)
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
+    exec {
+        commandLine cmd
+        standardOutput = outputStream
+    }
+    def result = outputStream.toString()
+    if (result.endsWith("\n")) {
+        result = result.substring(0, result.length() - 2)
+    }
+
+    result
 }
 
 private String summaryStyle(result) {
