@@ -17,6 +17,7 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.*;
+import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import org.joda.time.Period;
 import org.junit.Test;
@@ -83,7 +84,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         Map<String, String> properties = new HashMap<>();
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
-        DockerContainer container = agentInstances.create(new CreateAgentRequest(null, properties, null), createSettings());
+        DockerContainer container = agentInstances.create(new CreateAgentRequest(null, properties, null, new JobIdentifier()), createSettings());
         containers.add(container.name());
 
         ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(agentInstances, pluginRequest);

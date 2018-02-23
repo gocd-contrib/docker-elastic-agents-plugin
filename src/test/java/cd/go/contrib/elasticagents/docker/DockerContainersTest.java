@@ -16,6 +16,9 @@
 
 package cd.go.contrib.elasticagents.docker;
 
+import cd.go.contrib.elasticagents.docker.models.AgentStatusReport;
+import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
+import cd.go.contrib.elasticagents.docker.models.StatusReport;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import org.joda.time.Period;
 import org.junit.Before;
@@ -24,7 +27,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,13 +37,14 @@ public class DockerContainersTest extends BaseTest {
     private CreateAgentRequest request;
     private DockerContainers dockerContainers;
     private PluginSettings settings;
+    private final JobIdentifier jobIdentifier = new JobIdentifier("up42", 2L, "foo", "stage", "1", "job", 1L);
 
     @Before
     public void setUp() throws Exception {
         HashMap<String, String> properties = new HashMap<>();
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
-        request = new CreateAgentRequest("key", properties, "production");
+        request = new CreateAgentRequest("key", properties, "production", jobIdentifier);
         dockerContainers = new DockerContainers();
         settings = createSettings();
     }
@@ -170,5 +174,40 @@ public class DockerContainersTest extends BaseTest {
         dockerContainers.terminateUnregisteredInstances(createSettings(), new Agents());
         assertTrue(dockerContainers.hasInstance(container.name()));
         assertContainerExist(container.name());
+    }
+
+    @Test
+    public void shouldGetStatusReport() throws Exception {
+        DockerContainer container = dockerContainers.create(request, settings);
+        containers.add(container.name());
+
+        StatusReport statusReport = dockerContainers.getStatusReport(settings);
+
+        assertThat(statusReport, is(notNullValue()));
+        assertThat(statusReport.getContainerStatusReports(), hasSize(1));
+    }
+
+    @Test
+    public void shouldGetAgentStatusReportUsingElasticAgentId() throws Exception {
+        DockerContainer container = dockerContainers.create(request, settings);
+        containers.add(container.name());
+
+        AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(container.name(), settings);
+
+        assertThat(agentStatusReport, is(notNullValue()));
+        assertThat(agentStatusReport.getElasticAgentId(), is(container.name()));
+        assertThat(agentStatusReport.getJobIdentifier(), is(request.jobIdentifier()));
+    }
+
+    @Test
+    public void shouldGetAgentStatusReportUsingJobIdentifier() throws Exception {
+        DockerContainer container = dockerContainers.create(request, settings);
+        containers.add(container.name());
+
+        AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(request.jobIdentifier(), settings);
+
+        assertThat(agentStatusReport, is(notNullValue()));
+        assertThat(agentStatusReport.getElasticAgentId(), is(container.name()));
+        assertThat(agentStatusReport.getJobIdentifier(), is(request.jobIdentifier()));
     }
 }

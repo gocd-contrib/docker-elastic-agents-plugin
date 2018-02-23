@@ -18,6 +18,7 @@ package cd.go.contrib.elasticagents.docker.requests;
 
 import cd.go.contrib.elasticagents.docker.*;
 import cd.go.contrib.elasticagents.docker.executors.CreateAgentRequestExecutor;
+import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -36,15 +37,16 @@ public class CreateAgentRequest {
     private String autoRegisterKey;
     private Map<String, String> properties;
     private String environment;
-
+    private JobIdentifier jobIdentifier;
 
     public CreateAgentRequest() {
     }
 
-    public CreateAgentRequest(String autoRegisterKey, Map<String, String> properties, String environment) {
+    public CreateAgentRequest(String autoRegisterKey, Map<String, String> properties, String environment, JobIdentifier jobIdentifier) {
         this.autoRegisterKey = autoRegisterKey;
         this.properties = properties;
         this.environment = environment;
+        this.jobIdentifier = jobIdentifier;
     }
 
     public String autoRegisterKey() {
@@ -57,6 +59,10 @@ public class CreateAgentRequest {
 
     public String environment() {
         return environment;
+    }
+
+    public JobIdentifier jobIdentifier() {
+        return jobIdentifier;
     }
 
     public static CreateAgentRequest fromJSON(String json) {
