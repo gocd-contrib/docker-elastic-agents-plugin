@@ -16,6 +16,9 @@
 
 package cd.go.contrib.elasticagents.docker;
 
+import cd.go.contrib.elasticagents.docker.models.AgentStatusReport;
+import cd.go.contrib.elasticagents.docker.models.ContainerStatusReport;
+import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.google.common.collect.ImmutableList;
 import com.spotify.docker.client.DockerClient;
@@ -40,13 +43,15 @@ public class DockerContainerTest extends BaseTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    private JobIdentifier jobIdentifier;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         HashMap<String, String> properties = new HashMap<>();
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
-        request = new CreateAgentRequest("key", properties, "production");
+        jobIdentifier = new JobIdentifier("up42", 2L, "foo", "stage", "1", "job", 1L);
+        request = new CreateAgentRequest("key", properties, "production", jobIdentifier);
     }
 
     @Test
@@ -64,7 +69,7 @@ public class DockerContainerTest extends BaseTest {
             docker.removeImage(imageName, true, false);
         } catch (ImageNotFoundException ignore) {
         }
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod"), createSettings(), docker);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier), createSettings(), docker);
         containers.add(container.name());
 
         assertNotNull(docker.inspectImage(imageName));
@@ -76,12 +81,12 @@ public class DockerContainerTest extends BaseTest {
         String imageName = "ubuntu:does-not-exist";
         thrown.expect(ImageNotFoundException.class);
         thrown.expectMessage(containsString("Image not found: " + imageName));
-        DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod"), createSettings(), docker);
+        DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier), createSettings(), docker);
     }
 
     @Test
     public void shouldNotCreateContainerIfTheImageIsNotProvided() throws Exception {
-        CreateAgentRequest request = new CreateAgentRequest("key", new HashMap<String, String>(), "production");
+        CreateAgentRequest request = new CreateAgentRequest("key", new HashMap<>(), "production", jobIdentifier);
 
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("Must provide `Image` attribute.");
@@ -97,7 +102,7 @@ public class DockerContainerTest extends BaseTest {
 
         PluginSettings settings = createSettings();
         settings.setEnvironmentVariables("GLOBAL=something");
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), settings, docker);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), settings, docker);
         containers.add(container.name());
 
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
@@ -113,7 +118,7 @@ public class DockerContainerTest extends BaseTest {
         Map<String, String> properties = new HashMap<>();
         properties.put("Image", "busybox:latest");
 
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), createSettings(), docker);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), createSettings(), docker);
         containers.add(container.name());
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
         assertThat(containerInfo.config().env(), hasItem("GO_EA_AUTO_REGISTER_KEY=key"));
@@ -128,7 +133,7 @@ public class DockerContainerTest extends BaseTest {
         properties.put("Image", "busybox:latest");
         properties.put("Command", "cat\n/etc/hosts\n/etc/group");
 
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), createSettings(), docker);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), createSettings(), docker);
         containers.add(container.name());
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
         assertThat(containerInfo.config().cmd(), is(Arrays.asList("cat", "/etc/hosts", "/etc/group")));
@@ -164,7 +169,7 @@ public class DockerContainerTest extends BaseTest {
         properties.put("Hosts", "127.0.0.2\tbaz \n192.168.5.1\tfoo\tbar\n127.0.0.1  gocd.local ");
         properties.put("Command", "cat\n/etc/hosts");
 
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod"), createSettings(), docker);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), createSettings(), docker);
 
         containers.add(container.name());
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
@@ -178,5 +183,46 @@ public class DockerContainerTest extends BaseTest {
         assertThat(logs, containsString("127.0.0.2\tbaz"));
         assertThat(logs, containsString("192.168.5.1\tfoo"));
         assertThat(logs, containsString("127.0.0.1\tgocd.local"));
+
+        AgentStatusReport agentStatusReport = container.getAgentStatusReport(docker);
+        assertThat(agentStatusReport.getHosts(), containsInAnyOrder(
+                "baz:127.0.0.2", "foo\tbar:192.168.5.1", "gocd.local:127.0.0.1"));
+    }
+
+    @Test
+    public void shouldGetContainerStatusReport() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "busybox:latest");
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), createSettings(), docker);
+        containers.add(container.name());
+
+        ContainerStatusReport containerStatusReport = container.getContainerStatusReport(docker);
+
+        assertThat(containerStatusReport, is(notNullValue()));
+        assertThat(containerStatusReport.getElasticAgentId(), is(container.name()));
+        assertThat(containerStatusReport.getImage(), is("busybox:latest"));
+        assertThat(containerStatusReport.getJobIdentifier(), is(jobIdentifier));
+        assertThat(containerStatusReport.getState(), equalToIgnoringCase("running"));
+    }
+
+    @Test
+    public void shouldGetAgentStatusReport() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "busybox:latest");
+        properties.put("Command", "ls");
+        properties.put("Environment", "A=B\nC=D");
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), createSettings(), docker);
+        containers.add(container.name());
+
+        AgentStatusReport agentStatusReport = container.getAgentStatusReport(docker);
+
+        assertThat(agentStatusReport, is(notNullValue()));
+        assertThat(agentStatusReport.getElasticAgentId(), is(container.name()));
+        assertThat(agentStatusReport.getImage(), is("busybox:latest"));
+        assertThat(agentStatusReport.getJobIdentifier(), is(jobIdentifier));
+        assertThat(agentStatusReport.getCommand(), is("ls"));
+        Map<String, String> environmentVariables = agentStatusReport.getEnvironmentVariables();
+        assertThat(environmentVariables, hasEntry("A", "B"));
+        assertThat(environmentVariables, hasEntry("C", "D"));
     }
 }

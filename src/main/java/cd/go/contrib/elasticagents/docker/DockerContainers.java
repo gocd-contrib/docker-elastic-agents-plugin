@@ -16,21 +16,28 @@
 
 package cd.go.contrib.elasticagents.docker;
 
+import cd.go.contrib.elasticagents.docker.models.AgentStatusReport;
+import cd.go.contrib.elasticagents.docker.models.ContainerStatusReport;
+import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
+import cd.go.contrib.elasticagents.docker.models.StatusReport;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.ContainerNotFoundException;
 import com.spotify.docker.client.messages.Container;
 import com.spotify.docker.client.messages.ContainerInfo;
+import com.spotify.docker.client.messages.Info;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
+import static cd.go.contrib.elasticagents.docker.utils.Util.readableSize;
 
 public class DockerContainers implements AgentInstances<DockerContainer> {
 
@@ -125,6 +132,41 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
         }
     }
 
+    public StatusReport getStatusReport(PluginSettings pluginSettings) throws Exception {
+        DockerClient dockerClient = DockerClientFactory.docker(pluginSettings);
+
+        Info info = dockerClient.info();
+        return new StatusReport(info.osType(), info.architecture(), info.serverVersion(),
+                info.cpus(), readableSize(info.memTotal()), getContainerStatus(dockerClient));
+    }
+
+    public AgentStatusReport getAgentStatusReport(String elasticAgentId, PluginSettings pluginSettings) throws Exception {
+        Optional<DockerContainer> dockerContainer = Optional.ofNullable(find(elasticAgentId));
+        if(dockerContainer.isPresent()) {
+            return dockerContainer.get().getAgentStatusReport(docker(pluginSettings));
+        }
+        throw new RuntimeException(String.format("Can not find a running container for the provided elastic agent id '%s'", elasticAgentId));
+    }
+
+    public AgentStatusReport getAgentStatusReport(JobIdentifier jobIdentifier, PluginSettings pluginSettings) throws Exception {
+        Optional<DockerContainer> dockerContainer = instances.values()
+                .stream()
+                .filter(instance -> instance.getJobIdentifier().equals(jobIdentifier))
+                .findFirst();
+        if (dockerContainer.isPresent()) {
+            return dockerContainer.get().getAgentStatusReport(docker(pluginSettings));
+        }
+        throw new RuntimeException(String.format("Can not find a running container for the provided job identifier '%s'", jobIdentifier));
+    }
+
+    private List<ContainerStatusReport> getContainerStatus(DockerClient dockerClient) throws Exception {
+        List<ContainerStatusReport> containerStatusReportList = new ArrayList<>();
+        for (DockerContainer dockerContainer : instances.values()) {
+            containerStatusReportList.add(dockerContainer.getContainerStatusReport(dockerClient));
+        }
+        return containerStatusReportList;
+    }
+
     private void register(DockerContainer container) {
         instances.put(container.name(), container);
     }
@@ -171,5 +213,4 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     protected boolean isEmpty() {
         return instances.isEmpty();
     }
-
 }

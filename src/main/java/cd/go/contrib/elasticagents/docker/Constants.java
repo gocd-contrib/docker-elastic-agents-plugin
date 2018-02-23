@@ -28,7 +28,7 @@ public interface Constants {
     String EXTENSION_TYPE = "elastic-agent";
 
     // The extension point API version that this plugin understands
-    String API_VERSION = "1.0";
+    String API_VERSION = "2.0";
 
     // the identifier of this plugin
     GoPluginIdentifier PLUGIN_IDENTIFIER = new GoPluginIdentifier(EXTENSION_TYPE, Collections.singletonList(API_VERSION));
@@ -42,6 +42,7 @@ public interface Constants {
 
     // internal use only
     String CREATED_BY_LABEL_KEY = "Elastic-Agent-Created-By";
+    String JOB_IDENTIFIER_LABEL_KEY = "Elastic-Agent-Job-Identifier";
     String ENVIRONMENT_LABEL_KEY = "Elastic-Agent-Environment-Name";
     String CONFIGURATION_LABEL_KEY = "Elastic-Agent-Configuration";
 

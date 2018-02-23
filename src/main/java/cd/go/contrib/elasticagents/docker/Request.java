@@ -32,7 +32,10 @@ public enum Request {
     PLUGIN_SETTINGS_GET_ICON(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-icon"),
     PLUGIN_SETTINGS_GET_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-configuration"),
     PLUGIN_SETTINGS_GET_VIEW(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-view"),
-    PLUGIN_SETTINGS_VALIDATE_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".validate-configuration"),;
+    PLUGIN_SETTINGS_VALIDATE_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".validate-configuration"),
+    REQUEST_STATUS_REPORT(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".status-report"),
+    REQUEST_AGENT_STATUS_REPORT(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".agent-status-report"),
+    REQUEST_CAPABILITIES(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-capabilities");
 
     private final String requestName;
 

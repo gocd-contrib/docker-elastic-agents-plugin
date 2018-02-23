@@ -16,7 +16,12 @@
 
 package cd.go.contrib.elasticagents.docker;
 
+import cd.go.contrib.elasticagents.docker.models.AgentStatusReport;
+import cd.go.contrib.elasticagents.docker.models.ContainerStatusReport;
+import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.ContainerNotFoundException;
@@ -29,7 +34,6 @@ import com.spotify.docker.client.messages.HostConfig;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
-import java.io.IOException;
 import java.util.*;
 
 import static cd.go.contrib.elasticagents.docker.Constants.*;
@@ -42,10 +46,14 @@ public class DockerContainer {
     private final DateTime createdAt;
     private final Map<String, String> properties;
     private final String environment;
+    private final String id;
     private String name;
+    private final JobIdentifier jobIdentifier;
 
-    public DockerContainer(String name, Date createdAt, Map<String, String> properties, String environment) {
+    public DockerContainer(String id, String name, JobIdentifier jobIdentifier, Date createdAt, Map<String, String> properties, String environment) {
+        this.id = id;
         this.name = name;
+        this.jobIdentifier = jobIdentifier;
         this.createdAt = new DateTime(createdAt);
         this.properties = properties;
         this.environment = environment;
@@ -53,6 +61,10 @@ public class DockerContainer {
 
     public String name() {
         return name;
+    }
+
+    public JobIdentifier getJobIdentifier() {
+        return jobIdentifier;
     }
 
     public DateTime createdAt() {
@@ -79,10 +91,10 @@ public class DockerContainer {
 
     public static DockerContainer fromContainerInfo(ContainerInfo container) {
         Map<String, String> labels = container.config().labels();
-        return new DockerContainer(container.name().substring(1), container.created(), GSON.fromJson(labels.get(Constants.CONFIGURATION_LABEL_KEY), HashMap.class), labels.get(Constants.ENVIRONMENT_LABEL_KEY));
+        return new DockerContainer(container.id(), container.name().substring(1), jobIdentifier(container), container.created(), GSON.fromJson(labels.get(Constants.CONFIGURATION_LABEL_KEY), HashMap.class), labels.get(Constants.ENVIRONMENT_LABEL_KEY));
     }
 
-    public static DockerContainer create(CreateAgentRequest request, PluginSettings settings, DockerClient docker) throws InterruptedException, DockerException, IOException {
+    public static DockerContainer create(CreateAgentRequest request, PluginSettings settings, DockerClient docker) throws InterruptedException, DockerException {
         String containerName = UUID.randomUUID().toString();
 
         HashMap<String, String> labels = labelsFrom(request);
@@ -118,7 +130,7 @@ public class DockerContainer {
         LOG.debug("Created container " + containerName);
         docker.startContainer(containerName);
         LOG.debug("container " + containerName + " started");
-        return new DockerContainer(containerName, containerInfo.created(), request.properties(), request.environment());
+        return new DockerContainer(id, containerName, request.jobIdentifier(), containerInfo.created(), request.properties(), request.environment());
     }
 
     private static List<String> environmentFrom(CreateAgentRequest request, PluginSettings settings, String containerName) {
@@ -143,6 +155,7 @@ public class DockerContainer {
         HashMap<String, String> labels = new HashMap<>();
 
         labels.put(CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID);
+        labels.put(JOB_IDENTIFIER_LABEL_KEY, request.jobIdentifier().toJson());
         if (StringUtils.isNotBlank(request.environment())) {
             labels.put(ENVIRONMENT_LABEL_KEY, request.environment());
         }
@@ -188,6 +201,62 @@ public class DockerContainer {
             return image + ":latest";
         }
         return image;
+    }
+
+    public ContainerStatusReport getContainerStatusReport(DockerClient dockerClient) throws Exception {
+        ContainerInfo containerInfo = dockerClient.inspectContainer(id);
+        return new ContainerStatusReport(id, containerInfo.config().image(), containerInfo.state().status(),
+                containerInfo.created().getTime(), jobIdentifier(containerInfo), name);
+    }
+
+    public AgentStatusReport getAgentStatusReport(DockerClient dockerClient) throws Exception {
+        ContainerInfo containerInfo = dockerClient.inspectContainer(id);
+        String logs = readLogs(dockerClient);
+
+        return new AgentStatusReport(jobIdentifier(containerInfo), name, containerInfo.created().getTime(),
+                containerInfo.config().image(), containerInfo.path(), containerInfo.networkSettings().ipAddress(), logs,
+                parseEnvironmentVariables(containerInfo), extraHosts(containerInfo));
+    }
+
+    private static Map<String, String> parseEnvironmentVariables(ContainerInfo containerInfo) {
+        ImmutableList<String> env = containerInfo.config().env();
+        Map<String, String> environmentVariables = new HashMap<>();
+        if (env != null) {
+            env.forEach(e -> {
+                String[] keyValue = e.split("=");
+                if (keyValue.length == 2) {
+                    environmentVariables.put(keyValue[0], keyValue[1]);
+                } else {
+                    environmentVariables.put(keyValue[0], null);
+                }
+            });
+        }
+        return environmentVariables;
+    }
+
+    private static List<String> extraHosts(ContainerInfo containerInfo) {
+        HostConfig hostConfig = containerInfo.hostConfig();
+        if (hostConfig != null) {
+           return hostConfig.extraHosts();
+        }
+        return new ArrayList<>();
+    }
+
+    private static JobIdentifier jobIdentifier(ContainerInfo containerInfo) {
+        ImmutableMap<String, String> labels = containerInfo.config().labels();
+        if (labels == null) {
+            return null;
+        }
+        return JobIdentifier.fromJson(labels.get(JOB_IDENTIFIER_LABEL_KEY));
+    }
+
+    private String readLogs(DockerClient dockerClient) {
+        try {
+            return dockerClient.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr()).readFully();
+        } catch (Exception e) {
+            LOG.debug("Could not fetch logs", e);
+            return "";
+        }
     }
 
 }

@@ -17,10 +17,8 @@
 package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.executors.*;
-import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
-import cd.go.contrib.elasticagents.docker.requests.ProfileValidateRequest;
-import cd.go.contrib.elasticagents.docker.requests.ShouldAssignWorkRequest;
-import cd.go.contrib.elasticagents.docker.requests.ValidatePluginSettings;
+import cd.go.contrib.elasticagents.docker.requests.*;
+import cd.go.contrib.elasticagents.docker.views.ViewBuilder;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
 import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
@@ -37,7 +35,7 @@ public class DockerPlugin implements GoPlugin {
 
     public static final Logger LOG = Logger.getLoggerFor(DockerPlugin.class);
 
-    private AgentInstances<DockerContainer> agentInstances;
+    private DockerContainers agentInstances;
     private PluginRequest pluginRequest;
 
     @Override
@@ -52,7 +50,7 @@ public class DockerPlugin implements GoPlugin {
             switch (Request.fromString(request.requestName())) {
                 case REQUEST_SHOULD_ASSIGN_WORK:
                     refreshInstances();
-                    return ShouldAssignWorkRequest.fromJSON(request.requestBody()).executor(agentInstances, pluginRequest).execute();
+                    return ShouldAssignWorkRequest.fromJSON(request.requestBody()).executor(agentInstances).execute();
                 case REQUEST_CREATE_AGENT:
                     refreshInstances();
                     return CreateAgentRequest.fromJSON(request.requestBody()).executor(agentInstances, pluginRequest).execute();
@@ -73,6 +71,14 @@ public class DockerPlugin implements GoPlugin {
                     return new GetPluginConfigurationExecutor().execute();
                 case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
                     return ValidatePluginSettings.fromJSON(request.requestBody()).executor().execute();
+                case REQUEST_STATUS_REPORT:
+                    refreshInstances();
+                    return new StatusReportExecutor(pluginRequest, agentInstances, ViewBuilder.instance()).execute();
+                case REQUEST_AGENT_STATUS_REPORT:
+                    refreshInstances();
+                    return AgentStatusReportRequest.fromJSON(request.requestBody()).executor(pluginRequest, agentInstances).execute();
+                case REQUEST_CAPABILITIES:
+                    return new GetCapabilitiesExecutor().execute();
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }

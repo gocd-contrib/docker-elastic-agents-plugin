@@ -18,26 +18,18 @@ package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.AgentInstances;
 import cd.go.contrib.elasticagents.docker.DockerContainer;
-import cd.go.contrib.elasticagents.docker.PluginRequest;
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.requests.ShouldAssignWorkRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.apache.commons.lang.StringUtils.stripToEmpty;
-
 public class ShouldAssignWorkRequestExecutor implements RequestExecutor {
     private final AgentInstances<DockerContainer> agentInstances;
-    private final PluginRequest pluginRequest;
     private final ShouldAssignWorkRequest request;
 
-    public ShouldAssignWorkRequestExecutor(ShouldAssignWorkRequest request, AgentInstances<DockerContainer> agentInstances, PluginRequest pluginRequest) {
+    public ShouldAssignWorkRequestExecutor(ShouldAssignWorkRequest request, AgentInstances<DockerContainer> agentInstances) {
         this.request = request;
         this.agentInstances = agentInstances;
-        this.pluginRequest = pluginRequest;
     }
 
     @Override
@@ -48,14 +40,7 @@ public class ShouldAssignWorkRequestExecutor implements RequestExecutor {
             return DefaultGoPluginApiResponse.success("false");
         }
 
-        boolean environmentMatches = stripToEmpty(request.environment()).equalsIgnoreCase(stripToEmpty(instance.environment()));
-
-        Map<String, String> containerProperties = instance.properties() == null ? new HashMap<String, String>() : instance.properties();
-        Map<String, String> requestProperties = request.properties() == null ? new HashMap<String, String>() : request.properties();
-
-        boolean propertiesMatch = requestProperties.equals(containerProperties);
-
-        if (environmentMatches && propertiesMatch) {
+        if (instance.getJobIdentifier().equals(request.jobIdentifier())) {
             return DefaultGoPluginApiResponse.success("true");
         }
 
