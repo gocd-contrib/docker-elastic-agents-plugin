@@ -16,6 +16,7 @@ public class GetCapabilitiesExecutorTest {
 
         assertThat(response.responseCode(), is(200));
         JSONObject expected = new JSONObject().put("supports_status_report", true);
+        expected.put("supports_agent_status_report", true);
         JSONAssert.assertEquals(expected, new JSONObject(response.responseBody()), true);
     }
 
