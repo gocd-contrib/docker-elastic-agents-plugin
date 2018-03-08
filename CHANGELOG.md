@@ -5,7 +5,7 @@
 - Containers are labelled with a JobIdentifier, which is used to assign work to the right container.
 
 ### Know issues
-- Better message when a container is not created for the job or docker service is killed[(#48)](https://github.com/gocd-contrib/docker-elastic-agents/issues/48).
+- Better message when a container is not created for the job or docker container is killed[(#48)](https://github.com/gocd-contrib/docker-elastic-agents/issues/48).
 
 
 **_Note:_** *Requires GoCD version 18.2.0 and above. Plugin will not work with the older version of GoCD.*
