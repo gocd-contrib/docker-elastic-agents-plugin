@@ -213,8 +213,7 @@
                 <a
                         href="/go/tab/build/detail/${jobIdentifier.representation!''}"
                         title="View this job's details"
-                        rel="nofollow noreferrer" target="_blank">${jobIdentifier.jobName!''}(${jobIdentifier.jobId!''}
-                    )</a>
+                        rel="nofollow noreferrer" target="_blank">${jobIdentifier.jobName!''}</a>
             </li>
 
             <li class="last">
