@@ -202,7 +202,7 @@ Thanks to @konpa for the [docker icon](https://raw.githubusercontent.com/konpa/d
 ## License
 
 ```plain
-Copyright 2016, ThoughtWorks, Inc.
+Copyright 2018, ThoughtWorks, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
