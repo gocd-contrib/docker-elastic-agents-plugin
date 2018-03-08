@@ -17,6 +17,7 @@ public class GetCapabilitiesExecutor implements RequestExecutor {
 
     static {
         CAPABILITIES_RESPONSE.put("supports_status_report", true);
+        CAPABILITIES_RESPONSE.put("supports_agent_status_report", true);
     }
 
     @Override
