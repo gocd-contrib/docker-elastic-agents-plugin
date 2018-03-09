@@ -115,11 +115,15 @@ public class JobIdentifier {
                 "pipelineName='" + pipelineName + '\'' +
                 ", pipelineCounter=" + pipelineCounter +
                 ", pipelineLabel='" + pipelineLabel + '\'' +
-                ", staqeName='" + stageName + '\'' +
+                ", stageName='" + stageName + '\'' +
                 ", stageCounter='" + stageCounter + '\'' +
                 ", jobName='" + jobName + '\'' +
                 ", jobId=" + jobId +
                 '}';
+    }
+
+    public String represent() {
+        return String.format("%s/%d/%s/%s/%s", pipelineName, pipelineCounter, stageName, stageCounter, jobName);
     }
 
     public String toJson() {
