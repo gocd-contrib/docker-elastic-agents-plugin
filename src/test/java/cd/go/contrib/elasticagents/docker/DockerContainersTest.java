@@ -188,23 +188,11 @@ public class DockerContainersTest extends BaseTest {
     }
 
     @Test
-    public void shouldGetAgentStatusReportUsingElasticAgentId() throws Exception {
+    public void shouldGetAgentStatusReportUsingDockerContainer() throws Exception {
         DockerContainer container = dockerContainers.create(request, settings);
         containers.add(container.name());
 
-        AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(container.name(), settings);
-
-        assertThat(agentStatusReport, is(notNullValue()));
-        assertThat(agentStatusReport.getElasticAgentId(), is(container.name()));
-        assertThat(agentStatusReport.getJobIdentifier(), is(request.jobIdentifier()));
-    }
-
-    @Test
-    public void shouldGetAgentStatusReportUsingJobIdentifier() throws Exception {
-        DockerContainer container = dockerContainers.create(request, settings);
-        containers.add(container.name());
-
-        AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(request.jobIdentifier(), settings);
+        AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(settings, container);
 
         assertThat(agentStatusReport, is(notNullValue()));
         assertThat(agentStatusReport.getElasticAgentId(), is(container.name()));

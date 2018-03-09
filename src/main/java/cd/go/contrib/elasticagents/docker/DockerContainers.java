@@ -137,26 +137,11 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
 
         Info info = dockerClient.info();
         return new StatusReport(info.osType(), info.architecture(), info.serverVersion(),
-                info.cpus(), readableSize(info.memTotal()), getContainerStatus(dockerClient));
+            info.cpus(), readableSize(info.memTotal()), getContainerStatus(dockerClient));
     }
 
-    public AgentStatusReport getAgentStatusReport(String elasticAgentId, PluginSettings pluginSettings) throws Exception {
-        Optional<DockerContainer> dockerContainer = Optional.ofNullable(find(elasticAgentId));
-        if(dockerContainer.isPresent()) {
-            return dockerContainer.get().getAgentStatusReport(docker(pluginSettings));
-        }
-        throw new RuntimeException(String.format("Can not find a running container for the provided elastic agent id '%s'", elasticAgentId));
-    }
-
-    public AgentStatusReport getAgentStatusReport(JobIdentifier jobIdentifier, PluginSettings pluginSettings) throws Exception {
-        Optional<DockerContainer> dockerContainer = instances.values()
-                .stream()
-                .filter(instance -> instance.getJobIdentifier().equals(jobIdentifier))
-                .findFirst();
-        if (dockerContainer.isPresent()) {
-            return dockerContainer.get().getAgentStatusReport(docker(pluginSettings));
-        }
-        throw new RuntimeException(String.format("Can not find a running container for the provided job identifier '%s'", jobIdentifier));
+    public AgentStatusReport getAgentStatusReport(PluginSettings pluginSettings, DockerContainer dockerContainer) throws Exception {
+        return dockerContainer.getAgentStatusReport(docker(pluginSettings));
     }
 
     private List<ContainerStatusReport> getContainerStatus(DockerClient dockerClient) throws Exception {
@@ -207,6 +192,13 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     @Override
     public DockerContainer find(String agentId) {
         return instances.get(agentId);
+    }
+
+    public Optional<DockerContainer> find(JobIdentifier jobIdentifier) {
+        return instances.values()
+            .stream()
+            .filter(instance -> instance.getJobIdentifier().equals(jobIdentifier))
+            .findFirst();
     }
 
     // used by test
