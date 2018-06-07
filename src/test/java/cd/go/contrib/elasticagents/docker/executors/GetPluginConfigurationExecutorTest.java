@@ -119,6 +119,13 @@ public class GetPluginConfigurationExecutorTest {
                 "    \"required\": false,\n" +
                 "    \"secure\": true,\n" +
                 "    \"display-order\": \"11\"\n" +
+                "  }," +
+                "  \"pull_on_container_create\": {\n" +
+                "    \"display-name\": \"Pull image before creating the container\",\n" +
+                "    \"default-value\": \"false\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"12\"\n" +
                 "  }" +
                 "}\n";
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);

@@ -51,7 +51,11 @@ public class ValidateConfigurationExecutorTest {
                 "  {\n" +
                 "    \"message\": \"Use Private Registry must not be blank.\",\n" +
                 "    \"key\": \"enable_private_registry_authentication\"\n" +
-                "  }\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"message\": \"Pull image before creating the container must not be blank.\",\n" +
+                "    \"key\": \"pull_on_container_create\"\n" +
+                "  },\n" +
                 "]\n", response.responseBody(), true);
     }
 
@@ -66,6 +70,7 @@ public class ValidateConfigurationExecutorTest {
         settings.put("go_server_url", "https://ci.example.com/go");
         settings.put("enable_private_registry_authentication", "false");
         settings.put("auto_register_timeout", "10");
+        settings.put("pull_on_container_create", "false");
 
         GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
 
@@ -88,6 +93,7 @@ public class ValidateConfigurationExecutorTest {
         settings.put("private_registry_username", "username");
         settings.put("private_registry_password", "password");
         settings.put("auto_register_timeout", "10");
+        settings.put("pull_on_container_create", "false");
         GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
 
         assertThat(response.responseCode(), is(200));
@@ -108,6 +114,7 @@ public class ValidateConfigurationExecutorTest {
         settings.put("private_registry_username", "");
         settings.put("private_registry_password", "");
         settings.put("auto_register_timeout", "10");
+        settings.put("pull_on_container_create", "false");
         GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
 
         String expectedString = "[{\"message\":\"Private Registry Server must not be blank.\",\"key\":\"private_registry_server\"}," +

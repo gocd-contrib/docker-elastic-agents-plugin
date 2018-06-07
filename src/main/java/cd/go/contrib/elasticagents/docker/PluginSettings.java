@@ -80,6 +80,10 @@ public class PluginSettings {
     @SerializedName("enable_private_registry_authentication")
     private boolean useDockerAuthInfo;
 
+    @Expose
+    @SerializedName("pull_on_container_create")
+    private boolean pullOnContainerCreate;
+
     private Period autoRegisterPeriod;
 
     public static PluginSettings fromJSON(String json) {
@@ -111,6 +115,7 @@ public class PluginSettings {
             return false;
         if(privateRegistryPassword != null ? !privateRegistryPassword.equals(that.privateRegistryPassword) : that.privateRegistryPassword != null)
             return false;
+        if (pullOnContainerCreate != that.pullOnContainerCreate) return false;
         return autoRegisterPeriod != null ? autoRegisterPeriod.equals(that.autoRegisterPeriod) : that.autoRegisterPeriod == null;
     }
 
@@ -128,6 +133,7 @@ public class PluginSettings {
         result = 31 * result + (privateRegistryServer != null ? privateRegistryServer.hashCode() : 0);
         result = 31 * result + (privateRegistryPassword != null ? privateRegistryPassword.hashCode() : 0);
         result = 31 * result + (privateRegistryUsername != null ? privateRegistryUsername.hashCode() : 0);
+        result = 31 * result + (pullOnContainerCreate? 1 : 0);
         return result;
     }
 
@@ -189,6 +195,10 @@ public class PluginSettings {
         return Boolean.valueOf(useDockerAuthInfo);
     }
 
+    public Boolean pullOnContainerCreate() {
+        return Boolean.valueOf(pullOnContainerCreate);
+    }
+
     public void setDockerCACert(String dockerCACert) {
         this.dockerCACert = dockerCACert;
     }
@@ -211,5 +221,9 @@ public class PluginSettings {
 
     public void setMaxDockerContainers(Integer maxDockerContainers) {
         this.maxDockerContainers = String.valueOf(maxDockerContainers);
+    }
+
+    public void setPullOnContainerCreate(Boolean pullOnContainerCreate) {
+        this.pullOnContainerCreate = Boolean.valueOf(pullOnContainerCreate);
     }
 }

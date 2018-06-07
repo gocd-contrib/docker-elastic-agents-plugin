@@ -225,4 +225,18 @@ public class DockerContainerTest extends BaseTest {
         assertThat(environmentVariables, hasEntry("A", "B"));
         assertThat(environmentVariables, hasEntry("C", "D"));
     }
+
+    @Test
+    public void shouldPullImageWhenPullSettingIsEnabled() throws Exception {
+        String imageName = "busybox:latest";
+        PluginSettings settings = createSettings();
+        settings.setPullOnContainerCreate(true);
+
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier), settings, docker);
+        assertContainerExist(container.name());
+        containers.add(container.name());
+
+        assertNotNull(docker.inspectImage(imageName));
+        assertContainerExist(container.name());
+    }
 }
