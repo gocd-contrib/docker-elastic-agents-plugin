@@ -24,12 +24,15 @@ import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class DockerContainersTest extends BaseTest {
@@ -51,14 +54,29 @@ public class DockerContainersTest extends BaseTest {
 
     @Test
     public void shouldCreateADockerInstance() throws Exception {
-        DockerContainer container = dockerContainers.create(request, settings);
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+        DockerContainer container = dockerContainers.create(request, pluginRequest);
         containers.add(container.name());
         assertContainerExist(container.name());
     }
 
     @Test
+    public void shouldUpdateServerHealthMessageWithEmptyListWhileCreatingADockerInstance() throws Exception {
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+        DockerContainer container = dockerContainers.create(request, pluginRequest);
+        containers.add(container.name());
+
+        verify(pluginRequest).addServerHealthMessage(new ArrayList<>());
+        assertContainerExist(container.name());
+    }
+
+    @Test
     public void shouldTerminateAnExistingContainer() throws Exception {
-        DockerContainer container = dockerContainers.create(request, settings);
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+        DockerContainer container = dockerContainers.create(request, pluginRequest);
         containers.add(container.name());
 
         dockerContainers.terminate(container.name(), settings);
@@ -132,7 +150,10 @@ public class DockerContainersTest extends BaseTest {
         // do not allow any containers
         settings.setMaxDockerContainers(0);
 
-        DockerContainer dockerContainer = dockerContainers.create(request, settings);
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+
+        DockerContainer dockerContainer = dockerContainers.create(request, pluginRequest);
         if (dockerContainer != null) {
             containers.add(dockerContainer.name());
         }
@@ -140,13 +161,13 @@ public class DockerContainersTest extends BaseTest {
 
         // allow only one container
         settings.setMaxDockerContainers(1);
-        dockerContainer = dockerContainers.create(request, settings);
+        dockerContainer = dockerContainers.create(request, pluginRequest);
         if (dockerContainer != null) {
             containers.add(dockerContainer.name());
         }
         assertNotNull(dockerContainer);
 
-        dockerContainer = dockerContainers.create(request, settings);
+        dockerContainer = dockerContainers.create(request, pluginRequest);
         if (dockerContainer != null) {
             containers.add(dockerContainer.name());
         }
@@ -154,8 +175,30 @@ public class DockerContainersTest extends BaseTest {
     }
 
     @Test
-    public void shouldTerminateUnregistredContainersAfterTimeout() throws Exception {
-        DockerContainer container = dockerContainers.create(request, settings);
+    public void shouldAddAWarningToTheServerHealthMessagesIfAgentsCannotBeCreated() throws Exception {
+        PluginSettings settings = createSettings();
+
+        // do not allow any containers
+        settings.setMaxDockerContainers(0);
+
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+
+        DockerContainer dockerContainer = dockerContainers.create(request, pluginRequest);
+
+        ArrayList<Map<String, String>> messages = new ArrayList<>();
+        Map<String, String> message = new HashMap<>();
+        message.put("type", "warning");
+        message.put("message", "The number of containers currently running is currently at the maximum permissible limit (0). Not creating any more containers.");
+        messages.add(message);
+        verify(pluginRequest).addServerHealthMessage(messages);
+    }
+
+    @Test
+    public void shouldTerminateUnregisteredContainersAfterTimeout() throws Exception {
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+        DockerContainer container = dockerContainers.create(request, pluginRequest);
 
         assertTrue(dockerContainers.hasInstance(container.name()));
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
@@ -166,7 +209,9 @@ public class DockerContainersTest extends BaseTest {
 
     @Test
     public void shouldNotTerminateUnregistredContainersBeforeTimeout() throws Exception {
-        DockerContainer container = dockerContainers.create(request, settings);
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+        DockerContainer container = dockerContainers.create(request, pluginRequest);
         containers.add(container.name());
 
         assertTrue(dockerContainers.hasInstance(container.name()));
@@ -178,7 +223,9 @@ public class DockerContainersTest extends BaseTest {
 
     @Test
     public void shouldGetStatusReport() throws Exception {
-        DockerContainer container = dockerContainers.create(request, settings);
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+        DockerContainer container = dockerContainers.create(request, pluginRequest);
         containers.add(container.name());
 
         StatusReport statusReport = dockerContainers.getStatusReport(settings);
@@ -189,7 +236,9 @@ public class DockerContainersTest extends BaseTest {
 
     @Test
     public void shouldGetAgentStatusReportUsingDockerContainer() throws Exception {
-        DockerContainer container = dockerContainers.create(request, settings);
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+        DockerContainer container = dockerContainers.create(request, pluginRequest);
         containers.add(container.name());
 
         AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(settings, container);

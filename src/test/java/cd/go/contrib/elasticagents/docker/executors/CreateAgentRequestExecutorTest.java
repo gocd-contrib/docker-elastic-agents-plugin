@@ -32,6 +32,6 @@ public class CreateAgentRequestExecutorTest {
         when(pluginRequest.getPluginSettings()).thenReturn(settings);
         new CreateAgentRequestExecutor(request, agentInstances, pluginRequest).execute();
 
-        verify(agentInstances).create(request, settings);
+        verify(agentInstances).create(request, pluginRequest);
     }
 }

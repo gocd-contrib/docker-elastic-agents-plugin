@@ -29,10 +29,7 @@ import com.spotify.docker.client.messages.Info;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
@@ -48,17 +45,26 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     final Semaphore semaphore = new Semaphore(0, true);
 
     @Override
-    public DockerContainer create(CreateAgentRequest request, PluginSettings settings) throws Exception {
+    public DockerContainer create(CreateAgentRequest request, PluginRequest pluginRequest) throws Exception {
+        PluginSettings settings = pluginRequest.getPluginSettings();
         final Integer maxAllowedContainers = settings.getMaxDockerContainers();
         synchronized (instances) {
             doWithLockOnSemaphore(new SetupSemaphore(maxAllowedContainers, instances, semaphore));
+            List<Map<String, String>> messages = new ArrayList<>();
 
             if (semaphore.tryAcquire()) {
+                pluginRequest.addServerHealthMessage(messages);
                 DockerContainer container = DockerContainer.create(request, settings, docker(settings));
                 register(container);
                 return container;
             } else {
-                LOG.info("The number of containers currently running is currently at the maximum permissible limit (" + instances.size() + "). Not creating any more containers.");
+                String maxLimitExceededMessage = "The number of containers currently running is currently at the maximum permissible limit (" + instances.size() + "). Not creating any more containers.";
+                Map<String, String> messageToBeAdded = new HashMap<>();
+                messageToBeAdded.put("type", "warning");
+                messageToBeAdded.put("message", maxLimitExceededMessage);
+                messages.add(messageToBeAdded);
+                pluginRequest.addServerHealthMessage(messages);
+                LOG.info(maxLimitExceededMessage);
                 return null;
             }
         }

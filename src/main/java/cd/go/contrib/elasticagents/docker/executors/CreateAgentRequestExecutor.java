@@ -37,7 +37,7 @@ public class CreateAgentRequestExecutor implements RequestExecutor {
 
     @Override
     public GoPluginApiResponse execute() throws Exception {
-        agentInstances.create(request, pluginRequest.getPluginSettings());
+        agentInstances.create(request, pluginRequest);
         return new DefaultGoPluginApiResponse(200);
     }
 
