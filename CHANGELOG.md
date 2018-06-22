@@ -1,3 +1,9 @@
+## 1.0.0 - 2018-06-22
+
+### Added
+- Option to pull docker image on container create.
+- Show message on agent status report page when container in not running for the specified job id.
+
 ## 0.9.0 - 2018-03-08
 
 ### Added
