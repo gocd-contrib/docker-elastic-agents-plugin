@@ -103,6 +103,10 @@ public class DockerContainer {
 
         try {
             docker.inspectImage(imageName);
+            if (settings.pullOnContainerCreate()) {
+                LOG.info("Pulling a fresh version of " + imageName + ".");
+                docker.pull(imageName);
+            }
         } catch (ImageNotFoundException ex) {
             LOG.info("Image " + imageName + " not found, attempting to download.");
             docker.pull(imageName);

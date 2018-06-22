@@ -46,7 +46,7 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
     public static final Field PRIVATE_REGISTRY_SERVER = new ConditionalNonBlankField("private_registry_server", "Private Registry Server", null, false, false, "9", privateRegistryFieldsPredicate);
     public static final Field PRIVATE_REGISTRY_USERNAME = new ConditionalNonBlankField("private_registry_username", "Private Registry Username", null, false, false, "10", privateRegistryFieldsPredicate);
     public static final Field PRIVATE_REGISTRY_PASSWORD = new ConditionalNonBlankField("private_registry_password", "Private Registry Password", null, false, true, "11", privateRegistryFieldsPredicate);
-
+    public static final Field PULL_ON_CONTAINER_CREATE = new NonBlankField("pull_on_container_create", "Pull image before creating the container", "false", true, false, "12");
 
     public static final Map<String, Field> FIELDS = new LinkedHashMap<>();
 
@@ -66,6 +66,8 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
         FIELDS.put(PRIVATE_REGISTRY_SERVER.key(), PRIVATE_REGISTRY_SERVER);
         FIELDS.put(PRIVATE_REGISTRY_USERNAME.key(), PRIVATE_REGISTRY_USERNAME);
         FIELDS.put(PRIVATE_REGISTRY_PASSWORD.key(), PRIVATE_REGISTRY_PASSWORD);
+
+        FIELDS.put(PULL_ON_CONTAINER_CREATE.key(), PULL_ON_CONTAINER_CREATE);
     }
 
     public GoPluginApiResponse execute() {
