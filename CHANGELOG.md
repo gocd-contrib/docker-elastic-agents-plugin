@@ -1,4 +1,4 @@
-## 1.0.0 - 2018-06-22
+## 1.0.0 - 2018-06-26
 
 ### Added
 - Option to pull docker image on container create.
