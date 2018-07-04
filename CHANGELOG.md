@@ -1,3 +1,6 @@
+## 1.0.1 - 2018-07-04
+- Fixed broken plugin settings UI.
+
 ## 1.0.0 - 2018-06-26
 
 ### Added
