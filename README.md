@@ -3,15 +3,19 @@
 Table of Contents
 =================
 
+  * [Installation](#installation)
   * [Building the code base](#building-the-code-base)
   * [Is this production ready?](#is-this-production-ready)
   * [Using your own docker image with elastic agents](#using-your-own-docker-image-with-elastic-agents)
      * [Using the GoCD agent, installed via .deb/.rpm](#using-the-gocd-agent-installed-via-debrpm)
      * [Use a custom bootstrapper](#use-a-custom-bootstrapper)
-  * [Usage instructions](#usage-instructions)
   * [Troubleshooting](#troubleshooting)
   * [Credits](#credits)
   * [License](#license)
+
+## Installation
+
+Documentation for installation is available [here](INSTALL.md).
 
 ## Building the code base
 
@@ -68,118 +72,6 @@ See the bootstrap script and docker file here under [`contrib/scripts/bootstrap-
 This method uses lesser memory and boots up the agent process and starts off a build quickly:
 
 See the bootstrap script and docker file here under [`contrib/scripts/bootstrap-without-installed-agent`](contrib/scripts/bootstrap-without-installed-agent).
-
-## Usage instructions
-
-* Download and install Docker for your favorite OS from https://docs.docker.com/engine/installation/
-
-If you already have it running it on a mac, make sure to restart it (see https://github.com/docker/for-mac/issues/17#mobyaccess). Time drift is known to cause the plugin to not work, because the timestamps returned by the docker API has drifted from the host.
-
-A good way to know if there's a time drift is to run `docker ps` —
-
-    ```
-    CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
-    e0754c9f4cdb        alpine:latest       "/bin/sh"           32 minutes ago      Up 17 seconds                           test
-    809f310ba1e4        ubuntu:trusty       "/bin/bash"         33 minutes ago      Up About a minute                       reverent_raman
-    ```
-
-Notice how the `CREATED` and `STATUS` are several minutes apart for a recently created container.
-
-* Download the latest GoCD installer from https://go.cd/download
-
-    ```shell
-    $ unzip go-server-VERSION.zip
-    $ mkdir -p go-server-VERSION/plugins/external
-    ```
-* Download the docker plugin (https://github.com/gocd-contrib/docker-elastic-agents/releases)
-* Copy the docker plugin to the go server directory
-
-    ```
-    $ cp docker-elastic-agents-0.1-SNAPSHOT.jar /path/to/go-server-VERSION/plugins/external
-    ```
-
-* Start the server and configure the plugin (turn on debug logging to get more logs, they're not that noisy)
-
-  On linux/mac
-
-    ```shell
-    $ GO_SERVER_SYSTEM_PROPERTIES='-Dplugin.cd.go.contrib.elastic-agent.docker.log.level=debug' ./server.sh
-    ```
-
-  On windows
-
-    ```
-    C:> set GO_SERVER_SYSTEM_PROPERTIES='-Dplugin.cd.go.contrib.elastic-agent.docker.log.level=debug'
-    C:> server.cmd
-    ```
-
-To configure the plugin, navigate to the plugin settings page on your GoCD server http://localhost:8153/go/admin/plugins and setup the following settings for the docker plugin.
-
-```
-Go Server Host — https://YOUR_IP_ADDRESS:8154/go — do not use "localhost"
-Docker URI (for mac and linux) — unix:///var/run/docker.sock
-Auto register timeout - between 1-3 minutes
-```
-
-Now setup the config.xml —
-
-* add `agentAutoRegisterKey="some-secret-key"` to the `<server/>` tag.
-* setup a job —
-
-```xml
-<server agentAutoRegisterKey="...">
-  <elastic>
-    <profiles>
-      <profile id="docker.unit-tests" pluginId="cd.go.contrib.elastic-agent.docker">
-        <!-- The following properties are currently supported -->
-        <property>
-          <!-- Allows you to select the docker image that the build should run with -->
-          <key>Image</key>
-          <value>alpine</value>
-        </property>
-        <property>
-            <key>Command</key>
-            <value>ls</value>
-        </property>
-        <property>
-          <!-- Allows you to set the environment variables when starting the docker container -->
-          <key>Environment</key>
-          <value>
-            JAVA_HOME=/opt/java
-            MAKE_OPTS=-j8
-          </value>
-        </property>
-        <property>
-          <!-- Allows you to set the command that should be run on the container, separate executable and each args by a newline -->
-          <key>Command</key>
-          <value>
-            ls
-            -al
-            /usr/bin
-          </value>
-        </property>
-      </profile>
-    </profiles>
-  </elastic>
-</server>
-...
-<pipelines group="defaultGroup">
-  <pipeline name="Foo">
-    <materials>
-      <git url="YOUR GIT URL" />
-    </materials>
-    <stage name="defaultStage">
-      <jobs>
-        <job name="defaultJob" elasticProfileId="docker.unit-tests">
-          <tasks>
-            <exec command="ls" />
-          </tasks>
-        </job>
-      </jobs>
-    </stage>
-  </pipeline>
-</pipelines>
-```
 
 ## Troubleshooting
 
