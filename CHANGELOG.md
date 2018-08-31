@@ -1,3 +1,6 @@
+## 1.0.2 - 2018-08-31
+- Removed additional margin from status report pages
+
 ## 1.0.1 - 2018-07-04
 - Fixed broken plugin settings UI.
 

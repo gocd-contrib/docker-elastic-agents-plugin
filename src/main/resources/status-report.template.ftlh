@@ -1,4 +1,7 @@
 <style>
+	.main-container {
+		margin-top: 0;
+	}
 
 	[data-plugin-style-id="docker-elastic-plugin"] .container {
 		background: transparent !important;

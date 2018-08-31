@@ -1,6 +1,10 @@
 <style>
-    [data-plugin-style-id="docker-elastic-plugin"] .docker-elastic-agent {
-        padding: 60px 20px 0 20px;
+	.main-container {
+		margin-top: 0;
+	}
+
+	[data-plugin-style-id="docker-elastic-plugin"] .docker-elastic-agent {
+        padding: 70px 20px 0 20px;
     }
 
     [data-plugin-style-id="docker-elastic-plugin"] .tabs {
