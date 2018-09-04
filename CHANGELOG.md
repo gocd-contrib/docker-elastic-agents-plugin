@@ -1,4 +1,4 @@
-## 1.0.2 - 2018-08-31
+## 1.0.2 - 2018-09-04
 - Removed additional margin from status report pages
 
 ## 1.0.1 - 2018-07-04
