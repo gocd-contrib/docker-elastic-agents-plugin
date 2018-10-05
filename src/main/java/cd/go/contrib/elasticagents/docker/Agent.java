@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2018 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,6 +101,10 @@ public class Agent {
 
     public static String toJSONArray(Collection<Agent> metadata) {
         return new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create().toJson(metadata);
+    }
+
+    public void setElasticAgentId(String elasticAgentId) {
+        this.agentId = elasticAgentId;
     }
 
     @Override

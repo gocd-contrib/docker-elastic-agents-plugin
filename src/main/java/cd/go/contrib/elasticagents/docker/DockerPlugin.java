@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2018 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,9 @@ public class DockerPlugin implements GoPlugin {
                     return AgentStatusReportRequest.fromJSON(request.requestBody()).executor(pluginRequest, agentInstances).execute();
                 case REQUEST_CAPABILITIES:
                     return new GetCapabilitiesExecutor().execute();
+                case REQUEST_JOB_COMPLETION:
+                    refreshInstances();
+                    return JobCompletionRequest.fromJSON(request.requestBody()).executor(agentInstances, pluginRequest).execute();
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }
