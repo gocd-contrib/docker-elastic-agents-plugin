@@ -44,7 +44,7 @@ public class JobCompletionRequestExecutor implements RequestExecutor {
         String elasticAgentId = jobCompletionRequest.getElasticAgentId();
         Agent agent = new Agent();
         agent.setElasticAgentId(elasticAgentId);
-        LOG.info(format("[Job Completion] Terminating elastic agent with id {0} on job completion {1}.", agent.elasticAgentId(), jobCompletionRequest.jobIdentifier()));
+        LOG.debug(format("[Job Completion] Terminating elastic agent with id {0} on job completion {1}.", agent.elasticAgentId(), jobCompletionRequest.jobIdentifier()));
         List<Agent> agents = Arrays.asList(agent);
         pluginRequest.disableAgents(agents);
         agentInstances.terminate(agent.elasticAgentId(), pluginSettings);
