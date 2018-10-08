@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
-import static java.text.MessageFormat.format;
 
 public class JobCompletionRequestExecutor implements RequestExecutor {
     private final JobCompletionRequest jobCompletionRequest;
@@ -44,7 +43,7 @@ public class JobCompletionRequestExecutor implements RequestExecutor {
         String elasticAgentId = jobCompletionRequest.getElasticAgentId();
         Agent agent = new Agent();
         agent.setElasticAgentId(elasticAgentId);
-        LOG.debug(format("[Job Completion] Terminating elastic agent with id {0} on job completion {1}.", agent.elasticAgentId(), jobCompletionRequest.jobIdentifier()));
+        LOG.debug("[Job Completion] Terminating elastic agent with id {} on job completion {}.", agent.elasticAgentId(), jobCompletionRequest.jobIdentifier());
         List<Agent> agents = Arrays.asList(agent);
         pluginRequest.disableAgents(agents);
         agentInstances.terminate(agent.elasticAgentId(), pluginSettings);
