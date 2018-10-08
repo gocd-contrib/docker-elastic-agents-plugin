@@ -71,6 +71,10 @@ public class Agent {
     public Agent() {
     }
 
+    public Agent(String agentId){
+        this(agentId, null, null, null);
+    }
+
     // Used in tests
     public Agent(String agentId, AgentState agentState, BuildState buildState, ConfigState configState) {
         this.agentId = agentId;
@@ -101,10 +105,6 @@ public class Agent {
 
     public static String toJSONArray(Collection<Agent> metadata) {
         return new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create().toJson(metadata);
-    }
-
-    public void setElasticAgentId(String elasticAgentId) {
-        this.agentId = elasticAgentId;
     }
 
     @Override

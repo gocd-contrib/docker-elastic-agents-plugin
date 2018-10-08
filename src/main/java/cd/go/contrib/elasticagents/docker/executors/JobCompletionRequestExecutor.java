@@ -41,8 +41,7 @@ public class JobCompletionRequestExecutor implements RequestExecutor {
     public GoPluginApiResponse execute() throws Exception {
         PluginSettings pluginSettings = pluginRequest.getPluginSettings();
         String elasticAgentId = jobCompletionRequest.getElasticAgentId();
-        Agent agent = new Agent();
-        agent.setElasticAgentId(elasticAgentId);
+        Agent agent = new Agent(elasticAgentId);
         LOG.debug("[Job Completion] Terminating elastic agent with id {} on job completion {}.", agent.elasticAgentId(), jobCompletionRequest.jobIdentifier());
         List<Agent> agents = Arrays.asList(agent);
         pluginRequest.disableAgents(agents);
