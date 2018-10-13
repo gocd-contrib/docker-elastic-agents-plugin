@@ -5,7 +5,6 @@ import cd.go.contrib.elasticagents.docker.DockerContainers;
 import cd.go.contrib.elasticagents.docker.PluginRequest;
 import cd.go.contrib.elasticagents.docker.PluginSettings;
 import cd.go.contrib.elasticagents.docker.models.AgentStatusReport;
-import cd.go.contrib.elasticagents.docker.models.ExceptionMessage;
 import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import cd.go.contrib.elasticagents.docker.models.NotRunningAgentStatusReport;
 import cd.go.contrib.elasticagents.docker.requests.AgentStatusReportRequest;
@@ -16,7 +15,7 @@ import freemarker.template.Template;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.ArrayList;
