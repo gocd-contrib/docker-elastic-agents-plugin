@@ -55,7 +55,7 @@ public class ValidateConfigurationExecutorTest {
                 "  {\n" +
                 "    \"message\": \"Pull image before creating the container must not be blank.\",\n" +
                 "    \"key\": \"pull_on_container_create\"\n" +
-                "  },\n" +
+                "  }\n" +
                 "]\n", response.responseBody(), true);
     }
 
