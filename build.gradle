@@ -21,7 +21,7 @@ plugins {
 apply plugin: 'java'
 apply from: 'plugin-common.gradle'
 
-project.ext.pluginVersion = '1.0.2'
+project.ext.pluginVersion = '2.0.0'
 project.ext.fullVersion = project.distVersion ? "${project.pluginVersion}-${project.distVersion}" : project.pluginVersion
 
 group = 'cd.go.contrib'
@@ -32,7 +32,7 @@ description = 'GoCD Docker Elastic Agents'
 project.ext.pluginDesc = [
     id         : 'cd.go.contrib.elastic-agent.docker',
     version    : project.version,
-    goCdVersion: '18.1.0',
+    goCdVersion: '18.10.0',
     name       : 'Docker Elastic Agent Plugin',
     description: 'Docker Based Elastic Agent Plugins for GoCD',
     vendorName : 'GoCD Contributors',
