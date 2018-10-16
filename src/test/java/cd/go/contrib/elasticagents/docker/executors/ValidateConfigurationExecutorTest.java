@@ -117,9 +117,7 @@ public class ValidateConfigurationExecutorTest {
         settings.put("pull_on_container_create", "false");
         GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
 
-        String expectedString = "[{\"message\":\"Private Registry Server must not be blank.\",\"key\":\"private_registry_server\"}," +
-                "{\"message\":\"Private Registry Username must not be blank.\",\"key\":\"private_registry_username\"}," +
-                "{\"message\":\"Private Registry Password must not be blank.\",\"key\":\"private_registry_password\"}]";
+        String expectedString = "[{\"message\":\"Private Registry Server must not be blank.\",\"key\":\"private_registry_server\"}]";
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals(expectedString, response.responseBody(), true);
     }

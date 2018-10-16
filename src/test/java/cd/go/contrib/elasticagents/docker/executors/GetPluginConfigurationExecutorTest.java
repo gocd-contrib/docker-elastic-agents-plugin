@@ -109,13 +109,13 @@ public class GetPluginConfigurationExecutorTest {
                 "    \"display-order\": \"9\"\n" +
                 "  }," +
                 "  \"private_registry_username\": {\n" +
-                "    \"display-name\": \"Private Registry Username\",\n" +
+                "    \"display-name\": \"Private Registry Username (optional)\",\n" +
                 "    \"required\": false,\n" +
                 "    \"secure\": false,\n" +
                 "    \"display-order\": \"10\"\n" +
                 "  }," +
                 "  \"private_registry_password\": {\n" +
-                "    \"display-name\": \"Private Registry Password\",\n" +
+                "    \"display-name\": \"Private Registry Password (optional)\",\n" +
                 "    \"required\": false,\n" +
                 "    \"secure\": true,\n" +
                 "    \"display-order\": \"11\"\n" +

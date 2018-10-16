@@ -56,11 +56,16 @@ public class DockerClientFactory {
         }
 
         if (pluginSettings.useDockerAuthInfo()) {
-            RegistryAuth auth = RegistryAuth.builder()
-                    .password(pluginSettings.getPrivateRegistryPassword())
-                    .serverAddress(pluginSettings.getPrivateRegistryServer())
-                    .username(pluginSettings.getPrivateRegistryUsername())
-                    .build();
+            RegistryAuth auth;
+            if (isBlank(pluginSettings.getPrivateRegistryPassword()) && isBlank(pluginSettings.getPrivateRegistryUsername())) {
+                auth = RegistryAuth.fromDockerConfig(pluginSettings.getPrivateRegistryServer()).build();
+            } else {
+                auth = RegistryAuth.builder()
+                        .password(pluginSettings.getPrivateRegistryPassword())
+                        .serverAddress(pluginSettings.getPrivateRegistryServer())
+                        .username(pluginSettings.getPrivateRegistryUsername())
+                        .build();
+            }
             builder.registryAuth(auth);
         }
 

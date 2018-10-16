@@ -44,8 +44,8 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
         @Override public boolean apply(ValidatePluginSettings settings) { return Boolean.parseBoolean(settings.get(ENABLE_PRIVATE_REGISTRY_AUTHENTICATION.key()));}
     };
     public static final Field PRIVATE_REGISTRY_SERVER = new ConditionalNonBlankField("private_registry_server", "Private Registry Server", null, false, false, "9", privateRegistryFieldsPredicate);
-    public static final Field PRIVATE_REGISTRY_USERNAME = new ConditionalNonBlankField("private_registry_username", "Private Registry Username", null, false, false, "10", privateRegistryFieldsPredicate);
-    public static final Field PRIVATE_REGISTRY_PASSWORD = new ConditionalNonBlankField("private_registry_password", "Private Registry Password", null, false, true, "11", privateRegistryFieldsPredicate);
+    public static final Field PRIVATE_REGISTRY_USERNAME = new ConditionalField("private_registry_username", "Private Registry Username (optional)", null, false, false, "10", privateRegistryFieldsPredicate);
+    public static final Field PRIVATE_REGISTRY_PASSWORD = new ConditionalField("private_registry_password", "Private Registry Password (optional)", null, false, true, "11", privateRegistryFieldsPredicate);
     public static final Field PULL_ON_CONTAINER_CREATE = new NonBlankField("pull_on_container_create", "Pull image before creating the container", "false", true, false, "12");
 
     public static final Map<String, Field> FIELDS = new LinkedHashMap<>();
