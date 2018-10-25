@@ -32,6 +32,7 @@ import org.joda.time.Period;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import java.util.stream.Collectors;
 
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 import static cd.go.contrib.elasticagents.docker.utils.Util.readableSize;
@@ -39,6 +40,7 @@ import static cd.go.contrib.elasticagents.docker.utils.Util.readableSize;
 public class DockerContainers implements AgentInstances<DockerContainer> {
 
     private final Map<String, DockerContainer> instances = new ConcurrentHashMap<>();
+    private List<JobIdentifier> jobIdentifiers = new ArrayList<>();
     private boolean refreshed;
     public Clock clock = Clock.DEFAULT;
 
@@ -48,17 +50,21 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     public DockerContainer create(CreateAgentRequest request, PluginRequest pluginRequest) throws Exception {
         PluginSettings settings = pluginRequest.getPluginSettings();
         final Integer maxAllowedContainers = settings.getMaxDockerContainers();
+        if (!jobIdentifiers.contains(request.jobIdentifier())) {
+            jobIdentifiers.add(request.jobIdentifier());
+        }
         synchronized (instances) {
             doWithLockOnSemaphore(new SetupSemaphore(maxAllowedContainers, instances, semaphore));
             List<Map<String, String>> messages = new ArrayList<>();
-
             if (semaphore.tryAcquire()) {
                 pluginRequest.addServerHealthMessage(messages);
                 DockerContainer container = DockerContainer.create(request, settings, docker(settings));
                 register(container);
+                jobIdentifiers.remove(request.jobIdentifier());
                 return container;
             } else {
-                String maxLimitExceededMessage = "The number of containers currently running is currently at the maximum permissible limit (" + instances.size() + "). Not creating any more containers.";
+                String maxLimitExceededMessage = String.format("The number of containers currently running is currently at the maximum permissible limit (%d). Not creating more containers for jobs: %s.", instances.size(), jobIdentifiers.stream().map(JobIdentifier::getRepresentation)
+                        .collect(Collectors.joining(", ")));
                 Map<String, String> messageToBeAdded = new HashMap<>();
                 messageToBeAdded.put("type", "warning");
                 messageToBeAdded.put("message", maxLimitExceededMessage);

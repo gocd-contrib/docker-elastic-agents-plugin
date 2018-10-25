@@ -184,12 +184,12 @@ public class DockerContainersTest extends BaseTest {
         PluginRequest pluginRequest = mock(PluginRequest.class);
         when(pluginRequest.getPluginSettings()).thenReturn(settings);
 
-        DockerContainer dockerContainer = dockerContainers.create(request, pluginRequest);
-
+        dockerContainers.create(request, pluginRequest);
+        dockerContainers.create(new CreateAgentRequest("key", new HashMap<>(), "production", new JobIdentifier("up42", 2L, "foo", "stage", "1", "job2", 1L)), pluginRequest);
         ArrayList<Map<String, String>> messages = new ArrayList<>();
         Map<String, String> message = new HashMap<>();
         message.put("type", "warning");
-        message.put("message", "The number of containers currently running is currently at the maximum permissible limit (0). Not creating any more containers.");
+        message.put("message", "The number of containers currently running is currently at the maximum permissible limit (0). Not creating more containers for jobs: up42/2/stage/1/job, up42/2/stage/1/job2.");
         messages.add(message);
         verify(pluginRequest).addServerHealthMessage(messages);
     }
