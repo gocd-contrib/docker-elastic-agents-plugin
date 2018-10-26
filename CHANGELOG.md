@@ -3,7 +3,7 @@
 ### Added
 - Terminate container once job is finished.
 
-### Bugs
+### Fixed
 - Fixed validation issue with `enable_private_registry_authentication` and `pull_on_container_create`.
 
 **_Note:_** *Requires GoCD version 18.10.0 and above. Plugin will not work with the older version of GoCD.*
