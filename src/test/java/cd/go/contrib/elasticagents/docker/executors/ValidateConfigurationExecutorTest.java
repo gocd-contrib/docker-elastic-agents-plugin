@@ -47,14 +47,6 @@ public class ValidateConfigurationExecutorTest {
                 "  {\n" +
                 "    \"message\": \"Agent auto-register Timeout (in minutes) must be a positive integer.\",\n" +
                 "    \"key\": \"auto_register_timeout\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"message\": \"Use Private Registry must not be blank.\",\n" +
-                "    \"key\": \"enable_private_registry_authentication\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"message\": \"Pull image before creating the container must not be blank.\",\n" +
-                "    \"key\": \"pull_on_container_create\"\n" +
                 "  }\n" +
                 "]\n", response.responseBody(), true);
     }
