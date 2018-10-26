@@ -1,3 +1,13 @@
+## 2.0.0 - 2018-10-26
+
+### Added
+- Terminate container once job is finished.
+
+### Bugs
+- Fixed validation issue with `enable_private_registry_authentication` and `pull_on_container_create`.
+
+**_Note:_** *Requires GoCD version 18.10.0 and above. Plugin will not work with the older version of GoCD.*
+
 ## 1.0.2 - 2018-09-04
 - Removed additional margin from status report pages
 
