@@ -189,7 +189,7 @@ public class DockerContainersTest extends BaseTest {
         ArrayList<Map<String, String>> messages = new ArrayList<>();
         Map<String, String> message = new HashMap<>();
         message.put("type", "warning");
-        message.put("message", "The number of containers currently running is currently at the maximum permissible limit (0). Not creating more containers for jobs: up42/2/stage/1/job, up42/2/stage/1/job2.");
+        message.put("message", "The number of containers currently running is currently at the maximum permissible limit, \"0\". Not creating more containers for jobs: up42/2/stage/1/job, up42/2/stage/1/job2.");
         messages.add(message);
         verify(pluginRequest).addServerHealthMessage(messages);
     }
