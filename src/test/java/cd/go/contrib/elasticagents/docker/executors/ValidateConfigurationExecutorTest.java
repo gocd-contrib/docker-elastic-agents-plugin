@@ -47,14 +47,6 @@ public class ValidateConfigurationExecutorTest {
                 "  {\n" +
                 "    \"message\": \"Agent auto-register Timeout (in minutes) must be a positive integer.\",\n" +
                 "    \"key\": \"auto_register_timeout\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"message\": \"Use Private Registry must not be blank.\",\n" +
-                "    \"key\": \"enable_private_registry_authentication\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"message\": \"Pull image before creating the container must not be blank.\",\n" +
-                "    \"key\": \"pull_on_container_create\"\n" +
                 "  }\n" +
                 "]\n", response.responseBody(), true);
     }
@@ -90,6 +82,27 @@ public class ValidateConfigurationExecutorTest {
         settings.put("go_server_url", "https://ci.example.com/go");
         settings.put("enable_private_registry_authentication", "true");
         settings.put("private_registry_server", "server");
+        settings.put("private_registry_custom_credentials", "false");
+        settings.put("auto_register_timeout", "10");
+        settings.put("pull_on_container_create", "false");
+        GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
+
+        assertThat(response.responseCode(), is(200));
+        JSONAssert.assertEquals("[]", response.responseBody(), true);
+    }
+
+    @Test
+    public void shouldValidateAConfigurationWithPrivateRegistryCustomCreds() throws Exception {
+        ValidatePluginSettings settings = new ValidatePluginSettings();
+        settings.put("max_docker_containers", "1");
+        settings.put("docker_uri", "https://api.example.com");
+        settings.put("docker_ca_cert", "some ca cert");
+        settings.put("docker_client_key", "some client key");
+        settings.put("docker_client_cert", "sone client cert");
+        settings.put("go_server_url", "https://ci.example.com/go");
+        settings.put("enable_private_registry_authentication", "true");
+        settings.put("private_registry_server", "server");
+        settings.put("private_registry_custom_credentials", "true");
         settings.put("private_registry_username", "username");
         settings.put("private_registry_password", "password");
         settings.put("auto_register_timeout", "10");
@@ -101,7 +114,7 @@ public class ValidateConfigurationExecutorTest {
     }
 
     @Test
-    public void shouldNotValidateAConfigurationWithInvalidPrivateRegistrySettings() throws Exception {
+    public void shouldNotValidateAConfigurationWithInvalidPrivateRegistry() throws Exception {
         ValidatePluginSettings settings = new ValidatePluginSettings();
         settings.put("max_docker_containers", "1");
         settings.put("docker_uri", "https://api.example.com");
@@ -111,13 +124,37 @@ public class ValidateConfigurationExecutorTest {
         settings.put("go_server_url", "https://ci.example.com/go");
         settings.put("enable_private_registry_authentication", "true");
         settings.put("private_registry_server", "");
+        settings.put("private_registry_custom_credentials", "false");
+        settings.put("auto_register_timeout", "10");
+        settings.put("pull_on_container_create", "false");
+        GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
+
+        String expectedString = "[{\"message\":\"Private Registry Server must not be blank.\",\"key\":\"private_registry_server\"}]";
+        assertThat(response.responseCode(), is(200));
+        JSONAssert.assertEquals(expectedString, response.responseBody(), true);
+    }
+
+    @Test
+    public void shouldNotValidateAConfigurationWithInvalidPrivateRegistryCustomCreds() throws Exception {
+        ValidatePluginSettings settings = new ValidatePluginSettings();
+        settings.put("max_docker_containers", "1");
+        settings.put("docker_uri", "https://api.example.com");
+        settings.put("docker_ca_cert", "some ca cert");
+        settings.put("docker_client_key", "some client key");
+        settings.put("docker_client_cert", "sone client cert");
+        settings.put("go_server_url", "https://ci.example.com/go");
+        settings.put("enable_private_registry_authentication", "true");
+        settings.put("private_registry_server", "");
+        settings.put("private_registry_custom_credentials", "true");
         settings.put("private_registry_username", "");
         settings.put("private_registry_password", "");
         settings.put("auto_register_timeout", "10");
         settings.put("pull_on_container_create", "false");
         GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
 
-        String expectedString = "[{\"message\":\"Private Registry Server must not be blank.\",\"key\":\"private_registry_server\"}]";
+        String expectedString = "[{\"message\":\"Private Registry Server must not be blank.\",\"key\":\"private_registry_server\"}," +
+                "{\"message\":\"Private Registry Username must not be blank.\",\"key\":\"private_registry_username\"}," +
+                "{\"message\":\"Private Registry Password must not be blank.\",\"key\":\"private_registry_password\"}]";
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals(expectedString, response.responseBody(), true);
     }
