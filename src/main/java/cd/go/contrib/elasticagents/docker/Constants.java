@@ -40,6 +40,7 @@ public interface Constants {
     String REQUEST_SERVER_DELETE_AGENT = REQUEST_SERVER_PREFIX + ".elastic-agents.delete-agents";
     String REQUEST_SERVER_GET_PLUGIN_SETTINGS = REQUEST_SERVER_PREFIX + ".plugin-settings.get";
     String REQUEST_SERVER_LIST_AGENTS = REQUEST_SERVER_PREFIX + ".elastic-agents.list-agents";
+    String REQUEST_SERVER_SERVER_HEALTH_ADD_MESSAGES = REQUEST_SERVER_PREFIX + ".server-health.add-messages";
 
     // internal use only
     String CREATED_BY_LABEL_KEY = "Elastic-Agent-Created-By";

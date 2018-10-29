@@ -29,12 +29,10 @@ import com.spotify.docker.client.messages.Info;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import java.util.stream.Collectors;
 
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 import static cd.go.contrib.elasticagents.docker.utils.Util.readableSize;
@@ -42,23 +40,37 @@ import static cd.go.contrib.elasticagents.docker.utils.Util.readableSize;
 public class DockerContainers implements AgentInstances<DockerContainer> {
 
     private final Map<String, DockerContainer> instances = new ConcurrentHashMap<>();
+    private List<JobIdentifier> jobsWaitingForAgentCreation = new ArrayList<>();
     private boolean refreshed;
     public Clock clock = Clock.DEFAULT;
 
     final Semaphore semaphore = new Semaphore(0, true);
 
     @Override
-    public DockerContainer create(CreateAgentRequest request, PluginSettings settings) throws Exception {
+    public DockerContainer create(CreateAgentRequest request, PluginRequest pluginRequest) throws Exception {
+        PluginSettings settings = pluginRequest.getPluginSettings();
         final Integer maxAllowedContainers = settings.getMaxDockerContainers();
+        if (!jobsWaitingForAgentCreation.contains(request.jobIdentifier())) {
+            jobsWaitingForAgentCreation.add(request.jobIdentifier());
+        }
         synchronized (instances) {
             doWithLockOnSemaphore(new SetupSemaphore(maxAllowedContainers, instances, semaphore));
-
+            List<Map<String, String>> messages = new ArrayList<>();
             if (semaphore.tryAcquire()) {
+                pluginRequest.addServerHealthMessage(messages);
                 DockerContainer container = DockerContainer.create(request, settings, docker(settings));
                 register(container);
+                jobsWaitingForAgentCreation.remove(request.jobIdentifier());
                 return container;
             } else {
-                LOG.info("The number of containers currently running is currently at the maximum permissible limit (" + instances.size() + "). Not creating any more containers.");
+                String maxLimitExceededMessage = String.format("The number of containers currently running is currently at the maximum permissible limit, \"%d\". Not creating more containers for jobs: %s.", instances.size(), jobsWaitingForAgentCreation.stream().map(JobIdentifier::getRepresentation)
+                        .collect(Collectors.joining(", ")));
+                Map<String, String> messageToBeAdded = new HashMap<>();
+                messageToBeAdded.put("type", "warning");
+                messageToBeAdded.put("message", maxLimitExceededMessage);
+                messages.add(messageToBeAdded);
+                pluginRequest.addServerHealthMessage(messages);
+                LOG.info(maxLimitExceededMessage);
                 return null;
             }
         }

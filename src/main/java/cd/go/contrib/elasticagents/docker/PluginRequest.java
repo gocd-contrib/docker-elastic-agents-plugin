@@ -16,12 +16,14 @@
 
 package cd.go.contrib.elasticagents.docker;
 
+import com.google.gson.Gson;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.request.DefaultGoApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoApiResponse;
 
-import java.util.Collection;
+import java.util.*;
 
+import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 import static cd.go.contrib.elasticagents.docker.Constants.PROCESSOR_API_VERSION;
 import static cd.go.contrib.elasticagents.docker.Constants.PLUGIN_IDENTIFIER;
 
@@ -84,6 +86,22 @@ public class PluginRequest {
 
         if (response.responseCode() != 200) {
             throw ServerRequestFailedException.deleteAgents(response);
+        }
+    }
+
+    public void addServerHealthMessage(List<Map<String, String>> messages) {
+        Gson gson = new Gson();
+
+        DefaultGoApiRequest request = new DefaultGoApiRequest(Constants.REQUEST_SERVER_SERVER_HEALTH_ADD_MESSAGES, PROCESSOR_API_VERSION, PLUGIN_IDENTIFIER);
+
+        request.setRequestBody(gson.toJson(messages));
+
+        // submit the request
+        GoApiResponse response = accessor.submit(request);
+
+        // check status
+        if (response.responseCode() != 200) {
+            LOG.error("The server sent an unexpected status code " + response.responseCode() + " with the response body " + response.responseBody());
         }
     }
 }

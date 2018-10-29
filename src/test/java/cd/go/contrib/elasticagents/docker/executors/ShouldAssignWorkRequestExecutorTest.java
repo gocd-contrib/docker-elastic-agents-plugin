@@ -16,10 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker.executors;
 
-import cd.go.contrib.elasticagents.docker.Agent;
-import cd.go.contrib.elasticagents.docker.BaseTest;
-import cd.go.contrib.elasticagents.docker.DockerContainer;
-import cd.go.contrib.elasticagents.docker.DockerContainers;
+import cd.go.contrib.elasticagents.docker.*;
 import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import cd.go.contrib.elasticagents.docker.requests.ShouldAssignWorkRequest;
@@ -33,6 +30,8 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
 
@@ -48,7 +47,10 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
         properties.put("foo", "bar");
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
-        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment, jobIdentifier), createSettings());
+        PluginSettings settings = createSettings();
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(pluginRequest.getPluginSettings()).thenReturn(settings);
+        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment, jobIdentifier), pluginRequest);
         containers.add(instance.name());
     }
 
