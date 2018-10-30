@@ -49,7 +49,7 @@
 		</div>
 
 		<div class="form_item_block">
-			<label>Agent auto-register Timeout (in minutes)<span class='asterix'>*</span></label>
+			<label>Agent auto-register Timeout (in minutes):<span class='asterix'>*</span></label>
 			<input type="text" ng-model="auto_register_timeout" ng-required="true"/>
 			<span class="form_error" ng-show="GOINPUTNAME[auto_register_timeout].$error.server">{{GOINPUTNAME[auto_register_timeout].$error.server}}</span>
 		</div>
@@ -103,19 +103,35 @@
 
 		<div ng-show="enable_private_registry_authentication">
 			<div class="form_item_block">
-				<label>Private Registry Server:</label>
+				<label>Private Registry Server:<span class='asterix'>*</span></label>
 				<input type="text" ng-model="private_registry_server" ng-required="true"/>
 				<span class="form_error" ng-show="GOINPUTNAME[private_registry_server].$error.server">{{GOINPUTNAME[private_registry_server].$error.server}}</span>
 			</div>
-			<div class="form_item_block">
-				<label>Private Registry Username:</label>
-				<input type="text" ng-model="private_registry_username" ng-required="true"/>
-				<span class="form_error" ng-show="GOINPUTNAME[private_registry_username].$error.server">{{GOINPUTNAME[private_registry_username].$error.server}}</span>
+			<label>Private Registry credentials setup:</label>
+			<div class="form_item_block row" style="padding-top: 10px">
+				<div class="columns small-9 medium-10 larger-10"
+					ng-init="private_registry_custom_credentials = private_registry_custom_credentials || 'false'">
+					<input type="radio" ng-model="private_registry_custom_credentials" value="true"
+						id="login-using-custom-creds"/>
+					<label for="login-using-custom-creds">Custom credentials</label>
+
+					<input type="radio" ng-model="private_registry_custom_credentials" value="false"
+						id="login-using-docker-config"/>
+					<label for="login-using-docker-config">Use Docker configuration file</label>
+					<span class="form_error" ng-show="GOINPUTNAME[private_registry_custom_credentials].$error.server">{{GOINPUTNAME[private_registry_custom_credentials].$error.server}}</span>
+				</div>
 			</div>
-			<div class="form_item_block">
-				<label>Private Registry Password:</label>
-				<input type="password" ng-model="private_registry_password" ng-required="true"/>
-				<span class="form_error" ng-show="GOINPUTNAME[private_registry_password].$error.server">{{GOINPUTNAME[private_registry_password].$error.server}}</span>
+			<div ng-show="private_registry_custom_credentials">
+				<div class="form_item_block">
+					<label>Private Registry Username:</label>
+					<input type="text" ng-model="private_registry_username" ng-required="true"/>
+					<span class="form_error" ng-show="GOINPUTNAME[private_registry_username].$error.server">{{GOINPUTNAME[private_registry_username].$error.server}}</span>
+				</div>
+				<div class="form_item_block">
+					<label>Private Registry Password:</label>
+					<input type="password" ng-model="private_registry_password" ng-required="true"/>
+					<span class="form_error" ng-show="GOINPUTNAME[private_registry_password].$error.server">{{GOINPUTNAME[private_registry_password].$error.server}}</span>
+				</div>
 			</div>
 		</div>
 	</fieldset>

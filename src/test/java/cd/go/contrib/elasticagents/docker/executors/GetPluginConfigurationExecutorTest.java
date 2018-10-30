@@ -108,24 +108,31 @@ public class GetPluginConfigurationExecutorTest {
                 "    \"secure\": false,\n" +
                 "    \"display-order\": \"9\"\n" +
                 "  }," +
+                "  \"private_registry_custom_credentials\": {\n" +
+                "    \"display-name\": \"Private Registry credentials setup\",\n" +
+                "    \"default-value\": \"false\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"10\"\n" +
+                "  }," +
                 "  \"private_registry_username\": {\n" +
                 "    \"display-name\": \"Private Registry Username\",\n" +
                 "    \"required\": false,\n" +
                 "    \"secure\": false,\n" +
-                "    \"display-order\": \"10\"\n" +
+                "    \"display-order\": \"11\"\n" +
                 "  }," +
                 "  \"private_registry_password\": {\n" +
                 "    \"display-name\": \"Private Registry Password\",\n" +
                 "    \"required\": false,\n" +
                 "    \"secure\": true,\n" +
-                "    \"display-order\": \"11\"\n" +
+                "    \"display-order\": \"12\"\n" +
                 "  }," +
                 "  \"pull_on_container_create\": {\n" +
                 "    \"display-name\": \"Pull image before creating the container\",\n" +
                 "    \"default-value\": \"false\",\n" +
                 "    \"required\": true,\n" +
                 "    \"secure\": false,\n" +
-                "    \"display-order\": \"12\"\n" +
+                "    \"display-order\": \"13\"\n" +
                 "  }" +
                 "}\n";
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
