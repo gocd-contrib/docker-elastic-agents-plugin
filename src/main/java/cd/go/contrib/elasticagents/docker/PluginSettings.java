@@ -81,6 +81,10 @@ public class PluginSettings {
     private boolean useDockerAuthInfo;
 
     @Expose
+    @SerializedName("private_registry_custom_credentials")
+    private boolean useCustomRegistryCredentials;
+
+    @Expose
     @SerializedName("pull_on_container_create")
     private boolean pullOnContainerCreate;
 
@@ -111,6 +115,7 @@ public class PluginSettings {
         if (useDockerAuthInfo != that.useDockerAuthInfo) return false;
         if(privateRegistryServer != null ? !privateRegistryServer.equals(that.privateRegistryServer) : that.privateRegistryServer != null)
             return false;
+        if (useCustomRegistryCredentials != that.useCustomRegistryCredentials) return false;
         if(privateRegistryUsername != null ? !privateRegistryUsername.equals(that.privateRegistryUsername) : that.privateRegistryUsername != null)
             return false;
         if(privateRegistryPassword != null ? !privateRegistryPassword.equals(that.privateRegistryPassword) : that.privateRegistryPassword != null)
@@ -131,6 +136,7 @@ public class PluginSettings {
         result = 31 * result + (autoRegisterPeriod != null ? autoRegisterPeriod.hashCode() : 0);
         result = 31 * result + (useDockerAuthInfo?1:0);
         result = 31 * result + (privateRegistryServer != null ? privateRegistryServer.hashCode() : 0);
+        result = 31 * result + (useCustomRegistryCredentials? 1 : 0);
         result = 31 * result + (privateRegistryPassword != null ? privateRegistryPassword.hashCode() : 0);
         result = 31 * result + (privateRegistryUsername != null ? privateRegistryUsername.hashCode() : 0);
         result = 31 * result + (pullOnContainerCreate? 1 : 0);
@@ -193,6 +199,10 @@ public class PluginSettings {
 
     public Boolean useDockerAuthInfo() {
         return Boolean.valueOf(useDockerAuthInfo);
+    }
+
+    public Boolean useCustomRegistryCredentials() {
+        return Boolean.valueOf(useCustomRegistryCredentials);
     }
 
     public Boolean pullOnContainerCreate() {

@@ -44,9 +44,13 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
         @Override public boolean apply(ValidatePluginSettings settings) { return Boolean.parseBoolean(settings.get(ENABLE_PRIVATE_REGISTRY_AUTHENTICATION.key()));}
     };
     public static final Field PRIVATE_REGISTRY_SERVER = new ConditionalNonBlankField("private_registry_server", "Private Registry Server", null, false, false, "9", privateRegistryFieldsPredicate);
-    public static final Field PRIVATE_REGISTRY_USERNAME = new ConditionalNonBlankField("private_registry_username", "Private Registry Username", null, false, false, "10", privateRegistryFieldsPredicate);
-    public static final Field PRIVATE_REGISTRY_PASSWORD = new ConditionalNonBlankField("private_registry_password", "Private Registry Password", null, false, true, "11", privateRegistryFieldsPredicate);
-    public static final Field PULL_ON_CONTAINER_CREATE = new Field("pull_on_container_create", "Pull image before creating the container", "false", true, false, "12");
+    public static final Field PRIVATE_REGISTRY_CUSTOM_CREDENTIALS = new Field("private_registry_custom_credentials", "Private Registry credentials setup", "false", true, false, "10");
+    private static final Predicate<ValidatePluginSettings> privateRegistryCredentialsPredicate = new Predicate<ValidatePluginSettings>() {
+        @Override public boolean apply(ValidatePluginSettings settings) { return Boolean.parseBoolean(settings.get(PRIVATE_REGISTRY_CUSTOM_CREDENTIALS.key()));}
+    };
+    public static final Field PRIVATE_REGISTRY_USERNAME = new ConditionalNonBlankField("private_registry_username", "Private Registry Username", null, false, false, "11", privateRegistryCredentialsPredicate);
+    public static final Field PRIVATE_REGISTRY_PASSWORD = new ConditionalNonBlankField("private_registry_password", "Private Registry Password", null, false, true, "12", privateRegistryCredentialsPredicate);
+    public static final Field PULL_ON_CONTAINER_CREATE = new Field("pull_on_container_create", "Pull image before creating the container", "false", true, false, "13");
 
     public static final Map<String, Field> FIELDS = new LinkedHashMap<>();
 
@@ -64,6 +68,7 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
 
         FIELDS.put(ENABLE_PRIVATE_REGISTRY_AUTHENTICATION.key(), ENABLE_PRIVATE_REGISTRY_AUTHENTICATION);
         FIELDS.put(PRIVATE_REGISTRY_SERVER.key(), PRIVATE_REGISTRY_SERVER);
+        FIELDS.put(PRIVATE_REGISTRY_CUSTOM_CREDENTIALS.key(), PRIVATE_REGISTRY_CUSTOM_CREDENTIALS);
         FIELDS.put(PRIVATE_REGISTRY_USERNAME.key(), PRIVATE_REGISTRY_USERNAME);
         FIELDS.put(PRIVATE_REGISTRY_PASSWORD.key(), PRIVATE_REGISTRY_PASSWORD);
 
