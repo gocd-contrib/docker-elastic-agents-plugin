@@ -44,7 +44,7 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
         @Override public boolean apply(ValidatePluginSettings settings) { return Boolean.parseBoolean(settings.get(ENABLE_PRIVATE_REGISTRY_AUTHENTICATION.key()));}
     };
     public static final Field PRIVATE_REGISTRY_SERVER = new ConditionalNonBlankField("private_registry_server", "Private Registry Server", null, false, false, "9", privateRegistryFieldsPredicate);
-    public static final Field PRIVATE_REGISTRY_CUSTOM_CREDENTIALS = new Field("private_registry_custom_credentials", "Private Registry credentials setup", "false", true, false, "10");
+    public static final Field PRIVATE_REGISTRY_CUSTOM_CREDENTIALS = new Field("private_registry_custom_credentials", "Private Registry credentials setup", "true", true, false, "10");
     private static final Predicate<ValidatePluginSettings> privateRegistryCredentialsPredicate = new Predicate<ValidatePluginSettings>() {
         @Override public boolean apply(ValidatePluginSettings settings) { return Boolean.parseBoolean(settings.get(PRIVATE_REGISTRY_CUSTOM_CREDENTIALS.key()));}
     };

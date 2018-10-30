@@ -110,7 +110,7 @@ public class GetPluginConfigurationExecutorTest {
                 "  }," +
                 "  \"private_registry_custom_credentials\": {\n" +
                 "    \"display-name\": \"Private Registry credentials setup\",\n" +
-                "    \"default-value\": \"false\",\n" +
+                "    \"default-value\": \"true\",\n" +
                 "    \"required\": true,\n" +
                 "    \"secure\": false,\n" +
                 "    \"display-order\": \"10\"\n" +
