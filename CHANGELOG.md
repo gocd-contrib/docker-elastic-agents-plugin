@@ -1,3 +1,8 @@
+## 2.1.0 - 2018-11-13
+
+### Added
+- Allow loading credentials from config file when using a custom Docker registry
+
 ## 2.0.0 - 2018-10-26
 
 ### Added
