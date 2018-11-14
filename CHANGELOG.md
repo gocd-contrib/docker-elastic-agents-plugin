@@ -2,6 +2,7 @@
 
 ### Added
 - Allow loading credentials from config file when using a custom Docker registry
+- Show warnings in server health messages
 
 ## 2.0.0 - 2018-10-26
 
