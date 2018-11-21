@@ -26,16 +26,15 @@ public class ConditionalNonBlankField extends NonBlankField {
 
     private Predicate<ValidatePluginSettings> nonBlankCondition;
 
-    public ConditionalNonBlankField(String key, String displayName, String defaultValue, Boolean required,
+    public ConditionalNonBlankField(String key, String displayName, String defaultValue,
                                     Boolean secure, String displayOrder, Predicate<ValidatePluginSettings> condition) {
-        super(key, displayName, defaultValue, required, secure, displayOrder);
+        super(key, displayName, defaultValue, secure, displayOrder);
         this.nonBlankCondition = condition;
     }
 
     @Override
     public Map<String, String> validate(ValidatePluginSettings settings) {
-        if (nonBlankCondition.apply(settings))
-        {
+        if (nonBlankCondition.apply(settings)) {
             return super.validate(settings);
         }
         return new HashMap<>();

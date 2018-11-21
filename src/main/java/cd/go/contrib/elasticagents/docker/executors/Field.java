@@ -23,8 +23,10 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Field {
+    protected static final AtomicInteger DISPLAY_ORDER_GENERATOR = new AtomicInteger();
     protected final String key;
 
     @Expose
@@ -75,4 +77,7 @@ public class Field {
         return key;
     }
 
+    public static String next() {
+        return String.valueOf(DISPLAY_ORDER_GENERATOR.getAndIncrement());
+    }
 }

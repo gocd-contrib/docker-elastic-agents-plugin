@@ -37,18 +37,18 @@ public class ValidateConfigurationExecutorTest {
                 "    \"key\": \"go_server_url\"\n" +
                 "  },\n" +
                 "  {\n" +
-                "    \"message\": \"Maximum containers to allow must be a positive integer.\",\n" +
-                "    \"key\": \"max_docker_containers\"\n" +
-                "  }\n," +
-                "  {\n" +
                 "    \"message\": \"Docker URI must not be blank.\",\n" +
                 "    \"key\": \"docker_uri\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"message\": \"Maximum containers to allow must be a positive integer.\",\n" +
+                "    \"key\": \"max_docker_containers\"\n" +
                 "  },\n" +
                 "  {\n" +
                 "    \"message\": \"Agent auto-register Timeout (in minutes) must be a positive integer.\",\n" +
                 "    \"key\": \"auto_register_timeout\"\n" +
                 "  }\n" +
-                "]\n", response.responseBody(), true);
+                "]", response.responseBody(), true);
     }
 
     @Test
@@ -69,7 +69,6 @@ public class ValidateConfigurationExecutorTest {
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals("[]", response.responseBody(), true);
     }
-
 
     @Test
     public void shouldValidateAConfigurationWithAllPrivateRegistryInfos() throws Exception {
@@ -152,9 +151,21 @@ public class ValidateConfigurationExecutorTest {
         settings.put("pull_on_container_create", "false");
         GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
 
-        String expectedString = "[{\"message\":\"Private Registry Server must not be blank.\",\"key\":\"private_registry_server\"}," +
-                "{\"message\":\"Private Registry Username must not be blank.\",\"key\":\"private_registry_username\"}," +
-                "{\"message\":\"Private Registry Password must not be blank.\",\"key\":\"private_registry_password\"}]";
+        String expectedString = "[\n" +
+                "  {\n" +
+                "    \"message\": \"Private Registry Username must not be blank.\",\n" +
+                "    \"key\": \"private_registry_username\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"message\": \"Private Registry Server must not be blank.\",\n" +
+                "    \"key\": \"private_registry_server\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"message\": \"Private Registry Password must not be blank.\",\n" +
+                "    \"key\": \"private_registry_password\"\n" +
+                "  }\n" +
+                "]";
+
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals(expectedString, response.responseBody(), true);
     }
