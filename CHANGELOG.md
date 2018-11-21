@@ -1,3 +1,8 @@
+## 2.2.0 - 2018-11-21
+
+- Updated plugin libraries
+- Fixed the issue with plugin settings validation
+
 ## 2.1.0 - 2018-11-14
 
 ### Added
