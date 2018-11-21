@@ -20,8 +20,8 @@ import org.apache.commons.lang.StringUtils;
 
 public class NonBlankField extends Field {
 
-    public NonBlankField(String key, String displayName, String defaultValue, Boolean required, Boolean secure, String displayOrder) {
-        super(key, displayName, defaultValue, required, secure, displayOrder);
+    public NonBlankField(String key, String displayName, String defaultValue, Boolean secure, String displayOrder) {
+        super(key, displayName, defaultValue, true, secure, displayOrder);
     }
 
     @Override

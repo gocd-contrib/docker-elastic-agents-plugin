@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.nullValue;
 public class GoServerURLFieldTest {
 
     private final String displayName = "Go Server Url";
-    private final GoServerURLField goServerURLField = new GoServerURLField("go_server_url", displayName, null, true, false, "0");
+    private final GoServerURLField goServerURLField = new GoServerURLField("0");
 
     @Test
     public void shouldCheckBlankInput() {
@@ -70,7 +70,4 @@ public class GoServerURLFieldTest {
         result = goServerURLField.doValidate("https://example.com:8154/foo/go/");
         assertThat(result, is(nullValue()));
     }
-
-
-
 }

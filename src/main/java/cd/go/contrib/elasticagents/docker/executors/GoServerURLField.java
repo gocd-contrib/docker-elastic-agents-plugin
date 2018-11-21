@@ -20,12 +20,13 @@ import org.apache.http.client.utils.URIBuilder;
 
 import java.net.URISyntaxException;
 
+import static cd.go.contrib.elasticagents.docker.executors.GetPluginConfigurationExecutor.GO_SERVER_URL;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class GoServerURLField extends Field {
 
-    public GoServerURLField(String key, String displayName, String defaultValue, Boolean required, Boolean secure, String displayOrder) {
-        super(key, displayName, defaultValue, required, secure, displayOrder);
+    public GoServerURLField(String displayOrder) {
+        super(GO_SERVER_URL, "Go Server URL", null, true, false, displayOrder);
     }
 
     @Override

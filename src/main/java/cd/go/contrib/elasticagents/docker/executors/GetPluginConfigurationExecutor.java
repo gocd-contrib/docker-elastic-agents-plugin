@@ -24,56 +24,64 @@ import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-import java.util.LinkedHashMap;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static cd.go.contrib.elasticagents.docker.executors.Field.next;
 
 public class GetPluginConfigurationExecutor implements RequestExecutor {
-
     private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-    public static final Field GO_SERVER_URL = new GoServerURLField("go_server_url", "Go Server URL", null, true, false, "0");
-    public static final Field ENVIRONMENT_VARIABLES = new Field("environment_variables", "Environment Variables", null, false, false, "1");
-    public static final Field MAX_DOCKER_CONTAINERS = new PositiveNumberField("max_docker_containers", "Maximum containers to allow", null, true, false, "2");
-    public static final Field DOCKER_URL = new NonBlankField("docker_uri", "Docker URI", null, true, false, "3");
-    public static final Field AUTOREGISTER_TIMEOUT = new PositiveNumberField("auto_register_timeout", "Agent auto-register Timeout (in minutes)", "10", true, false, "4");
-    public static final Field DOCKER_CA_CERT = new Field("docker_ca_cert", "Docker CA Certificate", null, false, true, "5");
-    public static final Field DOCKER_CLIENT_KEY = new Field("docker_client_key", "Docker Client Key", null, false, true, "6");
-    public static final Field DOCKER_CLIENT_CERT = new Field("docker_client_cert", "Docker Client Certificate", null, false, true, "7");
-    public static final Field ENABLE_PRIVATE_REGISTRY_AUTHENTICATION = new Field("enable_private_registry_authentication", "Use Private Registry", "false", true, false, "8");
+    public static final String GO_SERVER_URL = "go_server_url";
+    public static final String ENVIRONMENT_VARIABLES = "environment_variables";
+    public static final String MAX_DOCKER_CONTAINERS = "max_docker_containers";
+    public static final String DOCKER_URI = "docker_uri";
+    public static final String AUTO_REGISTER_TIMEOUT = "auto_register_timeout";
+    public static final String DOCKER_CA_CERT = "docker_ca_cert";
+    public static final String DOCKER_CLIENT_KEY = "docker_client_key";
+    public static final String DOCKER_CLIENT_CERT = "docker_client_cert";
+    public static final String ENABLE_PRIVATE_REGISTRY_AUTHENTICATION = "enable_private_registry_authentication";
+    public static final String PRIVATE_REGISTRY_SERVER = "private_registry_server";
+    public static final String PRIVATE_REGISTRY_CUSTOM_CREDENTIALS = "private_registry_custom_credentials";
+    public static final String PRIVATE_REGISTRY_USERNAME = "private_registry_username";
+    public static final String PRIVATE_REGISTRY_PASSWORD = "private_registry_password";
+    public static final String PULL_ON_CONTAINER_CREATE = "pull_on_container_create";
+
     private static final Predicate<ValidatePluginSettings> privateRegistryFieldsPredicate = new Predicate<ValidatePluginSettings>() {
-        @Override public boolean apply(ValidatePluginSettings settings) { return Boolean.parseBoolean(settings.get(ENABLE_PRIVATE_REGISTRY_AUTHENTICATION.key()));}
+        @Override
+        public boolean apply(ValidatePluginSettings settings) {
+            return Boolean.parseBoolean(settings.get(ENABLE_PRIVATE_REGISTRY_AUTHENTICATION));
+        }
     };
-    public static final Field PRIVATE_REGISTRY_SERVER = new ConditionalNonBlankField("private_registry_server", "Private Registry Server", null, false, false, "9", privateRegistryFieldsPredicate);
-    public static final Field PRIVATE_REGISTRY_CUSTOM_CREDENTIALS = new Field("private_registry_custom_credentials", "Private Registry credentials setup", "true", true, false, "10");
     private static final Predicate<ValidatePluginSettings> privateRegistryCredentialsPredicate = new Predicate<ValidatePluginSettings>() {
-        @Override public boolean apply(ValidatePluginSettings settings) { return Boolean.parseBoolean(settings.get(PRIVATE_REGISTRY_CUSTOM_CREDENTIALS.key()));}
+        @Override
+        public boolean apply(ValidatePluginSettings settings) {
+            return privateRegistryFieldsPredicate.apply(settings) && Boolean.parseBoolean(settings.get(PRIVATE_REGISTRY_CUSTOM_CREDENTIALS));
+        }
     };
-    public static final Field PRIVATE_REGISTRY_USERNAME = new ConditionalNonBlankField("private_registry_username", "Private Registry Username", null, false, false, "11", privateRegistryCredentialsPredicate);
-    public static final Field PRIVATE_REGISTRY_PASSWORD = new ConditionalNonBlankField("private_registry_password", "Private Registry Password", null, false, true, "12", privateRegistryCredentialsPredicate);
-    public static final Field PULL_ON_CONTAINER_CREATE = new Field("pull_on_container_create", "Pull image before creating the container", "false", true, false, "13");
 
-    public static final Map<String, Field> FIELDS = new LinkedHashMap<>();
+    private static final List<Field> FIELD_LIST = Arrays.asList(
+            new GoServerURLField(next()),
+            new Field(ENVIRONMENT_VARIABLES, "Environment Variables", null, false, false, next()),
+            new PositiveNumberField(MAX_DOCKER_CONTAINERS, "Maximum containers to allow", null, true, false, next()),
+            new NonBlankField(DOCKER_URI, "Docker URI", null, false, next()),
+            new PositiveNumberField(AUTO_REGISTER_TIMEOUT, "Agent auto-register Timeout (in minutes)", "10", true, false, next()),
+            new Field(DOCKER_CA_CERT, "Docker CA Certificate", null, false, true, next()),
+            new Field(DOCKER_CLIENT_KEY, "Docker Client Key", null, false, true, next()),
+            new Field(DOCKER_CLIENT_CERT, "Docker Client Certificate", null, false, true, next()),
+            new Field(ENABLE_PRIVATE_REGISTRY_AUTHENTICATION, "Use Private Registry", "false", false, false, next()),
+            new ConditionalNonBlankField(PRIVATE_REGISTRY_SERVER, "Private Registry Server", null, false, next(), privateRegistryFieldsPredicate),
+            new Field(PRIVATE_REGISTRY_CUSTOM_CREDENTIALS, "Private Registry credentials setup", "true", true, false, next()),
+            new ConditionalNonBlankField(PRIVATE_REGISTRY_USERNAME, "Private Registry Username", null, false, next(), privateRegistryCredentialsPredicate),
+            new ConditionalNonBlankField(PRIVATE_REGISTRY_PASSWORD, "Private Registry Password", null, true, next(), privateRegistryCredentialsPredicate),
+            new Field(PULL_ON_CONTAINER_CREATE, "Pull image before creating the container", "false", true, false, next())
+    );
 
-    static {
-        FIELDS.put(GO_SERVER_URL.key(), GO_SERVER_URL);
-        FIELDS.put(ENVIRONMENT_VARIABLES.key(), ENVIRONMENT_VARIABLES);
-        FIELDS.put(MAX_DOCKER_CONTAINERS.key(), MAX_DOCKER_CONTAINERS);
-        FIELDS.put(DOCKER_URL.key(), DOCKER_URL);
-        FIELDS.put(AUTOREGISTER_TIMEOUT.key(), AUTOREGISTER_TIMEOUT);
-
-        // certs
-        FIELDS.put(DOCKER_CA_CERT.key(), DOCKER_CA_CERT);
-        FIELDS.put(DOCKER_CLIENT_KEY.key(), DOCKER_CLIENT_KEY);
-        FIELDS.put(DOCKER_CLIENT_CERT.key(), DOCKER_CLIENT_CERT);
-
-        FIELDS.put(ENABLE_PRIVATE_REGISTRY_AUTHENTICATION.key(), ENABLE_PRIVATE_REGISTRY_AUTHENTICATION);
-        FIELDS.put(PRIVATE_REGISTRY_SERVER.key(), PRIVATE_REGISTRY_SERVER);
-        FIELDS.put(PRIVATE_REGISTRY_CUSTOM_CREDENTIALS.key(), PRIVATE_REGISTRY_CUSTOM_CREDENTIALS);
-        FIELDS.put(PRIVATE_REGISTRY_USERNAME.key(), PRIVATE_REGISTRY_USERNAME);
-        FIELDS.put(PRIVATE_REGISTRY_PASSWORD.key(), PRIVATE_REGISTRY_PASSWORD);
-
-        FIELDS.put(PULL_ON_CONTAINER_CREATE.key(), PULL_ON_CONTAINER_CREATE);
-    }
+    public static final Map<String, Field> FIELDS = FIELD_LIST.stream()
+            .collect(Collectors.toMap(Field::key, Function.identity()));
 
     public GoPluginApiResponse execute() {
         return new DefaultGoPluginApiResponse(200, GSON.toJson(FIELDS));
