@@ -46,42 +46,30 @@ public class GetPluginConfigurationExecutorTest {
 
         assertThat(response.responseCode(), is(200));
         String expectedJSON = "{\n" +
+                "  \"private_registry_custom_credentials\": {\n" +
+                "    \"display-name\": \"Private Registry credentials setup\",\n" +
+                "    \"default-value\": \"true\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"10\"\n" +
+                "  },\n" +
+                "  \"private_registry_username\": {\n" +
+                "    \"display-name\": \"Private Registry Username\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"11\"\n" +
+                "  },\n" +
+                "  \"private_registry_server\": {\n" +
+                "    \"display-name\": \"Private Registry Server\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"9\"\n" +
+                "  },\n" +
                 "  \"go_server_url\": {\n" +
                 "    \"display-name\": \"Go Server URL\",\n" +
                 "    \"required\": true,\n" +
                 "    \"secure\": false,\n" +
                 "    \"display-order\": \"0\"\n" +
-                "  },\n" +
-                "  \"environment_variables\": {\n" +
-                "    \"display-name\": \"Environment Variables\",\n" +
-                "    \"required\": false,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"1\"\n" +
-                "  },\n" +
-                "  \"max_docker_containers\": {\n" +
-                "    \"display-name\": \"Maximum containers to allow\",\n" +
-                "    \"required\": true,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"2\"\n" +
-                "  },\n" +
-                "  \"docker_uri\": {\n" +
-                "    \"display-name\": \"Docker URI\",\n" +
-                "    \"required\": true,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"3\"\n" +
-                "  },\n" +
-                "  \"auto_register_timeout\": {\n" +
-                "    \"display-name\": \"Agent auto-register Timeout (in minutes)\",\n" +
-                "    \"default-value\": \"10\",\n" +
-                "    \"required\": true,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"4\"\n" +
-                "  },\n" +
-                "  \"docker_ca_cert\": {\n" +
-                "    \"display-name\": \"Docker CA Certificate\",\n" +
-                "    \"required\": false,\n" +
-                "    \"secure\": true,\n" +
-                "    \"display-order\": \"5\"\n" +
                 "  },\n" +
                 "  \"docker_client_key\": {\n" +
                 "    \"display-name\": \"Docker Client Key\",\n" +
@@ -89,52 +77,64 @@ public class GetPluginConfigurationExecutorTest {
                 "    \"secure\": true,\n" +
                 "    \"display-order\": \"6\"\n" +
                 "  },\n" +
-                "  \"docker_client_cert\": {\n" +
-                "    \"display-name\": \"Docker Client Certificate\",\n" +
-                "    \"required\": false,\n" +
-                "    \"secure\": true,\n" +
-                "    \"display-order\": \"7\"\n" +
-                "  }," +
                 "  \"enable_private_registry_authentication\": {\n" +
                 "    \"display-name\": \"Use Private Registry\",\n" +
                 "    \"default-value\": \"false\",\n" +
-                "    \"required\": true,\n" +
+                "    \"required\": false,\n" +
                 "    \"secure\": false,\n" +
                 "    \"display-order\": \"8\"\n" +
-                "  }," +
-                "  \"private_registry_server\": {\n" +
-                "    \"display-name\": \"Private Registry Server\",\n" +
-                "    \"required\": false,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"9\"\n" +
-                "  }," +
-                "  \"private_registry_custom_credentials\": {\n" +
-                "    \"display-name\": \"Private Registry credentials setup\",\n" +
-                "    \"default-value\": \"true\",\n" +
-                "    \"required\": true,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"10\"\n" +
-                "  }," +
-                "  \"private_registry_username\": {\n" +
-                "    \"display-name\": \"Private Registry Username\",\n" +
-                "    \"required\": false,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"11\"\n" +
-                "  }," +
-                "  \"private_registry_password\": {\n" +
-                "    \"display-name\": \"Private Registry Password\",\n" +
-                "    \"required\": false,\n" +
-                "    \"secure\": true,\n" +
-                "    \"display-order\": \"12\"\n" +
-                "  }," +
+                "  },\n" +
                 "  \"pull_on_container_create\": {\n" +
                 "    \"display-name\": \"Pull image before creating the container\",\n" +
                 "    \"default-value\": \"false\",\n" +
                 "    \"required\": true,\n" +
                 "    \"secure\": false,\n" +
                 "    \"display-order\": \"13\"\n" +
-                "  }" +
-                "}\n";
+                "  },\n" +
+                "  \"docker_ca_cert\": {\n" +
+                "    \"display-name\": \"Docker CA Certificate\",\n" +
+                "    \"required\": false,\n" +
+                "    \"secure\": true,\n" +
+                "    \"display-order\": \"5\"\n" +
+                "  },\n" +
+                "  \"environment_variables\": {\n" +
+                "    \"display-name\": \"Environment Variables\",\n" +
+                "    \"required\": false,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"1\"\n" +
+                "  },\n" +
+                "  \"docker_uri\": {\n" +
+                "    \"display-name\": \"Docker URI\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"3\"\n" +
+                "  },\n" +
+                "  \"max_docker_containers\": {\n" +
+                "    \"display-name\": \"Maximum containers to allow\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"2\"\n" +
+                "  },\n" +
+                "  \"private_registry_password\": {\n" +
+                "    \"display-name\": \"Private Registry Password\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": true,\n" +
+                "    \"display-order\": \"12\"\n" +
+                "  },\n" +
+                "  \"docker_client_cert\": {\n" +
+                "    \"display-name\": \"Docker Client Certificate\",\n" +
+                "    \"required\": false,\n" +
+                "    \"secure\": true,\n" +
+                "    \"display-order\": \"7\"\n" +
+                "  },\n" +
+                "  \"auto_register_timeout\": {\n" +
+                "    \"display-name\": \"Agent auto-register Timeout (in minutes)\",\n" +
+                "    \"default-value\": \"10\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"4\"\n" +
+                "  }\n" +
+                "}";
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
     }
 }
