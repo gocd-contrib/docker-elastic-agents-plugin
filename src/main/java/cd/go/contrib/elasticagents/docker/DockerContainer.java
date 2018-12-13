@@ -123,9 +123,8 @@ public class DockerContainer {
                 .image(imageName)
                 .labels(labels)
                 .env(env)
-                .hostConfig(HostConfig.builder().extraHosts(new Hosts(hostConfig)).build())
+                .hostConfig(HostConfig.builder().privileged(privileged(request.properties())).extraHosts(new Hosts(hostConfig)).build())
                 .build();
-
         ContainerCreation container = docker.createContainer(containerConfig, containerName);
         String id = container.id();
 
@@ -205,6 +204,11 @@ public class DockerContainer {
             return image + ":latest";
         }
         return image;
+    }
+
+    private static boolean privileged(Map<String, String> properties) {
+        String privileged = properties.get("Privileged");
+        return "true".equals(privileged);
     }
 
     public ContainerStatusReport getContainerStatusReport(DockerClient dockerClient) throws Exception {

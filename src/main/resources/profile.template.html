@@ -44,6 +44,15 @@
     </div>
 
     <div class="form_item_block">
+        <input type="checkbox" ng-model="Privileged" id="Privileged" ng-true-value="true" ng-false-value="false"/>
+        <label for="privileged">Privileged</label>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Privileged].$error.server}" ng-show="GOINPUTNAME[Privileged].$error.server">{{GOINPUTNAME[Privileged].$error.server}}</span>
+        <span class="form-help-content">
+                <strong>Note:</strong> When privileged mode is enabled, the container is given elevated privileges on the host container instance.
+        </span>
+    </div>
+
+    <div class="form_item_block">
         <label ng-class="{'is-invalid-label': GOINPUTNAME[Command].$error.server}">Docker Command: <small>(Enter one parameter per line)</small></label>
         <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Command].$error.server}" type="text" ng-model="Command" ng-required="true" rows="7" placeholder="ls&#x000A;-al&#x000A;/usr/bin"></textarea>
         <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Command].$error.server}" ng-show="GOINPUTNAME[Command].$error.server">{{GOINPUTNAME[Command].$error.server}}</span>
