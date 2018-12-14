@@ -33,6 +33,7 @@ public class GetProfileMetadataExecutor implements RequestExecutor {
     public static final Metadata COMMAND = new Metadata("Command", false, false);
     public static final Metadata ENVIRONMENT = new Metadata("Environment", false, false);
     public static final Metadata HOSTS = new HostMetadata();
+    public static final Metadata PRIVILEGED = new Metadata("Privileged", false, false);
 
     public static final List<Metadata> FIELDS = new ArrayList<>();
 
@@ -41,6 +42,7 @@ public class GetProfileMetadataExecutor implements RequestExecutor {
         FIELDS.add(COMMAND);
         FIELDS.add(ENVIRONMENT);
         FIELDS.add(HOSTS);
+        FIELDS.add(PRIVILEGED);
     }
 
     @Override

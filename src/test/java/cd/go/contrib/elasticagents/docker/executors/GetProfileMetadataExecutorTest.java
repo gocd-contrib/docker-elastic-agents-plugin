@@ -74,6 +74,13 @@ public class GetProfileMetadataExecutorTest {
                 "      \"required\": false,\n" +
                 "      \"secure\": false\n" +
                 "    }\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"key\": \"Privileged\",\n" +
+                "    \"metadata\": {\n" +
+                "      \"required\": false,\n" +
+                "      \"secure\": false\n" +
+                "    }\n" +
                 "  }\n" +
                 "]";
 

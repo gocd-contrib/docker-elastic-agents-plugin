@@ -114,6 +114,25 @@ public class DockerContainerTest extends BaseTest {
     }
 
     @Test
+    public void shouldStartContainerWithPrivilegedMode() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "busybox:latest");
+        properties.put("Privileged", "true");
+
+        PluginSettings settings = createSettings();
+        settings.setEnvironmentVariables("GLOBAL=something");
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), settings, docker);
+        containers.add(container.name());
+
+        ContainerInfo containerInfo = docker.inspectContainer(container.name());
+
+        assertThat(containerInfo.hostConfig().privileged(), is(true));
+        DockerContainer dockerContainer = DockerContainer.fromContainerInfo(containerInfo);
+
+        assertThat(dockerContainer.properties(), is(properties));
+    }
+
+    @Test
     public void shouldStartContainerWithAutoregisterEnvironmentVariables() throws Exception {
         Map<String, String> properties = new HashMap<>();
         properties.put("Image", "busybox:latest");
