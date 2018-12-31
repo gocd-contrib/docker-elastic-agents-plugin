@@ -1,3 +1,7 @@
+import groovy.xml.MarkupBuilder
+
+import java.text.DecimalFormat
+
 /*
  * Copyright 2016 ThoughtWorks, Inc.
  *
@@ -16,6 +20,7 @@
 
 plugins {
   id 'com.github.ben-manes.versions' version '0.13.0'
+  id 'co.riiid.gradle' version '0.4.2'
 }
 
 apply plugin: 'java'
@@ -85,8 +90,123 @@ jar {
   from(configurations.compile) {
     into "lib/"
   }
-  
+
   from(sourceSets.main.java) {
     into "/"
   }
+}
+
+static def getLastTag(boolean isExperimental) {
+  try {
+    def command = ["git", "describe", "--tags", "--abbrev=0"]
+    if (!isExperimental) {
+      command.add(command.size() - 1, '--match=*[^-exp]')
+    }
+
+    def process = command.join(" ").execute()
+    process.waitFor()
+    def result = process.text
+
+    return result.trim()
+  } catch (Exception e) {
+    return null
+  }
+}
+
+def getCommitsSinceLastTag(String tag) {
+  def hashStdOut = new ByteArrayOutputStream()
+  def hashErrorOutput = new ByteArrayOutputStream()
+  def commandToExecute = ["git", "log", "--no-merges", "--pretty=\"%h - %s\""]
+  if (tag) {
+    commandToExecute.add("${tag}..${project.gitRevision}")
+  }
+
+  try {
+    exec {
+      commandLine commandToExecute
+      standardOutput = hashStdOut
+      errorOutput = hashErrorOutput
+    }
+  } catch (Exception e) {
+    throw new GradleScriptException(hashErrorOutput.toString(), e)
+  }
+
+  return hashStdOut.toString().trim()
+}
+
+static String readableFileSize(long size) {
+  if (size <= 0) return "0"
+  final String[] units = ["B", "KB", "MB", "GB", "TB"]
+  int digitGroups = (int) (Math.log10(size) / Math.log10(1024))
+  return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups]
+}
+
+task previewGithubRelease() {
+  doLast {
+    def prerelease = !"No".equalsIgnoreCase(System.getenv('PRERELEASE'))
+    def lastTag = getLastTag(prerelease)
+    def repo = 'docker-elastic-agents'
+    def targetCommitish = project.gitRevision
+    def assets = jar.outputs.files.files
+    def tagName = "${project.fullVersion}${prerelease ? '-exp' : ''}"
+
+    def releaseName = "${prerelease ? 'Experimental: ' : ''}${project.fullVersion}"
+    def changelogHeader = lastTag ? "Changelog ${lastTag}..${project.fullVersion}" : "Changelog"
+
+    def changes = getCommitsSinceLastTag(lastTag).replaceAll("\"", "").stripIndent().trim()
+
+    def previewFile = file("${project.buildDir}/preview.html")
+    if (!previewFile.exists()) {
+      previewFile.createNewFile()
+    }
+    def html = new MarkupBuilder(new FileWriter(previewFile))
+    html.html {
+      body {
+        div {
+          h1(repo)
+          h3(releaseName)
+          div {
+            b("Tag: ")
+            span(tagName)
+          }
+          div {
+            b("Commit: ")
+            span(targetCommitish.substring(0, 7))
+          }
+
+          div {
+            h4("Assets")
+            assets.each { div(it.getName() + " - " + readableFileSize(it.length())) }
+          }
+
+          div {
+            h4(changelogHeader)
+            p {
+              changes.split("\n").each { div(it) }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+previewGithubRelease.dependsOn assemble
+githubRelease.dependsOn previewGithubRelease
+
+github {
+  owner = System.getenv('GITHUB_USER') ?: 'bob'
+  repo = 'docker-elastic-agents'
+  token = System.getenv('GITHUB_TOKEN') ?: 'bad-token'
+  targetCommitish = project.gitRevision
+  assets = jar.outputs.files.files
+
+  prerelease = !"No".equalsIgnoreCase(System.getenv('PRERELEASE'))
+  tagName = "${project.fullVersion}${prerelease ? '-exp' : ''}"
+  name = "${prerelease ? 'Experimental: ' : ''}${project.fullVersion}"
+  def lastTag = getLastTag(prerelease)
+  def changelogHeader = lastTag ? "### Changelog ${lastTag}..${project.gitRevision.substring(0, 7)}" : "### Changelog"
+  def changeLog = getCommitsSinceLastTag(lastTag).replaceAll("\"", "")
+
+  body = """\n$changelogHeader\n\n${changeLog}\n""".stripIndent().trim()
 }
