@@ -258,4 +258,66 @@ public class DockerContainerTest extends BaseTest {
         assertNotNull(docker.inspectImage(imageName));
         assertContainerExist(container.name());
     }
+
+    @Test
+    public void shouldStartContainerWithMemoryLimits() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "busybox:latest");
+        properties.put("ReservedMemory", "6M");
+        properties.put("MaxMemory", "10M");
+
+        PluginSettings settings = createSettings();
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), settings, docker);
+        containers.add(container.name());
+
+        ContainerInfo containerInfo = docker.inspectContainer(container.name());
+
+        assertThat(containerInfo.hostConfig().memoryReservation(), is(6 * 1024 * 1024L));
+        assertThat(containerInfo.hostConfig().memory(), is(10 * 1024 * 1024L));
+
+        DockerContainer dockerContainer = DockerContainer.fromContainerInfo(containerInfo);
+
+        assertThat(dockerContainer.properties(), is(properties));
+    }
+
+    @Test
+    public void shouldStartContainerWithCpuLimit() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "busybox:latest");
+        properties.put("Cpus", ".75");
+
+        PluginSettings settings = createSettings();
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), settings, docker);
+        containers.add(container.name());
+
+        ContainerInfo containerInfo = docker.inspectContainer(container.name());
+
+        assertThat(containerInfo.hostConfig().cpuPeriod(), is(100_000L));
+        assertThat(containerInfo.hostConfig().cpuQuota(), is(75_000L));
+
+        DockerContainer dockerContainer = DockerContainer.fromContainerInfo(containerInfo);
+
+        assertThat(dockerContainer.properties(), is(properties));
+    }
+
+    @Test
+    public void shouldStartContainerWithMountedVolumes() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "busybox:latest");
+        // using "/" as source folder because it seems the folder must exist on testing machine
+        properties.put("Mounts", "/:/A\n/:/B:ro");
+
+        PluginSettings settings = createSettings();
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), settings, docker);
+        containers.add(container.name());
+
+        ContainerInfo containerInfo = docker.inspectContainer(container.name());
+
+        assertThat(containerInfo.hostConfig().binds(), containsInAnyOrder(
+                "/:/A", "/:/B:ro"));
+
+        DockerContainer dockerContainer = DockerContainer.fromContainerInfo(containerInfo);
+
+        assertThat(dockerContainer.properties(), is(properties));
+    }
 }

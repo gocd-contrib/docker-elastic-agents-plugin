@@ -64,6 +64,34 @@
         <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Environment].$error.server}" ng-show="GOINPUTNAME[Environment].$error.server">{{GOINPUTNAME[Environment].$error.server}}</span>
     </div>
 
+    <div class="form_item_block">
+        For limits description see: <a href="https://docs.docker.com/config/containers/resource_constraints/#memory">Resource Constraints</a>.
+    </div>
+
+    <div class="form_item_block">
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[ReservedMemory].$error.server}">Reserved Memory <small>(Specify size in M, G or T)</small></label>
+        <input ng-class="{'is-invalid-input': GOINPUTNAME[ReservedMemory].$error.server}" type="text" ng-model="ReservedMemory" ng-required="false" placeholder="1G"/>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[ReservedMemory].$error.server}" ng-show="GOINPUTNAME[ReservedMemory].$error.server">{{GOINPUTNAME[ReservedMemory].$error.server}}</span>
+    </div>
+
+    <div class="form_item_block">
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[MaxMemory].$error.server}">Max Memory <small>(Specify size in M, G or T)</small></label>
+        <input ng-class="{'is-invalid-input': GOINPUTNAME[MaxMemory].$error.server}" type="text" ng-model="MaxMemory" ng-required="false" placeholder="4G"/>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[MaxMemory].$error.server}" ng-show="GOINPUTNAME[MaxMemory].$error.server">{{GOINPUTNAME[MaxMemory].$error.server}}</span>
+    </div>
+
+    <div class="form_item_block">
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[Cpus].$error.server}">Cpus</label>
+        <input ng-class="{'is-invalid-input': GOINPUTNAME[Cpus].$error.server}" type="text" ng-model="Cpus" ng-required="false" placeholder="1.5"/>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Cpus].$error.server}" ng-show="GOINPUTNAME[Cpus].$error.server">{{GOINPUTNAME[Cpus].$error.server}}</span>
+    </div>
+
+    <div class="form_item_block">
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[Mounts].$error.server}">Volume Mounts <small>(Enter one volume mount per line, source:dest[:ro])</small></label>
+        <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Mounts].$error.server}" type="text" ng-model="Mounts" ng-required="true" rows="4" placeholder="/var/run/docker.sock:/var/run/docker.sock"></textarea>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Mounts].$error.server}" ng-show="GOINPUTNAME[Mounts].$error.server">{{GOINPUTNAME[Mounts].$error.server}}</span>
+    </div>
+
     <div class="row">
         <div class="columns end">
             <label ng-class="{'is-invalid-label': GOINPUTNAME[Hosts].$error.server}">Host entries

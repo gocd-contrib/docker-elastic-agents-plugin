@@ -20,6 +20,7 @@ import cd.go.contrib.elasticagents.docker.models.AgentStatusReport;
 import cd.go.contrib.elasticagents.docker.models.ContainerStatusReport;
 import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
+import cd.go.contrib.elasticagents.docker.utils.Util;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -118,13 +119,34 @@ public class DockerContainer {
         }
 
         final String hostConfig = request.properties().get("Hosts");
+        final String reservedMemory = request.properties().get("ReservedMemory");
+        final String maxMemory = request.properties().get("MaxMemory");
+        final String cpus = request.properties().get("Cpus");
+        final String volumeMounts = request.properties().get("Mounts");
+
+        HostConfig.Builder hostBuilder = HostConfig.builder()
+                .privileged(privileged(request.properties()))
+                .extraHosts(new Hosts(hostConfig))
+                .memoryReservation(new MemorySpecification(reservedMemory).getMemory())
+                .memory(new MemorySpecification(maxMemory).getMemory());
+
+        CpusSpecification cpusValue = new CpusSpecification(cpus);
+        if (cpusValue.getCpus() != null) {
+            hostBuilder
+                    .cpuPeriod(cpusValue.getCpuPeriod())
+                    .cpuQuota(cpusValue.getCpuQuota());
+        }
+        if (volumeMounts != null) {
+            hostBuilder.appendBinds(Util.splitIntoLinesAndTrimSpaces(volumeMounts));
+        }
 
         ContainerConfig containerConfig = containerConfigBuilder
                 .image(imageName)
                 .labels(labels)
                 .env(env)
-                .hostConfig(HostConfig.builder().privileged(privileged(request.properties())).extraHosts(new Hosts(hostConfig)).build())
+                .hostConfig(hostBuilder.build())
                 .build();
+
         ContainerCreation container = docker.createContainer(containerConfig, containerName);
         String id = container.id();
 

@@ -50,10 +50,10 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     public DockerContainer create(CreateAgentRequest request, PluginRequest pluginRequest) throws Exception {
         PluginSettings settings = pluginRequest.getPluginSettings();
         final Integer maxAllowedContainers = settings.getMaxDockerContainers();
-        if (!jobsWaitingForAgentCreation.contains(request.jobIdentifier())) {
-            jobsWaitingForAgentCreation.add(request.jobIdentifier());
-        }
         synchronized (instances) {
+            if (!jobsWaitingForAgentCreation.contains(request.jobIdentifier())) {
+                jobsWaitingForAgentCreation.add(request.jobIdentifier());
+            }
             doWithLockOnSemaphore(new SetupSemaphore(maxAllowedContainers, instances, semaphore));
             List<Map<String, String>> messages = new ArrayList<>();
             if (semaphore.tryAcquire()) {

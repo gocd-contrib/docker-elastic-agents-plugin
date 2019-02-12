@@ -32,6 +32,10 @@ public class GetProfileMetadataExecutor implements RequestExecutor {
     public static final Metadata IMAGE = new Metadata("Image", true, false);
     public static final Metadata COMMAND = new Metadata("Command", false, false);
     public static final Metadata ENVIRONMENT = new Metadata("Environment", false, false);
+    public static final Metadata RESERVED_MEMORY = new MemoryMetadata("ReservedMemory");
+    public static final Metadata MAX_MEMORY = new MemoryMetadata("MaxMemory");
+    public static final Metadata CPUS = new Metadata("Cpus");
+    public static final Metadata MOUNTS = new Metadata("Mounts");
     public static final Metadata HOSTS = new HostMetadata();
     public static final Metadata PRIVILEGED = new Metadata("Privileged", false, false);
 
@@ -41,6 +45,10 @@ public class GetProfileMetadataExecutor implements RequestExecutor {
         FIELDS.add(IMAGE);
         FIELDS.add(COMMAND);
         FIELDS.add(ENVIRONMENT);
+        FIELDS.add(RESERVED_MEMORY);
+        FIELDS.add(MAX_MEMORY);
+        FIELDS.add(CPUS);
+        FIELDS.add(MOUNTS);
         FIELDS.add(HOSTS);
         FIELDS.add(PRIVILEGED);
     }
