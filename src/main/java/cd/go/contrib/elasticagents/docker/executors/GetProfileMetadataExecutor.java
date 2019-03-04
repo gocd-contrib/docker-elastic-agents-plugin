@@ -34,7 +34,7 @@ public class GetProfileMetadataExecutor implements RequestExecutor {
     public static final Metadata ENVIRONMENT = new Metadata("Environment", false, false);
     public static final Metadata RESERVED_MEMORY = new MemoryMetadata("ReservedMemory");
     public static final Metadata MAX_MEMORY = new MemoryMetadata("MaxMemory");
-    public static final Metadata CPUS = new Metadata("Cpus");
+    public static final Metadata CPUS = new CpusMetadata("Cpus");
     public static final Metadata MOUNTS = new Metadata("Mounts");
     public static final Metadata HOSTS = new HostMetadata();
     public static final Metadata PRIVILEGED = new Metadata("Privileged", false, false);
