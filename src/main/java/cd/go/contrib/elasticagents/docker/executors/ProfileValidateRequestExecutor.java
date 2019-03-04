@@ -18,6 +18,8 @@ package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.requests.ProfileValidateRequest;
+import cd.go.contrib.elasticagents.docker.validator.MemorySettingsProfileValidator;
+import cd.go.contrib.elasticagents.docker.validator.ProfileValidator;
 import com.google.gson.Gson;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
@@ -28,10 +30,12 @@ import static cd.go.contrib.elasticagents.docker.executors.GetProfileMetadataExe
 
 public class ProfileValidateRequestExecutor implements RequestExecutor {
     private final ProfileValidateRequest request;
+    private final List<ProfileValidator> validators = new ArrayList<>();
     private static final Gson GSON = new Gson();
 
     public ProfileValidateRequestExecutor(ProfileValidateRequest request) {
         this.request = request;
+        validators.add(new MemorySettingsProfileValidator());
     }
 
     @Override
@@ -50,6 +54,12 @@ public class ProfileValidateRequestExecutor implements RequestExecutor {
             }
         }
 
+        for (ProfileValidator validator : validators) {
+            Map<String, String> validationError = validator.validate(request.getProperties());
+            if (!validationError.isEmpty()) {
+                result.add(validationError);
+            }
+        }
 
         Set<String> set = new HashSet<>(request.getProperties().keySet());
         set.removeAll(knownFields);
