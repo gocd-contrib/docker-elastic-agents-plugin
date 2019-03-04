@@ -281,6 +281,23 @@ public class DockerContainerTest extends BaseTest {
     }
 
     @Test
+    public void shouldStartContainerNoMemoryLimits() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("Image", "busybox:latest");
+        properties.put("ReservedMemory", "");
+        properties.put("MaxMemory", "");
+
+        PluginSettings settings = createSettings();
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier), settings, docker);
+        containers.add(container.name());
+
+        ContainerInfo containerInfo = docker.inspectContainer(container.name());
+
+        assertThat(containerInfo.hostConfig().memoryReservation(), is(0L));
+        assertThat(containerInfo.hostConfig().memory(), is(0L));
+    }
+
+    @Test
     public void shouldStartContainerWithCpuLimit() throws Exception {
         Map<String, String> properties = new HashMap<>();
         properties.put("Image", "busybox:latest");
