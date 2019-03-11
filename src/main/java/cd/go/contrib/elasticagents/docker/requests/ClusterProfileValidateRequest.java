@@ -17,6 +17,7 @@
 package cd.go.contrib.elasticagents.docker.requests;
 
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
+import cd.go.contrib.elasticagents.docker.executors.ClusterProfileValidateRequestExecutor;
 import cd.go.contrib.elasticagents.docker.executors.ProfileValidateRequestExecutor;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,12 +25,12 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-public class ProfileValidateRequest {
+public class ClusterProfileValidateRequest {
 
     private static final Gson GSON = new Gson();
     private Map<String, String> properties;
 
-    public ProfileValidateRequest(Map<String, String> properties) {
+    public ClusterProfileValidateRequest(Map<String, String> properties) {
         this.properties = properties;
     }
 
@@ -38,14 +39,14 @@ public class ProfileValidateRequest {
         return properties;
     }
 
-    public static ProfileValidateRequest fromJSON(String json) {
+    public static ClusterProfileValidateRequest fromJSON(String json) {
         final Type type = new TypeToken<Map<String, String>>() {
         }.getType();
         final Map<String, String> properties = GSON.fromJson(json, type);
-        return new ProfileValidateRequest(properties);
+        return new ClusterProfileValidateRequest(properties);
     }
 
     public RequestExecutor executor() {
-        return new ProfileValidateRequestExecutor(this);
+        return new ClusterProfileValidateRequestExecutor(this);
     }
 }

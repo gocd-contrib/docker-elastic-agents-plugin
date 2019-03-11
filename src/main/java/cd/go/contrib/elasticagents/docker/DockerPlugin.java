@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 ThoughtWorks, Inc.
+ * Copyright 2019 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,12 @@ public class DockerPlugin implements GoPlugin {
                     return new GetPluginConfigurationExecutor().execute();
                 case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
                     return ValidatePluginSettings.fromJSON(request.requestBody()).executor().execute();
+                case REQUEST_GET_CLUSTER_PROFILE_METADATA:
+                    return new GetClusterProfileMetadataExecutor().execute();
+                case REQUEST_VALIDATE_CLUSTER_PROFILE_CONFIGURATION:
+                    return ClusterProfileValidateRequest.fromJSON(request.requestBody()).executor().execute();
+                case REQUEST_GET_CLUSTER_PROFILE_VIEW:
+                    return new GetViewRequestExecutor().execute();
                 case REQUEST_STATUS_REPORT:
                     refreshInstances();
                     return new StatusReportExecutor(pluginRequest, agentInstances, ViewBuilder.instance()).execute();
