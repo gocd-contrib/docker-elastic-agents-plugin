@@ -16,6 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker.requests;
 
+import cd.go.contrib.elasticagents.docker.ClusterProfile;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class CreateAgentRequestTest {
@@ -36,8 +38,8 @@ public class CreateAgentRequestTest {
                 "    \"key2\": \"value2\"\n" +
                 "  },\n" +
                 "  \"cluster_profile_properties\": {\n" +
-                "    \"key3\": \"value3\",\n" +
-                "    \"key4\": \"value4\"\n" +
+                "    \"go_server_url\": \"https://foo.com/go\",\n" +
+                "    \"docker_uri\": \"unix:///var/run/docker.sock\"\n" +
                 "  },\n" +
                 "  \"environment\": \"prod\"\n" +
                 "}";
@@ -50,9 +52,10 @@ public class CreateAgentRequestTest {
         expectedProperties.put("key2", "value2");
         assertThat(request.properties(), Matchers.<Map<String, String>>equalTo(expectedProperties));
 
-        HashMap<String, String> expectedClusterProperties = new HashMap<>();
-        expectedClusterProperties.put("key3", "value3");
-        expectedClusterProperties.put("key4", "value4");
-        assertThat(request.getClusterProfileProperties(), Matchers.<Map<String, String>>equalTo(expectedClusterProperties));
+        ClusterProfile expectedClusterProfile = new ClusterProfile();
+        expectedClusterProfile.setGoServerUrl("https://foo.com/go");
+        expectedClusterProfile.setDockerURI("unix:///var/run/docker.sock");
+
+        assertThat(request.getClusterProfileProperties(), is(expectedClusterProfile));
     }
 }
