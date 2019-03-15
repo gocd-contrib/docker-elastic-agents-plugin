@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 ThoughtWorks, Inc.
+ * Copyright 2019 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,9 @@ public enum Request {
     PLUGIN_SETTINGS_GET_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-configuration"),
     PLUGIN_SETTINGS_GET_VIEW(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-view"),
     PLUGIN_SETTINGS_VALIDATE_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".validate-configuration"),
+    REQUEST_GET_CLUSTER_PROFILE_METADATA(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-cluster-profile-metadata"),
+    REQUEST_VALIDATE_CLUSTER_PROFILE_CONFIGURATION(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".validate-cluster-profile"),
+    REQUEST_GET_CLUSTER_PROFILE_VIEW(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-cluster-profile-view"),
     REQUEST_STATUS_REPORT(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".status-report"),
     REQUEST_AGENT_STATUS_REPORT(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".agent-status-report"),
     REQUEST_CAPABILITIES(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-capabilities"),
