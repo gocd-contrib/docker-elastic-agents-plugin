@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2019 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,7 @@ import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -47,7 +44,7 @@ public class DockerContainersTest extends BaseTest {
         HashMap<String, String> properties = new HashMap<>();
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
-        request = new CreateAgentRequest("key", properties, "production", jobIdentifier);
+        request = new CreateAgentRequest("key", properties, "production", jobIdentifier, Collections.EMPTY_MAP);
         dockerContainers = new DockerContainers();
         settings = createSettings();
     }
@@ -185,7 +182,7 @@ public class DockerContainersTest extends BaseTest {
         when(pluginRequest.getPluginSettings()).thenReturn(settings);
 
         dockerContainers.create(request, pluginRequest);
-        dockerContainers.create(new CreateAgentRequest("key", new HashMap<>(), "production", new JobIdentifier("up42", 2L, "foo", "stage", "1", "job2", 1L)), pluginRequest);
+        dockerContainers.create(new CreateAgentRequest("key", new HashMap<>(), "production", new JobIdentifier("up42", 2L, "foo", "stage", "1", "job2", 1L), Collections.EMPTY_MAP), pluginRequest);
         ArrayList<Map<String, String>> messages = new ArrayList<>();
         Map<String, String> message = new HashMap<>();
         message.put("type", "warning");

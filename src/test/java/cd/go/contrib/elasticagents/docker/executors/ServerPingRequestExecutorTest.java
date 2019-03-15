@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2019 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         Map<String, String> properties = new HashMap<>();
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
-        DockerContainer container = agentInstances.create(new CreateAgentRequest(null, properties, null, new JobIdentifier()), pluginRequest);
+        DockerContainer container = agentInstances.create(new CreateAgentRequest(null, properties, null, new JobIdentifier(), Collections.EMPTY_MAP), pluginRequest);
         containers.add(container.name());
 
         ServerPingRequestExecutor serverPingRequestExecutor = new ServerPingRequestExecutor(agentInstances, pluginRequest);

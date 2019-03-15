@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2019 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,10 @@ public class CreateAgentRequestTest {
                 "    \"key1\": \"value1\",\n" +
                 "    \"key2\": \"value2\"\n" +
                 "  },\n" +
+                "  \"cluster_profile_properties\": {\n" +
+                "    \"key3\": \"value3\",\n" +
+                "    \"key4\": \"value4\"\n" +
+                "  },\n" +
                 "  \"environment\": \"prod\"\n" +
                 "}";
 
@@ -46,5 +50,9 @@ public class CreateAgentRequestTest {
         expectedProperties.put("key2", "value2");
         assertThat(request.properties(), Matchers.<Map<String, String>>equalTo(expectedProperties));
 
+        HashMap<String, String> expectedClusterProperties = new HashMap<>();
+        expectedClusterProperties.put("key3", "value3");
+        expectedClusterProperties.put("key4", "value4");
+        assertThat(request.getClusterProfileProperties(), Matchers.<Map<String, String>>equalTo(expectedClusterProperties));
     }
 }
