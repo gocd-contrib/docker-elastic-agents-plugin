@@ -35,16 +35,16 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public class CreateAgentRequest {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     private String autoRegisterKey;
-    private Map<String, String> properties;
+    private Map<String, String> elasticAgentProfileProperties;
     private String environment;
     private JobIdentifier jobIdentifier;
 
     public CreateAgentRequest() {
     }
 
-    public CreateAgentRequest(String autoRegisterKey, Map<String, String> properties, String environment, JobIdentifier jobIdentifier) {
+    public CreateAgentRequest(String autoRegisterKey, Map<String, String> elasticAgentProfileProperties, String environment, JobIdentifier jobIdentifier) {
         this.autoRegisterKey = autoRegisterKey;
-        this.properties = properties;
+        this.elasticAgentProfileProperties = elasticAgentProfileProperties;
         this.environment = environment;
         this.jobIdentifier = jobIdentifier;
     }
@@ -54,7 +54,7 @@ public class CreateAgentRequest {
     }
 
     public Map<String, String> properties() {
-        return properties;
+        return elasticAgentProfileProperties;
     }
 
     public String environment() {

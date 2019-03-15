@@ -31,7 +31,7 @@ public class CreateAgentRequestTest {
     public void shouldDeserializeFromJSON() throws Exception {
         String json = "{\n" +
                 "  \"auto_register_key\": \"secret-key\",\n" +
-                "  \"properties\": {\n" +
+                "  \"elastic_agent_profile_properties\": {\n" +
                 "    \"key1\": \"value1\",\n" +
                 "    \"key2\": \"value2\"\n" +
                 "  },\n" +
