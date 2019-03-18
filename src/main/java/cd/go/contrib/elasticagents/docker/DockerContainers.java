@@ -48,7 +48,8 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
 
     @Override
     public DockerContainer create(CreateAgentRequest request, PluginRequest pluginRequest) throws Exception {
-        PluginSettings settings = pluginRequest.getPluginSettings();
+        LOG.info(String.format("[Create Agent] Processing create agent request for %s", request.jobIdentifier()));
+        ClusterProfile settings = request.getClusterProfileProperties();
         final Integer maxAllowedContainers = settings.getMaxDockerContainers();
         synchronized (instances) {
             if (!jobsWaitingForAgentCreation.contains(request.jobIdentifier())) {

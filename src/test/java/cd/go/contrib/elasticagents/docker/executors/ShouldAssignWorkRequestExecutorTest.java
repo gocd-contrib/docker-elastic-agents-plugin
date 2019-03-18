@@ -48,10 +48,10 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
         properties.put("foo", "bar");
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
-        PluginSettings settings = createSettings();
+        ClusterProfile settings = createSettings();
         PluginRequest pluginRequest = mock(PluginRequest.class);
         when(pluginRequest.getPluginSettings()).thenReturn(settings);
-        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment, jobIdentifier, Collections.EMPTY_MAP), pluginRequest);
+        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment, jobIdentifier, settings), pluginRequest);
         containers.add(instance.name());
     }
 

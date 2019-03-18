@@ -51,6 +51,14 @@ public class CreateAgentRequest {
         this.clusterProfileProperties = ClusterProfile.fromConfiguration(clusterProfileProperties);
     }
 
+    public CreateAgentRequest(String autoRegisterKey, Map<String, String> elasticAgentProfileProperties, String environment, JobIdentifier jobIdentifier, ClusterProfile clusterProfile) {
+        this.autoRegisterKey = autoRegisterKey;
+        this.elasticAgentProfileProperties = elasticAgentProfileProperties;
+        this.environment = environment;
+        this.jobIdentifier = jobIdentifier;
+        this.clusterProfileProperties = clusterProfile;
+    }
+
     public String autoRegisterKey() {
         return autoRegisterKey;
     }

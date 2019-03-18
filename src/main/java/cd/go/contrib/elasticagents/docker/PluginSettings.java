@@ -236,4 +236,29 @@ public class PluginSettings {
     public void setPullOnContainerCreate(Boolean pullOnContainerCreate) {
         this.pullOnContainerCreate = Boolean.valueOf(pullOnContainerCreate);
     }
+
+    @Override
+    public String toString() {
+        return "PluginSettings{" +
+                "goServerUrl='" + goServerUrl + '\'' +
+                ", environmentVariables='" + environmentVariables + '\'' +
+                ", maxDockerContainers='" + maxDockerContainers + '\'' +
+                ", dockerURI='" + dockerURI + '\'' +
+                ", autoRegisterTimeout='" + autoRegisterTimeout + '\'' +
+                ", dockerCACert='" + dockerCACert + '\'' +
+                ", dockerClientCert='" + dockerClientCert + '\'' +
+                ", dockerClientKey='" + dockerClientKey + '\'' +
+                ", privateRegistryServer='" + privateRegistryServer + '\'' +
+                ", privateRegistryUsername='" + privateRegistryUsername + '\'' +
+                ", privateRegistryPassword='" + privateRegistryPassword + '\'' +
+                ", useDockerAuthInfo=" + useDockerAuthInfo +
+                ", useCustomRegistryCredentials=" + useCustomRegistryCredentials +
+                ", pullOnContainerCreate=" + pullOnContainerCreate +
+                ", autoRegisterPeriod=" + autoRegisterPeriod +
+                '}';
+    }
+
+    public void setGoServerUrl(String goServerUrl) {
+        this.goServerUrl = goServerUrl;
+    }
 }
