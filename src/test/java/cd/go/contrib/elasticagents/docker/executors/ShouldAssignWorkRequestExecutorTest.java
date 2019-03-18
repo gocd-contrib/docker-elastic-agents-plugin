@@ -57,7 +57,7 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
 
     @Test
     public void shouldAssignWorkToContainerWithSameJobIdentifier() {
-        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent(instance.name(), null, null, null), environment, jobIdentifier, null);
+        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent(instance.name(), null, null, null), environment, jobIdentifier, null, null);
         GoPluginApiResponse response = new ShouldAssignWorkRequestExecutor(request, agentInstances).execute();
         assertThat(response.responseCode(), is(200));
         assertThat(response.responseBody(), is("true"));
@@ -66,7 +66,7 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
     @Test
     public void shouldNotAssignWorkToContainerWithDifferentJobIdentifier() {
         JobIdentifier otherJobId = new JobIdentifier("up42", 2L, "foo", "stage", "1", "job", 2L);
-        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent(instance.name(), null, null, null), environment, otherJobId, null);
+        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent(instance.name(), null, null, null), environment, otherJobId, null,null);
         GoPluginApiResponse response = new ShouldAssignWorkRequestExecutor(request, agentInstances).execute();
         assertThat(response.responseCode(), is(200));
         assertThat(response.responseBody(), is("false"));
@@ -74,7 +74,7 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
 
     @Test
     public void shouldNotAssignWorkIfInstanceIsNotFound() {
-        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent("unknown-name", null, null, null), environment, jobIdentifier, null);
+        ShouldAssignWorkRequest request = new ShouldAssignWorkRequest(new Agent("unknown-name", null, null, null), environment, jobIdentifier, null,null);
         GoPluginApiResponse response = new ShouldAssignWorkRequestExecutor(request, agentInstances).execute();
         assertThat(response.responseCode(), is(200));
         assertThat(response.responseBody(), is("false"));

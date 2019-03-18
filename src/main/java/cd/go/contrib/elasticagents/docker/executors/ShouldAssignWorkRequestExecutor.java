@@ -23,6 +23,8 @@ import cd.go.contrib.elasticagents.docker.requests.ShouldAssignWorkRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
+import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
+
 public class ShouldAssignWorkRequestExecutor implements RequestExecutor {
     private final AgentInstances<DockerContainer> agentInstances;
     private final ShouldAssignWorkRequest request;
@@ -34,6 +36,8 @@ public class ShouldAssignWorkRequestExecutor implements RequestExecutor {
 
     @Override
     public GoPluginApiResponse execute() {
+        LOG.info(String.format("[Should Assign Work] Processing should assign work request for job %s and agent %s", request.jobIdentifier(), request.agent()));
+
         DockerContainer instance = agentInstances.find(request.agent().elasticAgentId());
 
         if (instance == null) {
