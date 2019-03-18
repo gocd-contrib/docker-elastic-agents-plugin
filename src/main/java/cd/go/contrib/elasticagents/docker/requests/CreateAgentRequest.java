@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2019 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,15 +38,25 @@ public class CreateAgentRequest {
     private Map<String, String> elasticAgentProfileProperties;
     private String environment;
     private JobIdentifier jobIdentifier;
+    private ClusterProfile clusterProfileProperties;
 
     public CreateAgentRequest() {
     }
 
-    public CreateAgentRequest(String autoRegisterKey, Map<String, String> elasticAgentProfileProperties, String environment, JobIdentifier jobIdentifier) {
+    public CreateAgentRequest(String autoRegisterKey, Map<String, String> elasticAgentProfileProperties, String environment, JobIdentifier jobIdentifier, Map<String, String> clusterProfileProperties) {
         this.autoRegisterKey = autoRegisterKey;
         this.elasticAgentProfileProperties = elasticAgentProfileProperties;
         this.environment = environment;
         this.jobIdentifier = jobIdentifier;
+        this.clusterProfileProperties = ClusterProfile.fromConfiguration(clusterProfileProperties);
+    }
+
+    public CreateAgentRequest(String autoRegisterKey, Map<String, String> elasticAgentProfileProperties, String environment, JobIdentifier jobIdentifier, ClusterProfile clusterProfile) {
+        this.autoRegisterKey = autoRegisterKey;
+        this.elasticAgentProfileProperties = elasticAgentProfileProperties;
+        this.environment = environment;
+        this.jobIdentifier = jobIdentifier;
+        this.clusterProfileProperties = clusterProfile;
     }
 
     public String autoRegisterKey() {
@@ -55,6 +65,10 @@ public class CreateAgentRequest {
 
     public Map<String, String> properties() {
         return elasticAgentProfileProperties;
+    }
+
+    public ClusterProfile getClusterProfileProperties() {
+        return clusterProfileProperties;
     }
 
     public String environment() {

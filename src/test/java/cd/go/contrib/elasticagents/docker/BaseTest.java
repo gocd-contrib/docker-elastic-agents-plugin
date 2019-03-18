@@ -59,8 +59,9 @@ public abstract class BaseTest {
         }
     }
 
-    protected PluginSettings createSettings() throws IOException {
-        PluginSettings settings = new PluginSettings();
+    protected ClusterProfile createSettings() throws IOException {
+        ClusterProfile settings = new ClusterProfile();
+
         settings.setMaxDockerContainers(1);
         settings.setDockerURI(builder.uri().toString());
         if (settings.getDockerURI().startsWith("https://")) {

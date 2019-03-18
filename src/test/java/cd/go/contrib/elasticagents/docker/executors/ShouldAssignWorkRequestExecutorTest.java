@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2019 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -47,10 +48,10 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
         properties.put("foo", "bar");
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
-        PluginSettings settings = createSettings();
+        ClusterProfile settings = createSettings();
         PluginRequest pluginRequest = mock(PluginRequest.class);
         when(pluginRequest.getPluginSettings()).thenReturn(settings);
-        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment, jobIdentifier), pluginRequest);
+        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment, jobIdentifier, settings), pluginRequest);
         containers.add(instance.name());
     }
 
