@@ -17,10 +17,7 @@
 package cd.go.contrib.elasticagents.docker.requests;
 
 
-import cd.go.contrib.elasticagents.docker.AgentInstances;
-import cd.go.contrib.elasticagents.docker.DockerContainer;
-import cd.go.contrib.elasticagents.docker.PluginRequest;
-import cd.go.contrib.elasticagents.docker.RequestExecutor;
+import cd.go.contrib.elasticagents.docker.*;
 import cd.go.contrib.elasticagents.docker.executors.JobCompletionRequestExecutor;
 import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import com.google.gson.FieldNamingPolicy;
@@ -28,6 +25,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Map;
+
+import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 
 public class JobCompletionRequest {
 
@@ -37,33 +38,69 @@ public class JobCompletionRequest {
     @Expose
     @SerializedName("elastic_agent_id")
     private String elasticAgentId;
+
     @Expose
     @SerializedName("job_identifier")
     private JobIdentifier jobIdentifier;
+
+    @Expose
+    @SerializedName("elastic_agent_profile_properties")
+    private Map<String, String> properties;
+
+    @Expose
+    @SerializedName("cluster_profile_properties")
+    private ClusterProfile clusterProfile;
+
     public JobCompletionRequest() {
     }
-    public JobCompletionRequest(String elasticAgentId, JobIdentifier jobIdentifier) {
+
+    public JobCompletionRequest(String elasticAgentId, JobIdentifier jobIdentifier, Map<String, String> properties, Map<String, String> clusterProfile) {
         this.elasticAgentId = elasticAgentId;
         this.jobIdentifier = jobIdentifier;
+        this.properties = properties;
+        this.clusterProfile = ClusterProfile.fromConfiguration(clusterProfile);
     }
+
+    public JobCompletionRequest(String elasticAgentId, JobIdentifier jobIdentifier, Map<String, String> properties, ClusterProfile clusterProfile) {
+        this.elasticAgentId = elasticAgentId;
+        this.jobIdentifier = jobIdentifier;
+        this.properties = properties;
+        this.clusterProfile = clusterProfile;
+    }
+
     public static JobCompletionRequest fromJSON(String json) {
         JobCompletionRequest jobCompletionRequest = GSON.fromJson(json, JobCompletionRequest.class);
+        LOG.info("jobCompletionRequest = " + jobCompletionRequest);
         return jobCompletionRequest;
     }
+
     public String getElasticAgentId() {
         return elasticAgentId;
     }
+
     public JobIdentifier jobIdentifier() {
         return jobIdentifier;
     }
+
+    public ClusterProfile getClusterProfile() {
+        return clusterProfile;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
     public RequestExecutor executor(AgentInstances<DockerContainer> agentInstances, PluginRequest pluginRequest) {
         return new JobCompletionRequestExecutor(this, agentInstances, pluginRequest);
     }
+
     @Override
     public String toString() {
         return "JobCompletionRequest{" +
                 "elasticAgentId='" + elasticAgentId + '\'' +
                 ", jobIdentifier=" + jobIdentifier +
+                ", properties=" + properties +
+                ", clusterProfile=" + clusterProfile +
                 '}';
     }
 }

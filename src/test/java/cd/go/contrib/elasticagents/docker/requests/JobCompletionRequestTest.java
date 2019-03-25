@@ -16,8 +16,12 @@
 
 package cd.go.contrib.elasticagents.docker.requests;
 
+import cd.go.contrib.elasticagents.docker.ClusterProfile;
 import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
+import org.hamcrest.Matchers;
 import org.junit.Test;
+
+import java.util.HashMap;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -27,6 +31,12 @@ public class JobCompletionRequestTest {
     public void shouldDeserializeFromJSON() throws Exception {
         String json = "{\n" +
                 "  \"elastic_agent_id\": \"ea1\",\n" +
+                "  \"elastic_agent_profile_properties\": {\n" +
+                "    \"Image\": \"alpine:latest\"\n" +
+                "  },\n" +
+                "  \"cluster_profile_properties\": {\n" +
+                "    \"go_server_url\": \"https://example.com/go\"\n" +
+                "  },\n" +
                 "  \"job_identifier\": {\n" +
                 "    \"pipeline_name\": \"test-pipeline\",\n" +
                 "    \"pipeline_counter\": 1,\n" +
@@ -37,10 +47,19 @@ public class JobCompletionRequestTest {
                 "    \"job_id\": 100\n" +
                 "  }\n" +
                 "}";
+
         JobCompletionRequest request = JobCompletionRequest.fromJSON(json);
         JobIdentifier expectedJobIdentifier = new JobIdentifier("test-pipeline", 1L, "Test Pipeline", "test-stage", "1", "test-job", 100L);
         JobIdentifier actualJobIdentifier = request.jobIdentifier();
         assertThat(actualJobIdentifier, is(expectedJobIdentifier));
         assertThat(request.getElasticAgentId(), is("ea1"));
+
+        HashMap<String, String> propertiesJson = new HashMap<>();
+        propertiesJson.put("Image", "alpine:latest");
+        assertThat(request.getProperties(), Matchers.equalTo(propertiesJson));
+
+        ClusterProfile expectedClusterProfile = new ClusterProfile();
+        expectedClusterProfile.setGoServerUrl("https://example.com/go");
+        assertThat(request.getClusterProfile(), is(expectedClusterProfile));
     }
 }

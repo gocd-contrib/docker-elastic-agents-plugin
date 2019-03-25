@@ -42,28 +42,29 @@ public class JobCompletionRequestExecutorTest {
     private AgentInstances<DockerContainer> mockAgentInstances;
     @Captor
     private ArgumentCaptor<List<Agent>> agentsArgumentCaptor;
+
     @Before
-    public void setUp(){
+    public void setUp() {
         initMocks(this);
     }
+
     @Test
     public void shouldTerminateElasticAgentOnJobCompletion() throws Exception {
-        JobIdentifier jobIdentifieær = new JobIdentifier(100L);
-        PluginSettings pluginSettings = new PluginSettings();
+        JobIdentifier jobIdentifier = new JobIdentifier(100L);
+        ClusterProfile clusterProfile = new ClusterProfile();
         String elasticAgentId = "agent-1";
-        JobCompletionRequest request = new JobCompletionRequest(elasticAgentId, jobIdentifieær);
+        JobCompletionRequest request = new JobCompletionRequest(elasticAgentId, jobIdentifier, null, clusterProfile);
         JobCompletionRequestExecutor executor = new JobCompletionRequestExecutor(request, mockAgentInstances, mockPluginRequest);
-        when(mockPluginRequest.getPluginSettings()).thenReturn(pluginSettings);
+        when(mockPluginRequest.getPluginSettings()).thenReturn(clusterProfile);
 
         GoPluginApiResponse response = executor.execute();
 
         InOrder inOrder = inOrder(mockPluginRequest, mockAgentInstances);
-        inOrder.verify(mockPluginRequest).getPluginSettings();
         inOrder.verify(mockPluginRequest).disableAgents(agentsArgumentCaptor.capture());
         List<Agent> agentsToDisabled = agentsArgumentCaptor.getValue();
         assertEquals(1, agentsToDisabled.size());
         assertEquals(elasticAgentId, agentsToDisabled.get(0).elasticAgentId());
-        inOrder.verify(mockAgentInstances).terminate(elasticAgentId, pluginSettings);
+        inOrder.verify(mockAgentInstances).terminate(elasticAgentId, clusterProfile);
         inOrder.verify(mockPluginRequest).deleteAgents(agentsArgumentCaptor.capture());
         List<Agent> agentsToDelete = agentsArgumentCaptor.getValue();
         assertEquals(agentsToDisabled, agentsToDelete);
