@@ -130,13 +130,26 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
                 oldAgents.add(agent);
             }
         }
+
         return new Agents(oldAgents);
     }
 
     @Override
+    //todo: Ganesh will delete this method
     public void refreshAll(PluginRequest pluginRequest) throws Exception {
         if (!refreshed) {
             DockerClient docker = docker(pluginRequest.getPluginSettings());
+            List<Container> containers = docker.listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
+            for (Container container : containers) {
+                register(DockerContainer.fromContainerInfo(docker.inspectContainer(container.id())));
+            }
+            refreshed = true;
+        }
+    }
+
+    public void refreshAll(ClusterProfile clusterProfile) throws Exception {
+        if (!refreshed) {
+            DockerClient docker = docker(clusterProfile);
             List<Container> containers = docker.listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
             for (Container container : containers) {
                 register(DockerContainer.fromContainerInfo(docker.inspectContainer(container.id())));
