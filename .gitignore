@@ -7,3 +7,4 @@ build
 .tags
 .tags1
 out/
+src/main/resources-generated/

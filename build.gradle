@@ -51,7 +51,6 @@ sourceSets {
     java {
       compileClasspath += configurations.compileOnly
       runtimeClasspath += configurations.compileOnly
-      resources.srcDirs += ['src/main/resource-templates']
     }
   }
 }
