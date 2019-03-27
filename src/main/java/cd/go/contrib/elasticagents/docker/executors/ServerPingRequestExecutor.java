@@ -17,59 +17,86 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.*;
+import cd.go.contrib.elasticagents.docker.requests.ServerPingRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-import java.util.Collection;
+import java.util.*;
 
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 
 public class ServerPingRequestExecutor implements RequestExecutor {
 
-    private final AgentInstances<DockerContainer> agentInstances;
+    private final ServerPingRequest serverPingRequest;
+    private Map<String, DockerContainers> clusterSpecificAgentInstances;
     private final PluginRequest pluginRequest;
 
-    public ServerPingRequestExecutor(AgentInstances<DockerContainer> agentInstances, PluginRequest pluginRequest) {
-        this.agentInstances = agentInstances;
+    public ServerPingRequestExecutor(ServerPingRequest serverPingRequest, Map<String, DockerContainers> clusterSpecificAgentInstances, PluginRequest pluginRequest) {
+        this.serverPingRequest = serverPingRequest;
+        this.clusterSpecificAgentInstances = clusterSpecificAgentInstances;
         this.pluginRequest = pluginRequest;
     }
 
     @Override
     public GoPluginApiResponse execute() throws Exception {
-        PluginSettings pluginSettings = pluginRequest.getPluginSettings();
+        Set<Agent> possiblyMissingAgents = new HashSet<>();
+        List<ClusterProfile> allClusterProfiles = serverPingRequest.allClusterProfileProperties();
 
+        for (ClusterProfile clusterProfile : allClusterProfiles) {
+            performCleanupForACluster(clusterProfile, clusterSpecificAgentInstances.get(clusterProfile.uuid()), possiblyMissingAgents);
+        }
+
+        refreshInstancesAgainToCheckForPossiblyMissingAgents(allClusterProfiles, possiblyMissingAgents);
+        return DefaultGoPluginApiResponse.success("");
+    }
+
+    private void performCleanupForACluster(ClusterProfile clusterProfile, DockerContainers dockerContainers, Set<Agent> possiblyMissingAgents) throws Exception {
         Agents allAgents = pluginRequest.listAgents();
-        Agents missingAgents = new Agents();
 
         for (Agent agent : allAgents.agents()) {
-            if (agentInstances.find(agent.elasticAgentId()) == null) {
-                LOG.warn("Was expecting a container with name " + agent.elasticAgentId() + ", but it was missing!");
-                missingAgents.add(agent);
+            if (dockerContainers.find(agent.elasticAgentId()) == null) {
+                possiblyMissingAgents.add(agent);
+            } else {
+                possiblyMissingAgents.remove(agent);
             }
         }
 
-        Agents agentsToDisable = agentInstances.instancesCreatedAfterTimeout(pluginSettings, allAgents);
-        agentsToDisable.addAll(missingAgents);
-
+        Agents agentsToDisable = dockerContainers.instancesCreatedAfterTimeout(clusterProfile, allAgents);
         disableIdleAgents(agentsToDisable);
 
         allAgents = pluginRequest.listAgents();
-        terminateDisabledAgents(allAgents, pluginSettings);
+        terminateDisabledAgents(allAgents, clusterProfile, dockerContainers);
 
-        agentInstances.terminateUnregisteredInstances(pluginSettings, allAgents);
+        dockerContainers.terminateUnregisteredInstances(clusterProfile, allAgents);
+    }
 
-        return DefaultGoPluginApiResponse.success("");
+    private void refreshInstancesAgainToCheckForPossiblyMissingAgents(List<ClusterProfile> allClusterProfiles, Set<Agent> possiblyMissingAgents) throws Exception {
+        DockerContainers dockerContainers = new DockerContainers();
+        for (ClusterProfile clusterProfile : allClusterProfiles) {
+            dockerContainers.refreshAll(clusterProfile);
+        }
+
+        Agents missingAgents = new Agents();
+        for (Agent possiblyMissingAgent : possiblyMissingAgents) {
+            if (!dockerContainers.hasInstance(possiblyMissingAgent.elasticAgentId())) {
+                LOG.warn("[Server Ping] Was expecting a container with name " + possiblyMissingAgent.elasticAgentId() + ", but it was missing!");
+                missingAgents.add(possiblyMissingAgent);
+            }
+        }
+
+        pluginRequest.disableAgents(missingAgents.agents());
+        pluginRequest.deleteAgents(missingAgents.agents());
     }
 
     private void disableIdleAgents(Agents agents) throws ServerRequestFailedException {
         pluginRequest.disableAgents(agents.findInstancesToDisable());
     }
 
-    private void terminateDisabledAgents(Agents agents, PluginSettings pluginSettings) throws Exception {
+    private void terminateDisabledAgents(Agents agents, PluginSettings pluginSettings, DockerContainers dockerContainers) throws Exception {
         Collection<Agent> toBeDeleted = agents.findInstancesToTerminate();
 
         for (Agent agent : toBeDeleted) {
-            agentInstances.terminate(agent.elasticAgentId(), pluginSettings);
+            dockerContainers.terminate(agent.elasticAgentId(), pluginSettings);
         }
 
         pluginRequest.deleteAgents(toBeDeleted);

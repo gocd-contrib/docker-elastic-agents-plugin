@@ -17,6 +17,7 @@
 package cd.go.contrib.elasticagents.docker;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class ClusterProfile extends PluginSettings {
     public static ClusterProfile fromJSON(String json) {
@@ -26,6 +27,10 @@ public class ClusterProfile extends PluginSettings {
     public static ClusterProfile fromConfiguration(Map<String, String> clusterProfileProperties) {
         //todo: Create cluster profiles properly instead of deserializing data twice
         return GSON.fromJson(GSON.toJson(clusterProfileProperties), ClusterProfile.class);
+    }
+
+    public String uuid() {
+        return Integer.toHexString(Objects.hash(this));
     }
 
     @Override
