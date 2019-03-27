@@ -40,7 +40,8 @@ gocdPlugin {
 
 group = 'cd.go.contrib'
 version = gocdPlugin.fullVersion(project)
-
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 repositories {
   jcenter()
   mavenLocal()
