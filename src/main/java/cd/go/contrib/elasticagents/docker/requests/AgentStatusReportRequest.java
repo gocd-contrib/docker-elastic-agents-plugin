@@ -1,5 +1,6 @@
 package cd.go.contrib.elasticagents.docker.requests;
 
+import cd.go.contrib.elasticagents.docker.ClusterProfileProperties;
 import cd.go.contrib.elasticagents.docker.DockerContainers;
 import cd.go.contrib.elasticagents.docker.PluginRequest;
 import cd.go.contrib.elasticagents.docker.executors.AgentStatusReportExecutor;
@@ -9,8 +10,10 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 
 public class AgentStatusReportRequest {
@@ -24,12 +27,17 @@ public class AgentStatusReportRequest {
     @Expose
     private JobIdentifier jobIdentifier;
 
+    @Expose
+    @SerializedName("cluster_profile_properties")
+    private ClusterProfileProperties clusterProfile;
+
     public AgentStatusReportRequest() {
     }
 
-    public AgentStatusReportRequest(String elasticAgentId, JobIdentifier jobIdentifier) {
+    public AgentStatusReportRequest(String elasticAgentId, JobIdentifier jobIdentifier, Map<String, String> clusterProfileProperties) {
         this.elasticAgentId = elasticAgentId;
         this.jobIdentifier = jobIdentifier;
+        this.clusterProfile = ClusterProfileProperties.fromConfiguration(clusterProfileProperties);
     }
 
     public static AgentStatusReportRequest fromJSON(String json) {
@@ -48,18 +56,23 @@ public class AgentStatusReportRequest {
         return new AgentStatusReportExecutor(this, pluginRequest, dockerContainers, ViewBuilder.instance());
     }
 
+    public ClusterProfileProperties getClusterProfile() {
+        return clusterProfile;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AgentStatusReportRequest that = (AgentStatusReportRequest) o;
         return Objects.equals(elasticAgentId, that.elasticAgentId) &&
-                Objects.equals(jobIdentifier, that.jobIdentifier);
+                Objects.equals(jobIdentifier, that.jobIdentifier) &&
+                Objects.equals(clusterProfile, that.clusterProfile);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(elasticAgentId, jobIdentifier);
+        return Objects.hash(elasticAgentId, jobIdentifier, clusterProfile);
     }
 
     @Override
@@ -67,6 +80,7 @@ public class AgentStatusReportRequest {
         return "AgentStatusReportRequest{" +
                 "elasticAgentId='" + elasticAgentId + '\'' +
                 ", jobIdentifier=" + jobIdentifier +
+                ", clusterProfile=" + clusterProfile +
                 '}';
     }
 }

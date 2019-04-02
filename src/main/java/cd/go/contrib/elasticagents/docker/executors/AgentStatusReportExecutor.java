@@ -20,6 +20,8 @@ import org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 public class AgentStatusReportExecutor {
     private static final Logger LOG = Logger.getLoggerFor(AgentStatusReportExecutor.class);
     private final AgentStatusReportRequest request;
@@ -38,7 +40,7 @@ public class AgentStatusReportExecutor {
     public GoPluginApiResponse execute() throws Exception {
         String elasticAgentId = request.getElasticAgentId();
         JobIdentifier jobIdentifier = request.getJobIdentifier();
-        LOG.info(String.format("[status-report] Generating status report for agent: %s with job: %s", elasticAgentId, jobIdentifier));
+        LOG.info(format("[status-report] Generating status report for agent: %s with job: %s", elasticAgentId, jobIdentifier));
 
         try {
             if (StringUtils.isNotBlank(elasticAgentId)) {
@@ -56,7 +58,7 @@ public class AgentStatusReportExecutor {
     private GoPluginApiResponse getStatusReportUsingJobIdentifier(JobIdentifier jobIdentifier) throws Exception {
         Optional<DockerContainer> dockerContainer = dockerContainers.find(jobIdentifier);
         if (dockerContainer.isPresent()) {
-            AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(pluginRequest.getPluginSettings(), dockerContainer.get());
+            AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(request.getClusterProfile(), dockerContainer.get());
             final String statusReportView = viewBuilder.build(viewBuilder.getTemplate("agent-status-report.template.ftlh"), agentStatusReport);
             return constructResponseForReport(statusReportView);
         }
@@ -67,7 +69,7 @@ public class AgentStatusReportExecutor {
     private GoPluginApiResponse getStatusReportUsingElasticAgentId(String elasticAgentId) throws Exception {
         Optional<DockerContainer> dockerContainer = Optional.ofNullable(dockerContainers.find(elasticAgentId));
         if (dockerContainer.isPresent()) {
-            AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(pluginRequest.getPluginSettings(), dockerContainer.get());
+            AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(request.getClusterProfile(), dockerContainer.get());
             final String statusReportView = viewBuilder.build(viewBuilder.getTemplate("agent-status-report.template.ftlh"), agentStatusReport);
             return constructResponseForReport(statusReportView);
         }
