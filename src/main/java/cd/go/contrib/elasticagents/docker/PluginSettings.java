@@ -157,6 +157,10 @@ public class PluginSettings {
         return autoRegisterTimeout;
     }
 
+    public void setAutoRegisterTimeout(String autoRegisterTimeout) {
+        this.autoRegisterTimeout = autoRegisterTimeout;
+    }
+
     public Collection<String> getEnvironmentVariables() {
         return Util.splitIntoLinesAndTrimSpaces(environmentVariables);
     }
