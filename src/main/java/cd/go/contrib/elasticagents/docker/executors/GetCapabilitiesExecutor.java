@@ -16,8 +16,9 @@ public class GetCapabilitiesExecutor implements RequestExecutor {
     private static final Map<String, Boolean> CAPABILITIES_RESPONSE = new LinkedHashMap<>();
 
     static {
-        CAPABILITIES_RESPONSE.put("supports_status_report", true);
+        CAPABILITIES_RESPONSE.put("supports_plugin_status_report", false);
         CAPABILITIES_RESPONSE.put("supports_agent_status_report", true);
+        CAPABILITIES_RESPONSE.put("supports_cluster_status_report", true);
     }
 
     @Override

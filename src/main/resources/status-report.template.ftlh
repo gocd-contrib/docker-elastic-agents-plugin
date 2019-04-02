@@ -103,7 +103,7 @@
 <div data-plugin-style-id="docker-elastic-plugin">
 	<div class="container">
 		<div class="page_header">
-			<h1 class="page_title">Plugin Status Report</h1>
+			<h1 class="page_title">Cluster Status Report</h1>
 		</div>
 		<div class="docker row">
 			<div>

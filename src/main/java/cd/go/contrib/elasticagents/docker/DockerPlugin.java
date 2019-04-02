@@ -105,6 +105,12 @@ public class DockerPlugin implements GoPlugin {
                     clusterProfileProperties = jobCompletionRequest.getClusterProfileProperties();
                     refreshInstancesForCluster(clusterProfileProperties);
                     return jobCompletionRequest.executor(getAgentInstancesFor(clusterProfileProperties), pluginRequest).execute();
+                case REQUEST_CLUSTER_STATUS_REPORT:
+                    ClusterStatusReportRequest clusterStatusReportRequest = ClusterStatusReportRequest.fromJSON(request.requestBody());
+                    clusterProfileProperties = clusterStatusReportRequest.getClusterProfile();
+                    refreshInstancesForCluster(clusterProfileProperties);
+                    return clusterStatusReportRequest.executor(clusterSpecificAgentInstances.get(clusterProfileProperties.uuid()))
+                            .execute();
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }
