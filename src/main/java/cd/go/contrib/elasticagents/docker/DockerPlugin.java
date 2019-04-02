@@ -95,9 +95,10 @@ public class DockerPlugin implements GoPlugin {
 //                    refreshInstances();
 //                    return new StatusReportExecutor(pluginRequest, agentInstances, ViewBuilder.instance()).execute();
                 case REQUEST_AGENT_STATUS_REPORT:
-                    return new DefaultGoPluginApiResponse(200);
-//                    refreshInstances();
-//                    return AgentStatusReportRequest.fromJSON(request.requestBody()).executor(pluginRequest, agentInstances).execute();
+                    AgentStatusReportRequest statusReportRequest = AgentStatusReportRequest.fromJSON(request.requestBody());
+                    ClusterProfileProperties clusterProfile = statusReportRequest.getClusterProfile();
+                    refreshInstancesForCluster(clusterProfile);
+                    return statusReportRequest.executor(pluginRequest, clusterSpecificAgentInstances.get(clusterProfile.uuid())).execute();
                 case REQUEST_CAPABILITIES:
                     return new GetCapabilitiesExecutor().execute();
                 case REQUEST_JOB_COMPLETION:
