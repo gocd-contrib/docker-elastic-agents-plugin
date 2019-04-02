@@ -25,7 +25,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ClusterProfile {
+public class ElasticAgentProfile {
     public static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .excludeFieldsWithoutExposeAnnotation()
@@ -40,45 +40,15 @@ public class ClusterProfile {
     private String pluginId;
 
     @Expose
+    @SerializedName("cluster_profile_id")
+    private String clusterProfileId;
+
+    @Expose
     @SerializedName("properties")
-    private ClusterProfileProperties clusterProfileProperties;
+    private HashMap<String, String> properties;
 
-
-    public ClusterProfile() {
-    }
-
-    public ClusterProfile(String id, String pluginId, PluginSettings pluginSettings) {
-        this.id = id;
-        this.pluginId = pluginId;
-        setClusterProfileProperties(pluginSettings);
-    }
-
-    public static ClusterProfile fromJSON(String json) {
-        return GSON.fromJson(json, ClusterProfile.class);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ClusterProfile that = (ClusterProfile) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(pluginId, that.pluginId) &&
-                Objects.equals(clusterProfileProperties, that.clusterProfileProperties);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, pluginId, clusterProfileProperties);
-    }
-
-    @Override
-    public String toString() {
-        return "ClusterProfile{" +
-                "id='" + id + '\'' +
-                ", pluginId='" + pluginId + '\'' +
-                ", clusterProfileProperties=" + clusterProfileProperties +
-                '}';
+    public static ElasticAgentProfile fromJSON(String json) {
+        return GSON.fromJson(json, ElasticAgentProfile.class);
     }
 
     public String getId() {
@@ -89,8 +59,12 @@ public class ClusterProfile {
         return pluginId;
     }
 
-    public ClusterProfileProperties getClusterProfileProperties() {
-        return clusterProfileProperties;
+    public String getClusterProfileId() {
+        return clusterProfileId;
+    }
+
+    public HashMap<String, String> getProperties() {
+        return properties;
     }
 
     public void setId(String id) {
@@ -101,11 +75,37 @@ public class ClusterProfile {
         this.pluginId = pluginId;
     }
 
-    public void setClusterProfileProperties(ClusterProfileProperties clusterProfileProperties) {
-        this.clusterProfileProperties = clusterProfileProperties;
+    public void setClusterProfileId(String clusterProfileId) {
+        this.clusterProfileId = clusterProfileId;
     }
 
-    public void setClusterProfileProperties(PluginSettings pluginSettings) {
-        this.clusterProfileProperties = ClusterProfileProperties.fromConfiguration(GSON.fromJson(GSON.toJson(pluginSettings), HashMap.class));
+    public void setProperties(HashMap<String, String> properties) {
+        this.properties = properties;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ElasticAgentProfile that = (ElasticAgentProfile) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(pluginId, that.pluginId) &&
+                Objects.equals(clusterProfileId, that.clusterProfileId) &&
+                Objects.equals(properties, that.properties);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, pluginId, clusterProfileId, properties);
+    }
+
+    @Override
+    public String toString() {
+        return "ElasticAgentProfile{" +
+                "id='" + id + '\'' +
+                ", pluginId='" + pluginId + '\'' +
+                ", clusterProfileId='" + clusterProfileId + '\'' +
+                ", properties=" + properties +
+                '}';
     }
 }

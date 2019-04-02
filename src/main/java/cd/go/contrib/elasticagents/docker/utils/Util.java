@@ -36,7 +36,6 @@ import java.util.Properties;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class Util {
-
     public static String readResource(String resourceFile) {
         try (InputStreamReader reader = new InputStreamReader(Util.class.getResourceAsStream(resourceFile), StandardCharsets.UTF_8)) {
             return CharStreams.toString(reader);

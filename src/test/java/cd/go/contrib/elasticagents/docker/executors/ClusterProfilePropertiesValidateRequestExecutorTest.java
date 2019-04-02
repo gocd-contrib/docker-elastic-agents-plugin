@@ -23,7 +23,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.util.Collections;
 
-public class ClusterProfileValidateRequestExecutorTest {
+public class ClusterProfilePropertiesValidateRequestExecutorTest {
     @Test
     public void shouldBarfWhenUnknownKeysArePassed() throws Exception {
         ClusterProfileValidateRequestExecutor executor = new ClusterProfileValidateRequestExecutor(new ClusterProfileValidateRequest(Collections.singletonMap("foo", "bar")));

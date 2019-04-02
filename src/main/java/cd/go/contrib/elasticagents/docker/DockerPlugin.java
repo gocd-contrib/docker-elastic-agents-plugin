@@ -50,23 +50,23 @@ public class DockerPlugin implements GoPlugin {
 
     @Override
     public GoPluginApiResponse handle(GoPluginApiRequest request) {
-        ClusterProfile clusterProfile;
+        ClusterProfileProperties clusterProfileProperties;
         try {
             switch (Request.fromString(request.requestName())) {
                 case REQUEST_SHOULD_ASSIGN_WORK:
                     ShouldAssignWorkRequest shouldAssignWorkRequest = ShouldAssignWorkRequest.fromJSON(request.requestBody());
-                    clusterProfile = shouldAssignWorkRequest.getClusterProfileProperties();
-                    refreshInstancesForCluster(clusterProfile);
-                    return shouldAssignWorkRequest.executor(getAgentInstancesFor(clusterProfile)).execute();
+                    clusterProfileProperties = shouldAssignWorkRequest.getClusterProfileProperties();
+                    refreshInstancesForCluster(clusterProfileProperties);
+                    return shouldAssignWorkRequest.executor(getAgentInstancesFor(clusterProfileProperties)).execute();
                 case REQUEST_CREATE_AGENT:
                     CreateAgentRequest createAgentRequest = CreateAgentRequest.fromJSON(request.requestBody());
-                    clusterProfile = createAgentRequest.getClusterProfileProperties();
-                    refreshInstancesForCluster(clusterProfile);
-                    return createAgentRequest.executor(getAgentInstancesFor(clusterProfile), pluginRequest).execute();
+                    clusterProfileProperties = createAgentRequest.getClusterProfileProperties();
+                    refreshInstancesForCluster(clusterProfileProperties);
+                    return createAgentRequest.executor(getAgentInstancesFor(clusterProfileProperties), pluginRequest).execute();
                 case REQUEST_SERVER_PING:
                     ServerPingRequest serverPingRequest = ServerPingRequest.fromJSON(request.requestBody());
-                    List<ClusterProfile> clusterProfiles = serverPingRequest.allClusterProfileProperties();
-                    refreshInstancesForAllClusters(clusterProfiles);
+                    List<ClusterProfileProperties> listOfClusterProfileProperties = serverPingRequest.allClusterProfileProperties();
+                    refreshInstancesForAllClusters(listOfClusterProfileProperties);
                     return serverPingRequest.executor(clusterSpecificAgentInstances, pluginRequest).execute();
                 case PLUGIN_SETTINGS_GET_VIEW:
                     return new GetViewRequestExecutor().execute();
@@ -88,6 +88,8 @@ public class DockerPlugin implements GoPlugin {
                     return ClusterProfileValidateRequest.fromJSON(request.requestBody()).executor().execute();
                 case REQUEST_GET_CLUSTER_PROFILE_VIEW:
                     return new GetViewRequestExecutor().execute();
+                case REQUEST_MIGRATE_CONFIGURATION:
+                    return MigrateConfigurationRequest.fromJSON(request.requestBody()).executor().execute();
                 case REQUEST_STATUS_REPORT:
                     return new DefaultGoPluginApiResponse(200);
 //                    refreshInstances();
@@ -100,9 +102,9 @@ public class DockerPlugin implements GoPlugin {
                     return new GetCapabilitiesExecutor().execute();
                 case REQUEST_JOB_COMPLETION:
                     JobCompletionRequest jobCompletionRequest = JobCompletionRequest.fromJSON(request.requestBody());
-                    clusterProfile = jobCompletionRequest.getClusterProfile();
-                    refreshInstancesForCluster(clusterProfile);
-                    return jobCompletionRequest.executor(getAgentInstancesFor(clusterProfile), pluginRequest).execute();
+                    clusterProfileProperties = jobCompletionRequest.getClusterProfileProperties();
+                    refreshInstancesForCluster(clusterProfileProperties);
+                    return jobCompletionRequest.executor(getAgentInstancesFor(clusterProfileProperties), pluginRequest).execute();
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }
@@ -111,21 +113,21 @@ public class DockerPlugin implements GoPlugin {
         }
     }
 
-    private void refreshInstancesForAllClusters(List<ClusterProfile> clusterProfiles) throws Exception {
-        for (ClusterProfile clusterProfile : clusterProfiles) {
-            refreshInstancesForCluster(clusterProfile);
+    private void refreshInstancesForAllClusters(List<ClusterProfileProperties> listOfClusterProfileProperties) throws Exception {
+        for (ClusterProfileProperties clusterProfileProperties : listOfClusterProfileProperties) {
+            refreshInstancesForCluster(clusterProfileProperties);
         }
     }
 
-    private AgentInstances<DockerContainer> getAgentInstancesFor(ClusterProfile clusterProfile) {
-        return clusterSpecificAgentInstances.get(clusterProfile.uuid());
+    private AgentInstances<DockerContainer> getAgentInstancesFor(ClusterProfileProperties clusterProfileProperties) {
+        return clusterSpecificAgentInstances.get(clusterProfileProperties.uuid());
     }
 
-    private void refreshInstancesForCluster(ClusterProfile clusterProfile) throws Exception {
-        DockerContainers dockerContainers = clusterSpecificAgentInstances.getOrDefault(clusterProfile.uuid(), new DockerContainers());
-        dockerContainers.refreshAll(clusterProfile);
+    private void refreshInstancesForCluster(ClusterProfileProperties clusterProfileProperties) throws Exception {
+        DockerContainers dockerContainers = clusterSpecificAgentInstances.getOrDefault(clusterProfileProperties.uuid(), new DockerContainers());
+        dockerContainers.refreshAll(clusterProfileProperties);
 
-        clusterSpecificAgentInstances.put(clusterProfile.uuid(), dockerContainers);
+        clusterSpecificAgentInstances.put(clusterProfileProperties.uuid(), dockerContainers);
     }
 
     @Override

@@ -49,7 +49,7 @@ public class JobCompletionRequest {
 
     @Expose
     @SerializedName("cluster_profile_properties")
-    private ClusterProfile clusterProfile;
+    private ClusterProfileProperties clusterProfileProperties;
 
     public JobCompletionRequest() {
     }
@@ -58,19 +58,18 @@ public class JobCompletionRequest {
         this.elasticAgentId = elasticAgentId;
         this.jobIdentifier = jobIdentifier;
         this.properties = properties;
-        this.clusterProfile = ClusterProfile.fromConfiguration(clusterProfile);
+        this.clusterProfileProperties = ClusterProfileProperties.fromConfiguration(clusterProfile);
     }
 
-    public JobCompletionRequest(String elasticAgentId, JobIdentifier jobIdentifier, Map<String, String> properties, ClusterProfile clusterProfile) {
+    public JobCompletionRequest(String elasticAgentId, JobIdentifier jobIdentifier, Map<String, String> properties, ClusterProfileProperties clusterProfileProperties) {
         this.elasticAgentId = elasticAgentId;
         this.jobIdentifier = jobIdentifier;
         this.properties = properties;
-        this.clusterProfile = clusterProfile;
+        this.clusterProfileProperties = clusterProfileProperties;
     }
 
     public static JobCompletionRequest fromJSON(String json) {
         JobCompletionRequest jobCompletionRequest = GSON.fromJson(json, JobCompletionRequest.class);
-        LOG.info("jobCompletionRequest = " + jobCompletionRequest);
         return jobCompletionRequest;
     }
 
@@ -82,8 +81,8 @@ public class JobCompletionRequest {
         return jobIdentifier;
     }
 
-    public ClusterProfile getClusterProfile() {
-        return clusterProfile;
+    public ClusterProfileProperties getClusterProfileProperties() {
+        return clusterProfileProperties;
     }
 
     public Map<String, String> getProperties() {
@@ -100,7 +99,7 @@ public class JobCompletionRequest {
                 "elasticAgentId='" + elasticAgentId + '\'' +
                 ", jobIdentifier=" + jobIdentifier +
                 ", properties=" + properties +
-                ", clusterProfile=" + clusterProfile +
+                ", clusterProfileProperties=" + clusterProfileProperties +
                 '}';
     }
 }

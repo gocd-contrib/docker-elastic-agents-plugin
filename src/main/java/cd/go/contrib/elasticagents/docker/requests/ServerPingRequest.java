@@ -16,7 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker.requests;
 
-import cd.go.contrib.elasticagents.docker.ClusterProfile;
+import cd.go.contrib.elasticagents.docker.ClusterProfileProperties;
 import cd.go.contrib.elasticagents.docker.DockerContainers;
 import cd.go.contrib.elasticagents.docker.PluginRequest;
 import cd.go.contrib.elasticagents.docker.executors.ServerPingRequestExecutor;
@@ -31,19 +31,19 @@ import java.util.stream.Collectors;
 public class ServerPingRequest {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
-    private List<ClusterProfile> allClusterProfileProperties;
+    private List<ClusterProfileProperties> allClusterProfilePropertiesProperties;
 
     public ServerPingRequest() {
     }
 
     public ServerPingRequest(List<Map<String, String>> allClusterProfileProperties) {
-        this.allClusterProfileProperties = allClusterProfileProperties.stream()
-                .map(clusterProfile -> ClusterProfile.fromConfiguration(clusterProfile))
+        this.allClusterProfilePropertiesProperties = allClusterProfileProperties.stream()
+                .map(clusterProfile -> ClusterProfileProperties.fromConfiguration(clusterProfile))
                 .collect(Collectors.toList());
     }
 
-    public List<ClusterProfile> allClusterProfileProperties() {
-        return allClusterProfileProperties;
+    public List<ClusterProfileProperties> allClusterProfileProperties() {
+        return allClusterProfilePropertiesProperties;
     }
 
     public static ServerPingRequest fromJSON(String json) {
@@ -53,7 +53,7 @@ public class ServerPingRequest {
     @Override
     public String toString() {
         return "ServerPingRequest{" +
-                "allClusterProfileProperties=" + allClusterProfileProperties +
+                "allClusterProfilePropertiesProperties=" + allClusterProfilePropertiesProperties +
                 '}';
     }
 

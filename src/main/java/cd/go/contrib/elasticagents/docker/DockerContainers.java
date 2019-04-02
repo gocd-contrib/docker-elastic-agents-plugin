@@ -49,7 +49,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     @Override
     public DockerContainer create(CreateAgentRequest request, PluginRequest pluginRequest) throws Exception {
         LOG.info(String.format("[Create Agent] Processing create agent request for %s", request.jobIdentifier()));
-        ClusterProfile settings = request.getClusterProfileProperties();
+        ClusterProfileProperties settings = request.getClusterProfileProperties();
         final Integer maxAllowedContainers = settings.getMaxDockerContainers();
         synchronized (instances) {
             if (!jobsWaitingForAgentCreation.contains(request.jobIdentifier())) {
@@ -147,9 +147,9 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
         }
     }
 
-    public void refreshAll(ClusterProfile clusterProfile) throws Exception {
+    public void refreshAll(ClusterProfileProperties clusterProfileProperties) throws Exception {
         if (!refreshed) {
-            DockerClient docker = docker(clusterProfile);
+            DockerClient docker = docker(clusterProfileProperties);
             List<Container> containers = docker.listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
             for (Container container : containers) {
                 register(DockerContainer.fromContainerInfo(docker.inspectContainer(container.id())));

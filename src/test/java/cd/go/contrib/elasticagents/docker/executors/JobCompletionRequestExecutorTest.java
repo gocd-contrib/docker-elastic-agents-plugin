@@ -51,11 +51,11 @@ public class JobCompletionRequestExecutorTest {
     @Test
     public void shouldTerminateElasticAgentOnJobCompletion() throws Exception {
         JobIdentifier jobIdentifier = new JobIdentifier(100L);
-        ClusterProfile clusterProfile = new ClusterProfile();
+        ClusterProfileProperties clusterProfileProperties = new ClusterProfileProperties();
         String elasticAgentId = "agent-1";
-        JobCompletionRequest request = new JobCompletionRequest(elasticAgentId, jobIdentifier, null, clusterProfile);
+        JobCompletionRequest request = new JobCompletionRequest(elasticAgentId, jobIdentifier, null, clusterProfileProperties);
         JobCompletionRequestExecutor executor = new JobCompletionRequestExecutor(request, mockAgentInstances, mockPluginRequest);
-        when(mockPluginRequest.getPluginSettings()).thenReturn(clusterProfile);
+        when(mockPluginRequest.getPluginSettings()).thenReturn(clusterProfileProperties);
 
         GoPluginApiResponse response = executor.execute();
 
@@ -64,7 +64,7 @@ public class JobCompletionRequestExecutorTest {
         List<Agent> agentsToDisabled = agentsArgumentCaptor.getValue();
         assertEquals(1, agentsToDisabled.size());
         assertEquals(elasticAgentId, agentsToDisabled.get(0).elasticAgentId());
-        inOrder.verify(mockAgentInstances).terminate(elasticAgentId, clusterProfile);
+        inOrder.verify(mockAgentInstances).terminate(elasticAgentId, clusterProfileProperties);
         inOrder.verify(mockPluginRequest).deleteAgents(agentsArgumentCaptor.capture());
         List<Agent> agentsToDelete = agentsArgumentCaptor.getValue();
         assertEquals(agentsToDisabled, agentsToDelete);

@@ -36,7 +36,7 @@ public class DockerContainersTest extends BaseTest {
 
     private CreateAgentRequest request;
     private DockerContainers dockerContainers;
-    private ClusterProfile settings;
+    private ClusterProfileProperties settings;
     private final JobIdentifier jobIdentifier = new JobIdentifier("up42", 2L, "foo", "stage", "1", "job", 1L);
 
     @Before

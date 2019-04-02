@@ -16,7 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker.requests;
 
-import cd.go.contrib.elasticagents.docker.ClusterProfile;
+import cd.go.contrib.elasticagents.docker.ClusterProfileProperties;
 import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -58,8 +58,8 @@ public class JobCompletionRequestTest {
         propertiesJson.put("Image", "alpine:latest");
         assertThat(request.getProperties(), Matchers.equalTo(propertiesJson));
 
-        ClusterProfile expectedClusterProfile = new ClusterProfile();
-        expectedClusterProfile.setGoServerUrl("https://example.com/go");
-        assertThat(request.getClusterProfile(), is(expectedClusterProfile));
+        ClusterProfileProperties expectedClusterProfileProperties = new ClusterProfileProperties();
+        expectedClusterProfileProperties.setGoServerUrl("https://example.com/go");
+        assertThat(request.getClusterProfileProperties(), is(expectedClusterProfileProperties));
     }
 }

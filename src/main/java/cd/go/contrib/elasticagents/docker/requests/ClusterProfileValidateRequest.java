@@ -34,7 +34,6 @@ public class ClusterProfileValidateRequest {
         this.properties = properties;
     }
 
-
     public Map<String, String> getProperties() {
         return properties;
     }

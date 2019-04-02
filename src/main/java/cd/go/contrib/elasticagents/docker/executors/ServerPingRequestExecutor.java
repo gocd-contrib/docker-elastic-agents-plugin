@@ -40,17 +40,17 @@ public class ServerPingRequestExecutor implements RequestExecutor {
     @Override
     public GoPluginApiResponse execute() throws Exception {
         Set<Agent> possiblyMissingAgents = new HashSet<>();
-        List<ClusterProfile> allClusterProfiles = serverPingRequest.allClusterProfileProperties();
+        List<ClusterProfileProperties> allClusterProfileProperties = serverPingRequest.allClusterProfileProperties();
 
-        for (ClusterProfile clusterProfile : allClusterProfiles) {
-            performCleanupForACluster(clusterProfile, clusterSpecificAgentInstances.get(clusterProfile.uuid()), possiblyMissingAgents);
+        for (ClusterProfileProperties clusterProfileProperties : allClusterProfileProperties) {
+            performCleanupForACluster(clusterProfileProperties, clusterSpecificAgentInstances.get(clusterProfileProperties.uuid()), possiblyMissingAgents);
         }
 
-        refreshInstancesAgainToCheckForPossiblyMissingAgents(allClusterProfiles, possiblyMissingAgents);
+        refreshInstancesAgainToCheckForPossiblyMissingAgents(allClusterProfileProperties, possiblyMissingAgents);
         return DefaultGoPluginApiResponse.success("");
     }
 
-    private void performCleanupForACluster(ClusterProfile clusterProfile, DockerContainers dockerContainers, Set<Agent> possiblyMissingAgents) throws Exception {
+    private void performCleanupForACluster(ClusterProfileProperties clusterProfileProperties, DockerContainers dockerContainers, Set<Agent> possiblyMissingAgents) throws Exception {
         Agents allAgents = pluginRequest.listAgents();
 
         for (Agent agent : allAgents.agents()) {
@@ -61,19 +61,19 @@ public class ServerPingRequestExecutor implements RequestExecutor {
             }
         }
 
-        Agents agentsToDisable = dockerContainers.instancesCreatedAfterTimeout(clusterProfile, allAgents);
+        Agents agentsToDisable = dockerContainers.instancesCreatedAfterTimeout(clusterProfileProperties, allAgents);
         disableIdleAgents(agentsToDisable);
 
         allAgents = pluginRequest.listAgents();
-        terminateDisabledAgents(allAgents, clusterProfile, dockerContainers);
+        terminateDisabledAgents(allAgents, clusterProfileProperties, dockerContainers);
 
-        dockerContainers.terminateUnregisteredInstances(clusterProfile, allAgents);
+        dockerContainers.terminateUnregisteredInstances(clusterProfileProperties, allAgents);
     }
 
-    private void refreshInstancesAgainToCheckForPossiblyMissingAgents(List<ClusterProfile> allClusterProfiles, Set<Agent> possiblyMissingAgents) throws Exception {
+    private void refreshInstancesAgainToCheckForPossiblyMissingAgents(List<ClusterProfileProperties> allClusterProfileProperties, Set<Agent> possiblyMissingAgents) throws Exception {
         DockerContainers dockerContainers = new DockerContainers();
-        for (ClusterProfile clusterProfile : allClusterProfiles) {
-            dockerContainers.refreshAll(clusterProfile);
+        for (ClusterProfileProperties clusterProfileProperties : allClusterProfileProperties) {
+            dockerContainers.refreshAll(clusterProfileProperties);
         }
 
         Agents missingAgents = new Agents();

@@ -59,8 +59,8 @@ public abstract class BaseTest {
         }
     }
 
-    protected ClusterProfile createSettings() throws IOException {
-        ClusterProfile settings = new ClusterProfile();
+    protected ClusterProfileProperties createSettings() throws IOException {
+        ClusterProfileProperties settings = new ClusterProfileProperties();
 
         settings.setMaxDockerContainers(1);
         settings.setDockerURI(builder.uri().toString());
