@@ -37,6 +37,7 @@ public enum Request {
     REQUEST_VALIDATE_CLUSTER_PROFILE_CONFIGURATION(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".validate-cluster-profile"),
     REQUEST_GET_CLUSTER_PROFILE_VIEW(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-cluster-profile-view"),
     REQUEST_STATUS_REPORT(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".status-report"),
+    REQUEST_CLUSTER_STATUS_REPORT(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".cluster-status-report"),
     REQUEST_AGENT_STATUS_REPORT(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".agent-status-report"),
     REQUEST_CAPABILITIES(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-capabilities"),
     REQUEST_JOB_COMPLETION(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".job-completion"),

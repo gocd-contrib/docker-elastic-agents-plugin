@@ -1,9 +1,9 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
+import cd.go.contrib.elasticagents.docker.ClusterProfileProperties;
 import cd.go.contrib.elasticagents.docker.DockerContainers;
-import cd.go.contrib.elasticagents.docker.PluginRequest;
-import cd.go.contrib.elasticagents.docker.PluginSettings;
 import cd.go.contrib.elasticagents.docker.models.StatusReport;
+import cd.go.contrib.elasticagents.docker.requests.ClusterStatusReportRequest;
 import cd.go.contrib.elasticagents.docker.views.ViewBuilder;
 import com.google.gson.JsonObject;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
@@ -21,13 +21,13 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StatusReportExecutorTest {
+public class ClusterStatusReportExecutorTest {
 
     @Mock
-    private PluginRequest pluginRequest;
+    private ClusterStatusReportRequest clusterStatusReportRequest;
 
     @Mock
-    private PluginSettings pluginSettings;
+    private ClusterProfileProperties clusterProfile;
 
     @Mock
     private ViewBuilder viewBuilder;
@@ -41,11 +41,11 @@ public class StatusReportExecutorTest {
     @Test
     public void shouldGetStatusReport() throws Exception {
         StatusReport statusReport = aStatusReport();
-        when(pluginRequest.getPluginSettings()).thenReturn(pluginSettings);
-        when(dockerContainers.getStatusReport(pluginSettings)).thenReturn(statusReport);
+        when(clusterStatusReportRequest.getClusterProfile()).thenReturn(clusterProfile);
+        when(dockerContainers.getStatusReport(clusterProfile)).thenReturn(statusReport);
         when(viewBuilder.getTemplate("status-report.template.ftlh")).thenReturn(template);
         when(viewBuilder.build(template, statusReport)).thenReturn("statusReportView");
-        StatusReportExecutor statusReportExecutor = new StatusReportExecutor(pluginRequest, dockerContainers, viewBuilder);
+        ClusterStatusReportExecutor statusReportExecutor = new ClusterStatusReportExecutor(clusterStatusReportRequest, dockerContainers, viewBuilder);
 
         GoPluginApiResponse goPluginApiResponse = statusReportExecutor.execute();
 
