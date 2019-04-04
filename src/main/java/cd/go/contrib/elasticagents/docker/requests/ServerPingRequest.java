@@ -24,14 +24,14 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ServerPingRequest {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-
-    private List<ClusterProfileProperties> allClusterProfilePropertiesProperties;
+    private List<ClusterProfileProperties> allClusterProfilePropertiesProperties = new ArrayList<>();
 
     public ServerPingRequest() {
     }
