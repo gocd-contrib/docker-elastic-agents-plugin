@@ -25,7 +25,6 @@ public class ClusterProfileProperties extends PluginSettings {
     }
 
     public static ClusterProfileProperties fromConfiguration(Map<String, String> clusterProfileProperties) {
-        //todo: Create cluster profiles properly instead of deserializing data twice
         return GSON.fromJson(GSON.toJson(clusterProfileProperties), ClusterProfileProperties.class);
     }
 

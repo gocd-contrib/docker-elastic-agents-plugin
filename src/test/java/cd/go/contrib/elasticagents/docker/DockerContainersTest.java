@@ -24,13 +24,14 @@ import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class DockerContainersTest extends BaseTest {
 
@@ -86,23 +87,22 @@ public class DockerContainersTest extends BaseTest {
         containers.add(container.name());
 
         DockerContainers dockerContainers = new DockerContainers();
-        PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
-        dockerContainers.refreshAll(pluginRequest);
+
+        ClusterProfileProperties profileProperties = createSettings();
+        dockerContainers.refreshAll(profileProperties);
         assertThat(dockerContainers.find(container.name()), is(container));
     }
 
     @Test
     public void shouldNotRefreshAllAgentInstancesAgainAfterTheStartUp() throws Exception {
         DockerContainers dockerContainers = new DockerContainers();
-        PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
-        dockerContainers.refreshAll(pluginRequest);
+        ClusterProfileProperties profileProperties = createSettings();
+        dockerContainers.refreshAll(profileProperties);
 
         DockerContainer container = DockerContainer.create(request, settings, docker);
         containers.add(container.name());
 
-        dockerContainers.refreshAll(pluginRequest);
+        dockerContainers.refreshAll(profileProperties);
 
         assertEquals(dockerContainers.find(container.name()), null);
     }
@@ -112,11 +112,10 @@ public class DockerContainersTest extends BaseTest {
         DockerContainer container = DockerContainer.create(request, settings, docker);
         containers.add(container.name());
 
-        PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
+        ClusterProfileProperties profileProperties = createSettings();
 
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(9));
-        dockerContainers.refreshAll(pluginRequest);
+        dockerContainers.refreshAll(profileProperties);
 
         Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createSettings(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
 
@@ -128,11 +127,10 @@ public class DockerContainersTest extends BaseTest {
         DockerContainer container = DockerContainer.create(request, settings, docker);
         containers.add(container.name());
 
-        PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(createSettings());
+        ClusterProfileProperties profileProperties = createSettings();
 
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
-        dockerContainers.refreshAll(pluginRequest);
+        dockerContainers.refreshAll(profileProperties);
 
         Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createSettings(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
 

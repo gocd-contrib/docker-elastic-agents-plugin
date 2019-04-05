@@ -67,12 +67,12 @@ public interface AgentInstances<T> {
     /**
      * This message is sent after plugin initialization time so that the plugin may connect to the cloud provider
      * and fetch a list of all instances that have been spun up by this plugin (before the server was shut down).
-     * This call should be should ideally remember if the agent instances are refreshed, and do nothing if instances
-     * were previously refreshed.
+     * This call should be should ideally remember if the agent instances are refreshed from the cluster,
+     * and do nothing if instances were previously refreshed.
      *
-     * @param pluginRequest the plugin request object
+     * @param clusterProfileProperties the list of cluster profile properties
      */
-    void refreshAll(PluginRequest pluginRequest) throws Exception;
+    void refreshAll(ClusterProfileProperties clusterProfileProperties) throws Exception;
 
     /**
      * This

@@ -38,7 +38,6 @@ import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 import static cd.go.contrib.elasticagents.docker.utils.Util.readableSize;
 
 public class DockerContainers implements AgentInstances<DockerContainer> {
-
     private final Map<String, DockerContainer> instances = new ConcurrentHashMap<>();
     private List<JobIdentifier> jobsWaitingForAgentCreation = new ArrayList<>();
     private boolean refreshed;
@@ -135,18 +134,6 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     }
 
     @Override
-    //todo: Ganesh will delete this method
-    public void refreshAll(PluginRequest pluginRequest) throws Exception {
-        if (!refreshed) {
-            DockerClient docker = docker(pluginRequest.getPluginSettings());
-            List<Container> containers = docker.listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
-            for (Container container : containers) {
-                register(DockerContainer.fromContainerInfo(docker.inspectContainer(container.id())));
-            }
-            refreshed = true;
-        }
-    }
-
     public void refreshAll(ClusterProfileProperties clusterProfileProperties) throws Exception {
         if (!refreshed) {
             DockerClient docker = docker(clusterProfileProperties);

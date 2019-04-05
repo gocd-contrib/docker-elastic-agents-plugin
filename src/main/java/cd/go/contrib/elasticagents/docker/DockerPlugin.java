@@ -25,7 +25,6 @@ import com.thoughtworks.go.plugin.api.annotation.Extension;
 import com.thoughtworks.go.plugin.api.exceptions.UnhandledRequestTypeException;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
-import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
 import java.util.HashMap;
@@ -90,15 +89,16 @@ public class DockerPlugin implements GoPlugin {
                     return new GetViewRequestExecutor().execute();
                 case REQUEST_MIGRATE_CONFIGURATION:
                     return MigrateConfigurationRequest.fromJSON(request.requestBody()).executor().execute();
-                case REQUEST_STATUS_REPORT:
-                    return new DefaultGoPluginApiResponse(200);
-//                    refreshInstances();
-//                    return new StatusReportExecutor(pluginRequest, agentInstances, ViewBuilder.instance()).execute();
                 case REQUEST_AGENT_STATUS_REPORT:
                     AgentStatusReportRequest statusReportRequest = AgentStatusReportRequest.fromJSON(request.requestBody());
                     ClusterProfileProperties clusterProfile = statusReportRequest.getClusterProfile();
                     refreshInstancesForCluster(clusterProfile);
                     return statusReportRequest.executor(pluginRequest, clusterSpecificAgentInstances.get(clusterProfile.uuid())).execute();
+                case REQUEST_CLUSTER_STATUS_REPORT:
+                    ClusterStatusReportRequest clusterStatusReportRequest = ClusterStatusReportRequest.fromJSON(request.requestBody());
+                    clusterProfileProperties = clusterStatusReportRequest.getClusterProfile();
+                    refreshInstancesForCluster(clusterProfileProperties);
+                    return clusterStatusReportRequest.executor(clusterSpecificAgentInstances.get(clusterProfileProperties.uuid())).execute();
                 case REQUEST_CAPABILITIES:
                     return new GetCapabilitiesExecutor().execute();
                 case REQUEST_JOB_COMPLETION:
@@ -106,12 +106,6 @@ public class DockerPlugin implements GoPlugin {
                     clusterProfileProperties = jobCompletionRequest.getClusterProfileProperties();
                     refreshInstancesForCluster(clusterProfileProperties);
                     return jobCompletionRequest.executor(getAgentInstancesFor(clusterProfileProperties), pluginRequest).execute();
-                case REQUEST_CLUSTER_STATUS_REPORT:
-                    ClusterStatusReportRequest clusterStatusReportRequest = ClusterStatusReportRequest.fromJSON(request.requestBody());
-                    clusterProfileProperties = clusterStatusReportRequest.getClusterProfile();
-                    refreshInstancesForCluster(clusterProfileProperties);
-                    return clusterStatusReportRequest.executor(clusterSpecificAgentInstances.get(clusterProfileProperties.uuid()))
-                            .execute();
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }
