@@ -31,7 +31,6 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
 
@@ -47,10 +46,9 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
         properties.put("foo", "bar");
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
-        ClusterProfileProperties settings = createSettings();
+        ClusterProfileProperties clusterProfiles = createClusterProfiles();
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(settings);
-        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment, jobIdentifier, settings), pluginRequest);
+        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment, jobIdentifier, clusterProfiles), pluginRequest);
         containers.add(instance.name());
     }
 

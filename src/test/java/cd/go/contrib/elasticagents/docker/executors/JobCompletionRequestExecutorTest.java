@@ -32,7 +32,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class JobCompletionRequestExecutorTest {
@@ -55,8 +54,6 @@ public class JobCompletionRequestExecutorTest {
         String elasticAgentId = "agent-1";
         JobCompletionRequest request = new JobCompletionRequest(elasticAgentId, jobIdentifier, null, clusterProfileProperties);
         JobCompletionRequestExecutor executor = new JobCompletionRequestExecutor(request, mockAgentInstances, mockPluginRequest);
-        when(mockPluginRequest.getPluginSettings()).thenReturn(clusterProfileProperties);
-
         GoPluginApiResponse response = executor.execute();
 
         InOrder inOrder = inOrder(mockPluginRequest, mockAgentInstances);

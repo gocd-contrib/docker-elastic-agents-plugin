@@ -37,16 +37,16 @@ public class DockerContainersTest extends BaseTest {
 
     private CreateAgentRequest request;
     private DockerContainers dockerContainers;
-    private ClusterProfileProperties settings;
+    private ClusterProfileProperties clusterProfile;
     private final JobIdentifier jobIdentifier = new JobIdentifier("up42", 2L, "foo", "stage", "1", "job", 1L);
 
     @Before
     public void setUp() throws Exception {
-        settings = createSettings();
+        clusterProfile = createClusterProfiles();
         HashMap<String, String> properties = new HashMap<>();
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
-        request = new CreateAgentRequest("key", properties, "production", jobIdentifier, settings);
+        request = new CreateAgentRequest("key", properties, "production", jobIdentifier, clusterProfile);
         dockerContainers = new DockerContainers();
     }
 
@@ -61,7 +61,6 @@ public class DockerContainersTest extends BaseTest {
     @Test
     public void shouldUpdateServerHealthMessageWithEmptyListWhileCreatingADockerInstance() throws Exception {
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(settings);
         DockerContainer container = dockerContainers.create(request, pluginRequest);
         containers.add(container.name());
 
@@ -72,23 +71,22 @@ public class DockerContainersTest extends BaseTest {
     @Test
     public void shouldTerminateAnExistingContainer() throws Exception {
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(settings);
         DockerContainer container = dockerContainers.create(request, pluginRequest);
         containers.add(container.name());
 
-        dockerContainers.terminate(container.name(), settings);
+        dockerContainers.terminate(container.name(), clusterProfile);
 
         assertContainerDoesNotExist(container.name());
     }
 
     @Test
     public void shouldRefreshAllAgentInstancesAtStartUp() throws Exception {
-        DockerContainer container = DockerContainer.create(request, settings, docker);
+        DockerContainer container = DockerContainer.create(request, clusterProfile, docker);
         containers.add(container.name());
 
         DockerContainers dockerContainers = new DockerContainers();
 
-        ClusterProfileProperties profileProperties = createSettings();
+        ClusterProfileProperties profileProperties = createClusterProfiles();
         dockerContainers.refreshAll(profileProperties);
         assertThat(dockerContainers.find(container.name()), is(container));
     }
@@ -96,10 +94,10 @@ public class DockerContainersTest extends BaseTest {
     @Test
     public void shouldNotRefreshAllAgentInstancesAgainAfterTheStartUp() throws Exception {
         DockerContainers dockerContainers = new DockerContainers();
-        ClusterProfileProperties profileProperties = createSettings();
+        ClusterProfileProperties profileProperties = createClusterProfiles();
         dockerContainers.refreshAll(profileProperties);
 
-        DockerContainer container = DockerContainer.create(request, settings, docker);
+        DockerContainer container = DockerContainer.create(request, clusterProfile, docker);
         containers.add(container.name());
 
         dockerContainers.refreshAll(profileProperties);
@@ -109,30 +107,30 @@ public class DockerContainersTest extends BaseTest {
 
     @Test
     public void shouldNotListTheContainerIfItIsCreatedBeforeTimeout() throws Exception {
-        DockerContainer container = DockerContainer.create(request, settings, docker);
+        DockerContainer container = DockerContainer.create(request, clusterProfile, docker);
         containers.add(container.name());
 
-        ClusterProfileProperties profileProperties = createSettings();
+        ClusterProfileProperties profileProperties = createClusterProfiles();
 
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(9));
         dockerContainers.refreshAll(profileProperties);
 
-        Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createSettings(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
+        Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createClusterProfiles(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
 
         assertFalse(filteredDockerContainers.containsAgentWithId(container.name()));
     }
 
     @Test
     public void shouldListTheContainerIfItIsNotCreatedBeforeTimeout() throws Exception {
-        DockerContainer container = DockerContainer.create(request, settings, docker);
+        DockerContainer container = DockerContainer.create(request, clusterProfile, docker);
         containers.add(container.name());
 
-        ClusterProfileProperties profileProperties = createSettings();
+        ClusterProfileProperties profileProperties = createClusterProfiles();
 
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
         dockerContainers.refreshAll(profileProperties);
 
-        Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createSettings(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
+        Agents filteredDockerContainers = dockerContainers.instancesCreatedAfterTimeout(createClusterProfiles(), new Agents(Arrays.asList(new Agent(container.name(), null, null, null))));
 
         assertTrue(filteredDockerContainers.containsAgentWithId(container.name()));
     }
@@ -141,10 +139,9 @@ public class DockerContainersTest extends BaseTest {
     public void shouldNotCreateContainersIfMaxLimitIsReached() throws Exception {
 
         // do not allow any containers
-        settings.setMaxDockerContainers(0);
+        clusterProfile.setMaxDockerContainers(0);
 
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(settings);
 
         DockerContainer dockerContainer = dockerContainers.create(request, pluginRequest);
         if (dockerContainer != null) {
@@ -153,7 +150,7 @@ public class DockerContainersTest extends BaseTest {
         assertNull(dockerContainer);
 
         // allow only one container
-        settings.setMaxDockerContainers(1);
+        clusterProfile.setMaxDockerContainers(1);
         dockerContainer = dockerContainers.create(request, pluginRequest);
         if (dockerContainer != null) {
             containers.add(dockerContainer.name());
@@ -170,13 +167,12 @@ public class DockerContainersTest extends BaseTest {
     @Test
     public void shouldAddAWarningToTheServerHealthMessagesIfAgentsCannotBeCreated() throws Exception {
         // do not allow any containers
-        settings.setMaxDockerContainers(0);
+        clusterProfile.setMaxDockerContainers(0);
 
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(settings);
 
         dockerContainers.create(request, pluginRequest);
-        dockerContainers.create(new CreateAgentRequest("key", new HashMap<>(), "production", new JobIdentifier("up42", 2L, "foo", "stage", "1", "job2", 1L), settings), pluginRequest);
+        dockerContainers.create(new CreateAgentRequest("key", new HashMap<>(), "production", new JobIdentifier("up42", 2L, "foo", "stage", "1", "job2", 1L), clusterProfile), pluginRequest);
         ArrayList<Map<String, String>> messages = new ArrayList<>();
         Map<String, String> message = new HashMap<>();
         message.put("type", "warning");
@@ -188,26 +184,23 @@ public class DockerContainersTest extends BaseTest {
     @Test
     public void shouldTerminateUnregisteredContainersAfterTimeout() throws Exception {
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(settings);
         DockerContainer container = dockerContainers.create(request, pluginRequest);
 
         assertTrue(dockerContainers.hasInstance(container.name()));
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(11));
-        dockerContainers.terminateUnregisteredInstances(createSettings(), new Agents());
+        dockerContainers.terminateUnregisteredInstances(createClusterProfiles(), new Agents());
         assertFalse(dockerContainers.hasInstance(container.name()));
         assertContainerDoesNotExist(container.name());
     }
 
     @Test
     public void shouldNotTerminateUnregistredContainersBeforeTimeout() throws Exception {
-        PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(settings);
-        DockerContainer container = dockerContainers.create(request, pluginRequest);
+        DockerContainer container = dockerContainers.create(request, mock(PluginRequest.class));
         containers.add(container.name());
 
         assertTrue(dockerContainers.hasInstance(container.name()));
         dockerContainers.clock = new Clock.TestClock().forward(Period.minutes(9));
-        dockerContainers.terminateUnregisteredInstances(createSettings(), new Agents());
+        dockerContainers.terminateUnregisteredInstances(createClusterProfiles(), new Agents());
         assertTrue(dockerContainers.hasInstance(container.name()));
         assertContainerExist(container.name());
     }
@@ -215,11 +208,10 @@ public class DockerContainersTest extends BaseTest {
     @Test
     public void shouldGetStatusReport() throws Exception {
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(settings);
         DockerContainer container = dockerContainers.create(request, pluginRequest);
         containers.add(container.name());
 
-        StatusReport statusReport = dockerContainers.getStatusReport(settings);
+        StatusReport statusReport = dockerContainers.getStatusReport(clusterProfile);
 
         assertThat(statusReport, is(notNullValue()));
         assertThat(statusReport.getContainerStatusReports(), hasSize(1));
@@ -228,11 +220,10 @@ public class DockerContainersTest extends BaseTest {
     @Test
     public void shouldGetAgentStatusReportUsingDockerContainer() throws Exception {
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(pluginRequest.getPluginSettings()).thenReturn(settings);
         DockerContainer container = dockerContainers.create(request, pluginRequest);
         containers.add(container.name());
 
-        AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(settings, container);
+        AgentStatusReport agentStatusReport = dockerContainers.getAgentStatusReport(clusterProfile, container);
 
         assertThat(agentStatusReport, is(notNullValue()));
         assertThat(agentStatusReport.getElasticAgentId(), is(container.name()));
