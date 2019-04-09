@@ -67,13 +67,13 @@ public class DockerPlugin implements GoPlugin {
                     List<ClusterProfileProperties> listOfClusterProfileProperties = serverPingRequest.allClusterProfileProperties();
                     refreshInstancesForAllClusters(listOfClusterProfileProperties);
                     return serverPingRequest.executor(clusterSpecificAgentInstances, pluginRequest).execute();
-                case REQUEST_GET_PROFILE_METADATA:
+                case REQUEST_GET_ELASTIC_AGENT_PROFILE_METADATA:
                     return new GetProfileMetadataExecutor().execute();
-                case REQUEST_GET_PROFILE_VIEW:
+                case REQUEST_GET_ELASTIC_AGENT_PROFILE_VIEW:
                     return new GetProfileViewExecutor().execute();
-                case REQUEST_VALIDATE_PROFILE:
+                case REQUEST_VALIDATE_ELASTIC_AGENT_PROFILE:
                     return ProfileValidateRequest.fromJSON(request.requestBody()).executor().execute();
-                case PLUGIN_SETTINGS_GET_ICON:
+                case REQUEST_GET_ICON:
                     return new GetPluginSettingsIconExecutor().execute();
                 case REQUEST_GET_CLUSTER_PROFILE_METADATA:
                     return new GetClusterProfileMetadataExecutor().execute();
