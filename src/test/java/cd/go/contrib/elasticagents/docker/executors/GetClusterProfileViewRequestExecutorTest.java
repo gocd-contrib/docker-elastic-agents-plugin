@@ -28,11 +28,11 @@ import java.util.Map;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class GetViewRequestExecutorTest {
+public class GetClusterProfileViewRequestExecutorTest {
 
     @Test
     public void shouldRenderTheTemplateInJSON() throws Exception {
-        GoPluginApiResponse response = new GetViewRequestExecutor().execute();
+        GoPluginApiResponse response = new GetClusterProfileViewRequestExecutor().execute();
         assertThat(response.responseCode(), is(200));
         final Type type = new TypeToken<Map<String, String>>() {
         }.getType();
@@ -44,12 +44,11 @@ public class GetViewRequestExecutorTest {
     public void allFieldsShouldBePresentInView() throws Exception {
         String template = Util.readResource("/plugin-settings.template.html");
 
-        for (Map.Entry<String, Field> fieldEntry : GetPluginConfigurationExecutor.FIELDS.entrySet()) {
-            assertThat(template, containsString("ng-model=\"" + fieldEntry.getKey() + "\""));
-            assertThat(template, containsString("<span class=\"form_error\" ng-show=\"GOINPUTNAME[" + fieldEntry.getKey() +
-                    "].$error.server\">{{GOINPUTNAME[" + fieldEntry.getKey() +
+        for (Metadata field : GetClusterProfileMetadataExecutor.FIELDS) {
+            assertThat(template, containsString("ng-model=\"" + field.getKey() + "\""));
+            assertThat(template, containsString("<span class=\"form_error\" ng-show=\"GOINPUTNAME[" + field.getKey() +
+                    "].$error.server\">{{GOINPUTNAME[" + field.getKey() +
                     "].$error.server}}</span>"));
         }
     }
-
 }

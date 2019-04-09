@@ -67,8 +67,6 @@ public class DockerPlugin implements GoPlugin {
                     List<ClusterProfileProperties> listOfClusterProfileProperties = serverPingRequest.allClusterProfileProperties();
                     refreshInstancesForAllClusters(listOfClusterProfileProperties);
                     return serverPingRequest.executor(clusterSpecificAgentInstances, pluginRequest).execute();
-                case PLUGIN_SETTINGS_GET_VIEW:
-                    return new GetViewRequestExecutor().execute();
                 case REQUEST_GET_PROFILE_METADATA:
                     return new GetProfileMetadataExecutor().execute();
                 case REQUEST_GET_PROFILE_VIEW:
@@ -77,16 +75,12 @@ public class DockerPlugin implements GoPlugin {
                     return ProfileValidateRequest.fromJSON(request.requestBody()).executor().execute();
                 case PLUGIN_SETTINGS_GET_ICON:
                     return new GetPluginSettingsIconExecutor().execute();
-                case PLUGIN_SETTINGS_GET_CONFIGURATION:
-                    return new GetPluginConfigurationExecutor().execute();
-                case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
-                    return ValidatePluginSettings.fromJSON(request.requestBody()).executor().execute();
                 case REQUEST_GET_CLUSTER_PROFILE_METADATA:
                     return new GetClusterProfileMetadataExecutor().execute();
                 case REQUEST_VALIDATE_CLUSTER_PROFILE_CONFIGURATION:
                     return ClusterProfileValidateRequest.fromJSON(request.requestBody()).executor().execute();
                 case REQUEST_GET_CLUSTER_PROFILE_VIEW:
-                    return new GetViewRequestExecutor().execute();
+                    return new GetClusterProfileViewRequestExecutor().execute();
                 case REQUEST_MIGRATE_CONFIGURATION:
                     return MigrateConfigurationRequest.fromJSON(request.requestBody()).executor().execute();
                 case REQUEST_AGENT_STATUS_REPORT:

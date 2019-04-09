@@ -30,9 +30,6 @@ public enum Request {
     // settings related requests that the server makes to the plugin
     REQUEST_VALIDATE_PROFILE(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".validate-profile"),
     PLUGIN_SETTINGS_GET_ICON(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-icon"),
-    PLUGIN_SETTINGS_GET_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-configuration"),
-    PLUGIN_SETTINGS_GET_VIEW(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-view"),
-    PLUGIN_SETTINGS_VALIDATE_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".validate-configuration"),
     REQUEST_GET_CLUSTER_PROFILE_METADATA(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-cluster-profile-metadata"),
     REQUEST_VALIDATE_CLUSTER_PROFILE_CONFIGURATION(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".validate-cluster-profile"),
     REQUEST_GET_CLUSTER_PROFILE_VIEW(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-cluster-profile-view"),

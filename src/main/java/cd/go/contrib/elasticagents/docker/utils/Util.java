@@ -16,7 +16,7 @@
 
 package cd.go.contrib.elasticagents.docker.utils;
 
-import cd.go.contrib.elasticagents.docker.executors.GetViewRequestExecutor;
+import cd.go.contrib.elasticagents.docker.executors.GetClusterProfileViewRequestExecutor;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.io.ByteStreams;
@@ -45,7 +45,7 @@ public class Util {
     }
 
     public static byte[] readResourceBytes(String resourceFile) {
-        try (InputStream in = GetViewRequestExecutor.class.getResourceAsStream(resourceFile)) {
+        try (InputStream in = GetClusterProfileViewRequestExecutor.class.getResourceAsStream(resourceFile)) {
             return ByteStreams.toByteArray(in);
         } catch (IOException e) {
             throw new RuntimeException("Could not find resource " + resourceFile, e);
