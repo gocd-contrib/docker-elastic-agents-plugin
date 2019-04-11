@@ -48,59 +48,59 @@ public class GetClusterProfilePropertiesMetadataExecutorTest {
         assertThat(response.responseCode(), is(200));
         String expectedJSON = "[" +
                 "  {" +
-                "      \"key\":\"go_server_url\"," +
+                "      \"key\":\"GoServerUrl\"," +
                 "      \"metadata\":{\"required\":true,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"environment_variables\"," +
+                "      \"key\":\"EnvironmentVariables\"," +
                 "      \"metadata\":{\"required\":false,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"max_docker_containers\"," +
+                "      \"key\":\"MaxDockerContainers\"," +
                 "      \"metadata\":{\"required\":true,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"docker_uri\"," +
+                "      \"key\":\"DockerUri\"," +
                 "      \"metadata\":{\"required\":true,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"auto_register_timeout\"," +
+                "      \"key\":\"AutoRegisterTimeout\"," +
                 "      \"metadata\":{\"required\":true,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"docker_ca_cert\"," +
+                "      \"key\":\"DockerCaCert\"," +
                 "      \"metadata\":{\"required\":false,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"docker_client_key\"," +
+                "      \"key\":\"DockerClientKey\"," +
                 "      \"metadata\":{\"required\":false,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"docker_client_cert\"," +
+                "      \"key\":\"DockerClientCert\"," +
                 "      \"metadata\":{\"required\":false,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"enable_private_registry_authentication\"," +
+                "      \"key\":\"EnablePrivateRegistryAuthentication\"," +
                 "      \"metadata\":{\"required\":false,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"private_registry_server\"," +
+                "      \"key\":\"PrivateRegistryServer\"," +
                 "      \"metadata\":{\"required\":false,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"private_registry_custom_credentials\"," +
+                "      \"key\":\"PrivateRegistryCustomCredentials\"," +
                 "      \"metadata\":{\"required\":false,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"private_registry_username\"," +
+                "      \"key\":\"PrivateRegistryUsername\"," +
                 "      \"metadata\":{\"required\":false,\"secure\":false}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"private_registry_password\"," +
+                "      \"key\":\"PrivateRegistryPassword\"," +
                 "      \"metadata\":{\"required\":false,\"secure\":true}" +
                 "  }," +
                 "  {" +
-                "      \"key\":\"pull_on_container_create\"," +
+                "      \"key\":\"PullOnContainerCreate\"," +
                 "      \"metadata\":{\"required\":false,\"secure\":false}" +
                 "  }" +
                 "]\n";

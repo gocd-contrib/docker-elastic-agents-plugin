@@ -29,10 +29,10 @@ public class ClusterProfilePropertiesValidateRequestExecutorTest {
         ClusterProfileValidateRequestExecutor executor = new ClusterProfileValidateRequestExecutor(new ClusterProfileValidateRequest(Collections.singletonMap("foo", "bar")));
         String json = executor.execute().responseBody();
         String expectedStr = "[" +
-                "  {\"message\":\"Go Server URL must not be blank.\",\"key\":\"go_server_url\"}," +
-                "  {\"message\":\"max_docker_containers must not be blank.\",\"key\":\"max_docker_containers\"}," +
-                "  {\"message\":\"docker_uri must not be blank.\",\"key\":\"docker_uri\"}," +
-                "  {\"message\":\"auto_register_timeout must not be blank.\",\"key\":\"auto_register_timeout\"}," +
+                "  {\"message\":\"Go Server URL must not be blank.\",\"key\":\"GoServerUrl\"}," +
+                "  {\"message\":\"MaxDockerContainers must not be blank.\",\"key\":\"MaxDockerContainers\"}," +
+                "  {\"message\":\"DockerUri must not be blank.\",\"key\":\"DockerUri\"}," +
+                "  {\"message\":\"AutoRegisterTimeout must not be blank.\",\"key\":\"AutoRegisterTimeout\"}," +
                 "  {\"key\":\"foo\",\"message\":\"Is an unknown property\"}" +
                 "]";
         JSONAssert.assertEquals(expectedStr, json, JSONCompareMode.NON_EXTENSIBLE);
@@ -44,10 +44,10 @@ public class ClusterProfilePropertiesValidateRequestExecutorTest {
         String json = executor.execute().responseBody();
 
         String expectedStr = "[" +
-                "  {\"message\":\"Go Server URL must not be blank.\",\"key\":\"go_server_url\"}," +
-                "  {\"message\":\"max_docker_containers must not be blank.\",\"key\":\"max_docker_containers\"}," +
-                "  {\"message\":\"docker_uri must not be blank.\",\"key\":\"docker_uri\"}," +
-                "  {\"message\":\"auto_register_timeout must not be blank.\",\"key\":\"auto_register_timeout\"}" +
+                "  {\"message\":\"Go Server URL must not be blank.\",\"key\":\"GoServerUrl\"}," +
+                "  {\"message\":\"MaxDockerContainers must not be blank.\",\"key\":\"MaxDockerContainers\"}," +
+                "  {\"message\":\"DockerUri must not be blank.\",\"key\":\"DockerUri\"}," +
+                "  {\"message\":\"AutoRegisterTimeout must not be blank.\",\"key\":\"AutoRegisterTimeout\"}" +
                 "]\n";
 
         JSONAssert.assertEquals(expectedStr, json, JSONCompareMode.NON_EXTENSIBLE);

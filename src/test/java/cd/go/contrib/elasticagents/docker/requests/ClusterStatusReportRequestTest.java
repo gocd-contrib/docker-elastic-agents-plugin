@@ -14,12 +14,12 @@ public class ClusterStatusReportRequestTest {
     public void shouldDeserializeFromJSON() {
         JsonObject jsonObject = new JsonObject();
         JsonObject clusterJSON = new JsonObject();
-        clusterJSON.addProperty("go_server_url", "https://go-server/go");
+        clusterJSON.addProperty("GoServerUrl", "https://go-server/go");
         jsonObject.add("cluster_profile_properties", clusterJSON);
 
         ClusterStatusReportRequest clusterStatusReportRequest = ClusterStatusReportRequest.fromJSON(jsonObject.toString());
 
-        ClusterStatusReportRequest expected = new ClusterStatusReportRequest(Collections.singletonMap("go_server_url", "https://go-server/go"));
+        ClusterStatusReportRequest expected = new ClusterStatusReportRequest(Collections.singletonMap("GoServerUrl", "https://go-server/go"));
         assertThat(clusterStatusReportRequest, is(expected));
     }
 }

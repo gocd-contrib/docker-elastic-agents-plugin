@@ -33,8 +33,8 @@
 	<div class="form_item_block">
 		<label>Go Server URL (this is passed to the agents, so don't use <code>localhost</code>):<span
 			class='asterix'>*</span></label>
-		<input type="text" ng-model="go_server_url" ng-required="true" placeholder="https://ipaddress:8154/go"/>
-		<span class="form_error" ng-show="GOINPUTNAME[go_server_url].$error.server">{{GOINPUTNAME[go_server_url].$error.server}}</span>
+		<input type="text" ng-model="GoServerUrl" ng-required="true" placeholder="https://ipaddress:8154/go"/>
+		<span class="form_error" ng-show="GOINPUTNAME[GoServerUrl].$error.server">{{GOINPUTNAME[GoServerUrl].$error.server}}</span>
 	</div>
 
 	<fieldset>
@@ -43,94 +43,94 @@
 			<label>Environment Variables
 				<small>(Enter one variable per line)</small>
 			</label>
-			<textarea type="text" ng-model="environment_variables" ng-required="true" rows="7"
+			<textarea type="text" ng-model="EnvironmentVariables" ng-required="true" rows="7"
 					  placeholder="JAVA_HOME=/opt/java&#x000A;MAVEN_HOME=/opt/maven"></textarea>
-			<span class="form_error" ng-show="GOINPUTNAME[environment_variables].$error.server">{{GOINPUTNAME[environment_variables].$error.server}}</span>
+			<span class="form_error" ng-show="GOINPUTNAME[EnvironmentVariables].$error.server">{{GOINPUTNAME[EnvironmentVariables].$error.server}}</span>
 		</div>
 
 		<div class="form_item_block">
 			<label>Agent auto-register Timeout (in minutes):<span class='asterix'>*</span></label>
-			<input type="text" ng-model="auto_register_timeout" ng-required="true"/>
-			<span class="form_error" ng-show="GOINPUTNAME[auto_register_timeout].$error.server">{{GOINPUTNAME[auto_register_timeout].$error.server}}</span>
+			<input type="text" ng-model="AutoRegisterTimeout" ng-required="true"/>
+			<span class="form_error" ng-show="GOINPUTNAME[AutoRegisterTimeout].$error.server">{{GOINPUTNAME[AutoRegisterTimeout].$error.server}}</span>
 		</div>
 
 		<div class="form_item_block">
 			<label>Maximum docker containers to run at any given point in time:<span class='asterix'>*</span></label>
-			<input type="text" ng-model="max_docker_containers" ng-required="true"/>
-			<span class="form_error" ng-show="GOINPUTNAME[max_docker_containers].$error.server">{{GOINPUTNAME[max_docker_containers].$error.server}}</span>
+			<input type="text" ng-model="MaxDockerContainers" ng-required="true"/>
+			<span class="form_error" ng-show="GOINPUTNAME[MaxDockerContainers].$error.server">{{GOINPUTNAME[MaxDockerContainers].$error.server}}</span>
 		</div>
 
 		<div class="form_item_block">
-			<input type="checkbox" ng-model="pull_on_container_create" id="pull_on_container_create" ng-true-value="true" ng-false-value="false"/>
+			<input type="checkbox" ng-model="PullOnContainerCreate" id="pull_on_container_create" ng-true-value="true" ng-false-value="false"/>
 			<label for="pull_on_container_create">Always pull image before creating the container</label>
-			<span class="form_error" ng-show="GOINPUTNAME[pull_on_container_create].$error.server">{{GOINPUTNAME[pull_on_container_create].$error.server}}</span>
+			<span class="form_error" ng-show="GOINPUTNAME[PullOnContainerCreate].$error.server">{{GOINPUTNAME[PullOnContainerCreate].$error.server}}</span>
 		</div>
 	</fieldset>
 	<fieldset>
 		<legend>Docker client configuration</legend>
 		<div class="form_item_block">
 			<label>Docker URI:<span class='asterix'>*</span></label>
-			<input type="text" ng-model="docker_uri" ng-required="true"/>
-			<span class="form_error" ng-show="GOINPUTNAME[docker_uri].$error.server">{{GOINPUTNAME[docker_uri].$error.server}}</span>
+			<input type="text" ng-model="DockerUri" ng-required="true"/>
+			<span class="form_error" ng-show="GOINPUTNAME[DockerUri].$error.server">{{GOINPUTNAME[DockerUri].$error.server}}</span>
 		</div>
 
 		<div class="form_item_block">
 			<label>Docker CA Certificate:</label>
-			<textarea type="text" ng-model="docker_ca_cert" rows="7"></textarea>
-			<span class="form_error" ng-show="GOINPUTNAME[docker_ca_cert].$error.server">{{GOINPUTNAME[docker_ca_cert].$error.server}}</span>
+			<textarea type="text" ng-model="DockerCaCert" rows="7"></textarea>
+			<span class="form_error" ng-show="GOINPUTNAME[DockerCaCert].$error.server">{{GOINPUTNAME[DockerCaCert].$error.server}}</span>
 		</div>
 
 		<div class="form_item_block">
 			<label>Docker Client Key:</label>
-			<textarea type="text" ng-model="docker_client_key" rows="7"></textarea>
-			<span class="form_error" ng-show="GOINPUTNAME[docker_client_key].$error.server">{{GOINPUTNAME[docker_client_key].$error.server}}</span>
+			<textarea type="text" ng-model="DockerClientKey" rows="7"></textarea>
+			<span class="form_error" ng-show="GOINPUTNAME[DockerClientKey].$error.server">{{GOINPUTNAME[DockerClientKey].$error.server}}</span>
 		</div>
 
 		<div class="form_item_block">
 			<label>Docker Client Certificate:</label>
-			<textarea type="text" ng-model="docker_client_cert" rows="7"></textarea>
-			<span class="form_error" ng-show="GOINPUTNAME[docker_client_cert].$error.server">{{GOINPUTNAME[docker_client_cert].$error.server}}</span>
+			<textarea type="text" ng-model="DockerClientCert" rows="7"></textarea>
+			<span class="form_error" ng-show="GOINPUTNAME[DockerClientCert].$error.server">{{GOINPUTNAME[DockerClientCert].$error.server}}</span>
 		</div>
 	</fieldset>
 
 	<fieldset>
 		<legend>Docker registry settings</legend>
 		<div class="form_item_block">
-			<input type="checkbox" ng-model="enable_private_registry_authentication" id="enable_private_registry_authentication" ng-true-value="true" ng-false-value="false"/>
+			<input type="checkbox" ng-model="EnablePrivateRegistryAuthentication" id="enable_private_registry_authentication" ng-true-value="true" ng-false-value="false"/>
 			<label for="enable_private_registry_authentication">Use Private Registry</label>
-			<span class="form_error" ng-show="GOINPUTNAME[enable_private_registry_authentication].$error.server">{{GOINPUTNAME[enable_private_registry_authentication].$error.server}}</span>
+			<span class="form_error" ng-show="GOINPUTNAME[EnablePrivateRegistryAuthentication].$error.server">{{GOINPUTNAME[EnablePrivateRegistryAuthentication].$error.server}}</span>
 		</div>
 
-		<div ng-show="enable_private_registry_authentication">
+		<div ng-show="EnablePrivateRegistryAuthentication">
 			<div class="form_item_block">
 				<label>Private Registry Server:<span class='asterix'>*</span></label>
-				<input type="text" ng-model="private_registry_server" ng-required="true"/>
-				<span class="form_error" ng-show="GOINPUTNAME[private_registry_server].$error.server">{{GOINPUTNAME[private_registry_server].$error.server}}</span>
+				<input type="text" ng-model="PrivateRegistryServer" ng-required="true"/>
+				<span class="form_error" ng-show="GOINPUTNAME[PrivateRegistryServer].$error.server">{{GOINPUTNAME[PrivateRegistryServer].$error.server}}</span>
 			</div>
 			<label>Private Registry credentials setup:</label>
 			<div class="form_item_block row" style="padding-top: 10px">
 				<div class="columns small-9 medium-10 larger-10"
-					ng-init="private_registry_custom_credentials = private_registry_custom_credentials || 'true'">
-					<input type="radio" ng-model="private_registry_custom_credentials" value="true"
+					ng-init="PrivateRegistryCustomCredentials = PrivateRegistryCustomCredentials || 'true'">
+					<input type="radio" ng-model="PrivateRegistryCustomCredentials" value="true"
 						id="login-using-custom-creds"/>
 					<label for="login-using-custom-creds">Custom credentials</label>
 
-					<input type="radio" ng-model="private_registry_custom_credentials" value="false"
+					<input type="radio" ng-model="PrivateRegistryCustomCredentials" value="false"
 						id="login-using-docker-config"/>
 					<label for="login-using-docker-config">Use Docker configuration file</label>
-					<span class="form_error" ng-show="GOINPUTNAME[private_registry_custom_credentials].$error.server">{{GOINPUTNAME[private_registry_custom_credentials].$error.server}}</span>
+					<span class="form_error" ng-show="GOINPUTNAME[PrivateRegistryCustomCredentials].$error.server">{{GOINPUTNAME[PrivateRegistryCustomCredentials].$error.server}}</span>
 				</div>
 			</div>
-			<div ng-show="private_registry_custom_credentials">
+			<div ng-show="PrivateRegistryCustomCredentials">
 				<div class="form_item_block">
 					<label>Private Registry Username:</label>
-					<input type="text" ng-model="private_registry_username" ng-required="true"/>
-					<span class="form_error" ng-show="GOINPUTNAME[private_registry_username].$error.server">{{GOINPUTNAME[private_registry_username].$error.server}}</span>
+					<input type="text" ng-model="PrivateRegistryUsername" ng-required="true"/>
+					<span class="form_error" ng-show="GOINPUTNAME[PrivateRegistryUsername].$error.server">{{GOINPUTNAME[PrivateRegistryUsername].$error.server}}</span>
 				</div>
 				<div class="form_item_block">
 					<label>Private Registry Password:</label>
-					<input type="password" ng-model="private_registry_password" ng-required="true"/>
-					<span class="form_error" ng-show="GOINPUTNAME[private_registry_password].$error.server">{{GOINPUTNAME[private_registry_password].$error.server}}</span>
+					<input type="password" ng-model="PrivateRegistryPassword" ng-required="true"/>
+					<span class="form_error" ng-show="GOINPUTNAME[PrivateRegistryPassword].$error.server">{{GOINPUTNAME[PrivateRegistryPassword].$error.server}}</span>
 				</div>
 			</div>
 		</div>

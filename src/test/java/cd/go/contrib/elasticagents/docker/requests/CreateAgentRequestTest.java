@@ -38,8 +38,8 @@ public class CreateAgentRequestTest {
                 "    \"key2\": \"value2\"\n" +
                 "  },\n" +
                 "  \"cluster_profile_properties\": {\n" +
-                "    \"go_server_url\": \"https://foo.com/go\",\n" +
-                "    \"docker_uri\": \"unix:///var/run/docker.sock\"\n" +
+                "    \"GoServerUrl\": \"https://foo.com/go\",\n" +
+                "    \"DockerUri\": \"unix:///var/run/docker.sock\"\n" +
                 "  },\n" +
                 "  \"environment\": \"prod\"\n" +
                 "}";

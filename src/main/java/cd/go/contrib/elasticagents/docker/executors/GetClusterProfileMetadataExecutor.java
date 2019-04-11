@@ -29,19 +29,19 @@ public class GetClusterProfileMetadataExecutor implements RequestExecutor {
     private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     public static final Metadata GO_SERVER_URL = new GoServerURLMetadata();
-    public static final Metadata ENVIRONMENT_VARIABLES = new Metadata("environment_variables", false, false);
-    public static final Metadata MAX_DOCKER_CONTAINERS = new Metadata("max_docker_containers", true, false);
-    public static final Metadata DOCKER_URI = new Metadata("docker_uri", true, false);
-    public static final Metadata AUTO_REGISTER_TIMEOUT = new Metadata("auto_register_timeout", true, false);
-    public static final Metadata DOCKER_CA_CERT = new Metadata("docker_ca_cert", false, false);
-    public static final Metadata DOCKER_CLIENT_KEY = new Metadata("docker_client_key", false, false);
-    public static final Metadata DOCKER_CLIENT_CERT = new Metadata("docker_client_cert", false, false);
-    public static final Metadata ENABLE_PRIVATE_REGISTRY_AUTHENTICATION = new Metadata("enable_private_registry_authentication", false, false);
-    public static final Metadata PRIVATE_REGISTRY_SERVER = new Metadata("private_registry_server", false, false);
-    public static final Metadata PRIVATE_REGISTRY_CUSTOM_CREDENTIALS = new Metadata("private_registry_custom_credentials", false, false);
-    public static final Metadata PRIVATE_REGISTRY_USERNAME = new Metadata("private_registry_username", false, false);
-    public static final Metadata PRIVATE_REGISTRY_PASSWORD = new Metadata("private_registry_password", false, true);
-    public static final Metadata PULL_ON_CONTAINER_CREATE = new Metadata("pull_on_container_create", false, false);
+    public static final Metadata ENVIRONMENT_VARIABLES = new Metadata("EnvironmentVariables", false, false);
+    public static final Metadata MAX_DOCKER_CONTAINERS = new Metadata("MaxDockerContainers", true, false);
+    public static final Metadata DOCKER_URI = new Metadata("DockerUri", true, false);
+    public static final Metadata AUTO_REGISTER_TIMEOUT = new Metadata("AutoRegisterTimeout", true, false);
+    public static final Metadata DOCKER_CA_CERT = new Metadata("DockerCaCert", false, false);
+    public static final Metadata DOCKER_CLIENT_KEY = new Metadata("DockerClientKey", false, false);
+    public static final Metadata DOCKER_CLIENT_CERT = new Metadata("DockerClientCert", false, false);
+    public static final Metadata ENABLE_PRIVATE_REGISTRY_AUTHENTICATION = new Metadata("EnablePrivateRegistryAuthentication", false, false);
+    public static final Metadata PRIVATE_REGISTRY_SERVER = new Metadata("PrivateRegistryServer", false, false);
+    public static final Metadata PRIVATE_REGISTRY_CUSTOM_CREDENTIALS = new Metadata("PrivateRegistryCustomCredentials", false, false);
+    public static final Metadata PRIVATE_REGISTRY_USERNAME = new Metadata("PrivateRegistryUsername", false, false);
+    public static final Metadata PRIVATE_REGISTRY_PASSWORD = new Metadata("PrivateRegistryPassword", false, true);
+    public static final Metadata PULL_ON_CONTAINER_CREATE = new Metadata("PullOnContainerCreate", false, false);
 
     public static final List<Metadata> FIELDS = new ArrayList<>();
 

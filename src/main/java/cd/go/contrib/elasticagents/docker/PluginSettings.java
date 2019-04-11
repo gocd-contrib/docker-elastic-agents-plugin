@@ -33,59 +33,59 @@ public class PluginSettings {
             .create();
 
     @Expose
-    @SerializedName("go_server_url")
+    @SerializedName("GoServerUrl")
     private String goServerUrl;
 
     @Expose
-    @SerializedName("environment_variables")
+    @SerializedName("EnvironmentVariables")
     private String environmentVariables;
 
     @Expose
-    @SerializedName("max_docker_containers")
+    @SerializedName("MaxDockerContainers")
     private String maxDockerContainers;
 
     @Expose
-    @SerializedName("docker_uri")
+    @SerializedName("DockerUri")
     private String dockerURI;
 
     @Expose
-    @SerializedName("auto_register_timeout")
+    @SerializedName("AutoRegisterTimeout")
     private String autoRegisterTimeout;
 
     @Expose
-    @SerializedName("docker_ca_cert")
+    @SerializedName("DockerCaCert")
     private String dockerCACert;
 
     @Expose
-    @SerializedName("docker_client_cert")
+    @SerializedName("DockerClientCert")
     private String dockerClientCert;
 
     @Expose
-    @SerializedName("docker_client_key")
+    @SerializedName("DockerClientKey")
     private String dockerClientKey;
 
     @Expose
-    @SerializedName("private_registry_server")
+    @SerializedName("PrivateRegistryServer")
     private String privateRegistryServer;
 
     @Expose
-    @SerializedName("private_registry_username")
+    @SerializedName("PrivateRegistryUsername")
     private String privateRegistryUsername;
 
     @Expose
-    @SerializedName("private_registry_password")
+    @SerializedName("PrivateRegistryPassword")
     private String privateRegistryPassword;
 
     @Expose
-    @SerializedName("enable_private_registry_authentication")
+    @SerializedName("EnablePrivateRegistryAuthentication")
     private boolean useDockerAuthInfo;
 
     @Expose
-    @SerializedName("private_registry_custom_credentials")
+    @SerializedName("PrivateRegistryCustomCredentials")
     private boolean useCustomRegistryCredentials;
 
     @Expose
-    @SerializedName("pull_on_container_create")
+    @SerializedName("PullOnContainerCreate")
     private boolean pullOnContainerCreate;
 
     private Period autoRegisterPeriod;

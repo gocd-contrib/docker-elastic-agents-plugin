@@ -35,7 +35,7 @@ public class JobCompletionRequestTest {
                 "    \"Image\": \"alpine:latest\"\n" +
                 "  },\n" +
                 "  \"cluster_profile_properties\": {\n" +
-                "    \"go_server_url\": \"https://example.com/go\"\n" +
+                "    \"GoServerUrl\": \"https://example.com/go\"\n" +
                 "  },\n" +
                 "  \"job_identifier\": {\n" +
                 "    \"pipeline_name\": \"test-pipeline\",\n" +

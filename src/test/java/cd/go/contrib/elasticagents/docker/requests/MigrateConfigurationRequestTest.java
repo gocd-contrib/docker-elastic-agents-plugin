@@ -35,16 +35,16 @@ public class MigrateConfigurationRequestTest {
     public void shouldCreateMigrationConfigRequestFromRequestBody() {
         String requestBody = "{" +
                 "    \"plugin_settings\":{" +
-                "        \"go_server_url\":\"https://127.0.0.1:8154/go\", " +
-                "        \"auto_register_timeout\":\"20\"" +
+                "        \"GoServerUrl\":\"https://127.0.0.1:8154/go\", " +
+                "        \"AutoRegisterTimeout\":\"20\"" +
                 "    }," +
                 "    \"cluster_profiles\":[" +
                 "        {" +
                 "            \"id\":\"cluster_profile_id\"," +
                 "            \"plugin_id\":\"plugin_id\"," +
                 "            \"properties\":{" +
-                "                \"go_server_url\":\"https://127.0.0.1:8154/go\", " +
-                "                \"auto_register_timeout\":\"20\"" +
+                "                \"GoServerUrl\":\"https://127.0.0.1:8154/go\", " +
+                "                \"AutoRegisterTimeout\":\"20\"" +
                 "            }" +
                 "         }" +
                 "    ]," +
@@ -127,16 +127,16 @@ public class MigrateConfigurationRequestTest {
 
         String expected = "{" +
                 "    \"plugin_settings\":{" +
-                "        \"go_server_url\":\"https://127.0.0.1:8154/go\", " +
-                "        \"auto_register_timeout\":\"20\"" +
+                "        \"GoServerUrl\":\"https://127.0.0.1:8154/go\", " +
+                "        \"AutoRegisterTimeout\":\"20\"" +
                 "    }," +
                 "    \"cluster_profiles\":[" +
                 "        {" +
                 "            \"id\":\"cluster_profile_id\"," +
                 "            \"plugin_id\":\"plugin_id\"," +
                 "            \"properties\":{" +
-                "                \"go_server_url\":\"https://127.0.0.1:8154/go\", " +
-                "                \"auto_register_timeout\":\"20\"" +
+                "                \"GoServerUrl\":\"https://127.0.0.1:8154/go\", " +
+                "                \"AutoRegisterTimeout\":\"20\"" +
                 "            }" +
                 "         }" +
                 "    ]," +

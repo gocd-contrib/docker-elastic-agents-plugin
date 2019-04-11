@@ -23,7 +23,7 @@ import java.net.URISyntaxException;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class GoServerURLMetadata extends Metadata {
-    private static String GO_SERVER_URL = "go_server_url";
+    private static String GO_SERVER_URL = "GoServerUrl";
     private static String GO_SERVER_URL_DISPLAY_VALUE = "Go Server URL";
 
     public GoServerURLMetadata() {
