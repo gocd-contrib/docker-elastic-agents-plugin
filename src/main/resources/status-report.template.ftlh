@@ -145,7 +145,7 @@
 							<td>
 							<#if containerStatus.jobIdentifier??>
 								<a rel="nofollow noreferrer" target="_blank"
-								   href="/go/admin/status_reports/cd.go.contrib.elastic-agent.docker/${containerStatus.elasticAgentId!}">${containerStatus.jobIdentifier.representation!}</a>
+								   href="/go/admin/status_reports/cd.go.contrib.elastic-agent.docker/agent/${containerStatus.elasticAgentId!}?job_id=${containerStatus.jobIdentifier.jobId}">${containerStatus.jobIdentifier.representation!}</a>
                             </#if>
 							</td>
 							<td>${containerStatus.image!}</td>
