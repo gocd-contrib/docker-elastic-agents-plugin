@@ -39,6 +39,7 @@ public class ServerPingRequestExecutor implements RequestExecutor {
 
     @Override
     public GoPluginApiResponse execute() throws Exception {
+        //todo: remove possiblyMissingAgents, refer to ecs/kubernetes server ping implementation
         Set<Agent> possiblyMissingAgents = new HashSet<>();
         List<ClusterProfileProperties> allClusterProfileProperties = serverPingRequest.allClusterProfileProperties();
 
