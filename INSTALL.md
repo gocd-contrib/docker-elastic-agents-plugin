@@ -6,13 +6,13 @@ Table of Contents
   * [Requirements](#requirements)
   * [Installation](#installation)
   * [Configuration](#configuration)
-    - [Configure plugin settings](#configure-plugin-settings)
-    - [Create an elastic profile](#create-an-elastic-profile)
-    - [Configure job to use an elastic agent profile](#configure-job-to-use-an-elastic-agent-profile)
+    - [Configure a Cluster Profile](#configure-a-cluster-profile)
+    - [Create an Elastic Profile](#create-an-elastic-profile)
+    - [Configure a Job to use an Elastic Agent Profile](#configure-a-job-to-use-an-elastic-agent-profile)
 
 ## Requirements
 
-* GoCD server version `v17.9.0` or above
+* GoCD server version `v19.3.0` or above
 * Docker Server
 
 ## Installation
@@ -23,17 +23,18 @@ and restart the server.
 
 ## Configuration
 
-### Configure plugin settings
+### Configure a Cluster Profile
 
-The plugin settings are used to provide global level configurations for the plugin. Configurations such as docker server configuration and private registry settings are provided in plugin settings.
+The cluster profile settings are used to provide cluster level configurations for the plugin. Configurations such as docker server configuration and private registry settings are provided in cluster profile settings.
 
-1. Login to `GoCD server` as admin and navigate to **_Admin_** _>_ **_Plugins_**
+1. Login to `GoCD server` as admin and navigate to **_Admin_** _>_ **_Elastic Profile_**
 
-    ![Plugins][1]
+    ![Elastic Profiles][1]
 
-2. Click on **_Settings icon_** of `Docker Elastic Agent Plugin` to update plugin settings configuration.
+2. Click on **_Add Cluster Profile_**. Select `Docker Elastic Agent Plugin` from the plugin ID dropdown. 
 
-    ![Configure plugin settings][2]
+    ![Cluster Profile basic settings][2]
+    ![Cluster Profile docker client settings][8]
 
     | Field Name                      | Mandatory | Description                                                                                                                                                                                     |
     |---------------------------------|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -51,11 +52,11 @@ The plugin settings are used to provide global level configurations for the plug
 
     The Elastic Agent Profile is used to define the configuration of a docker container(GoCD docker agent). The profile is used to configure the docker image, set memory limits, provide docker command and environment variables etc...
 
-1. Login to `GoCD server` as admin and navigate to **_Admin_** _>_ **_Elastic Agent Profiles_**
+1. Login to `GoCD server` as admin and navigate to **_Admin_** _>_ **_Elastic Profiles_**
 
     ![Elastic Profiles][3]
 
-2. Click on **_Add_** to create new elastic agent profile
+2. Click on **_New Elastic Agent Profile_** to create new elastic agent profile for a cluster.
 
     ![Create elastic profile][4]
 
@@ -65,11 +66,11 @@ The plugin settings are used to provide global level configurations for the plug
     | **Plugin id**             | Yes       | Select `Docker Elastic Agent Plugin` for **_Plugin id_**                                                                                                                                   |
     | **Docker image**          | Yes       | GoCD elastic agent docker image name. Pre build GoCD agent docker images are available [here](https://www.gocd.org/download/#docker)                                                            |
     | **Docker Command**        | No        | Commands that you want to execute on container start. <br/>*_Note: This will override the existing docker entry-point defined in docker image._*                                                     |
-    | **Environment Variables** | No        | Environment variables for container. This will overrides the environment variables defined in plugin settings.(enter each per line)                                                             |
+    | **Environment Variables** | No        | Environment variables for container. This will overrides the environment variables defined in cluster profile.(enter each per line)                                                             |
     | **Host entries**          | No        | This allows users to add host entries in `/etc/hosts`(enter each per line)                                                                                                                      |
 
 
-### Configure job to use an elastic agent profile
+### Configure a job to use an elastic agent profile
 
 1. Click the gear icon on **_Pipeline_**
 
@@ -87,10 +88,11 @@ The plugin settings are used to provide global level configurations for the plug
 
 6. Save your changes
 
-[1]: images/plugins.png     "Plugins"
-[2]: images/plugin-settings.png    "Configure plugin settings"
+[1]: images/elastic_profiles_spa.png     "Elastic Profiles"
+[2]: images/cluster-profiles/basic-settings.png    "Cluster Profile basic settings"
 [3]: images/profiles_page.png  "Elastic profiles"
 [4]: images/profile.png "Create elastic profile"
 [5]: images/pipeline.png  "Pipeline"
 [6]: images/quick-edit.png  "Quick edit"
 [7]: images/configure-job.png  "Configure a job"
+[8]: images/cluster-profiles/docker-client-settings.png "Cluster Profile docker client settings" 
