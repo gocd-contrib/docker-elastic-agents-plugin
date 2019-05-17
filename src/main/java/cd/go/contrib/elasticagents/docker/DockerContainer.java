@@ -95,7 +95,8 @@ public class DockerContainer {
         return new DockerContainer(container.id(), container.name().substring(1), jobIdentifier(container), container.created(), GSON.fromJson(labels.get(Constants.CONFIGURATION_LABEL_KEY), HashMap.class), labels.get(Constants.ENVIRONMENT_LABEL_KEY));
     }
 
-    public static DockerContainer create(CreateAgentRequest request, PluginSettings settings, DockerClient docker) throws InterruptedException, DockerException {
+    public static DockerContainer create(CreateAgentRequest request, PluginSettings settings, DockerClient docker,
+                                         ConsoleLogAppender consoleLogAppender) throws InterruptedException, DockerException {
         String containerName = UUID.randomUUID().toString();
 
         HashMap<String, String> labels = labelsFrom(request);
@@ -105,10 +106,12 @@ public class DockerContainer {
         try {
             docker.inspectImage(imageName);
             if (settings.pullOnContainerCreate()) {
+                consoleLogAppender.accept("Pulling a fresh version of " + imageName + ".");
                 LOG.info("Pulling a fresh version of " + imageName + ".");
                 docker.pull(imageName);
             }
         } catch (ImageNotFoundException ex) {
+            consoleLogAppender.accept("Image " + imageName + " not found, attempting to download.");
             LOG.info("Image " + imageName + " not found, attempting to download.");
             docker.pull(imageName);
         }
@@ -147,13 +150,16 @@ public class DockerContainer {
                 .hostConfig(hostBuilder.build())
                 .build();
 
+        consoleLogAppender.accept(String.format("Creating container: %s", containerName));
         ContainerCreation container = docker.createContainer(containerConfig, containerName);
         String id = container.id();
 
         ContainerInfo containerInfo = docker.inspectContainer(id);
 
         LOG.debug("Created container " + containerName);
+        consoleLogAppender.accept(String.format("Starting container: %s", containerName));
         docker.startContainer(containerName);
+        consoleLogAppender.accept(String.format("Started container: %s", containerName));
         LOG.debug("container " + containerName + " started");
         return new DockerContainer(id, containerName, request.jobIdentifier(), containerInfo.created(), request.properties(), request.environment());
     }
@@ -288,5 +294,4 @@ public class DockerContainer {
             return "";
         }
     }
-
 }

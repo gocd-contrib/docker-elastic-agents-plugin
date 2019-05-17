@@ -46,7 +46,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
     final Semaphore semaphore = new Semaphore(0, true);
 
     @Override
-    public DockerContainer create(CreateAgentRequest request, PluginRequest pluginRequest) throws Exception {
+    public DockerContainer create(CreateAgentRequest request, PluginRequest pluginRequest, ConsoleLogAppender consoleLogAppender) throws Exception {
         LOG.info(String.format("[Create Agent] Processing create agent request for %s", request.jobIdentifier()));
         ClusterProfileProperties settings = request.getClusterProfileProperties();
         final Integer maxAllowedContainers = settings.getMaxDockerContainers();
@@ -58,7 +58,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
             List<Map<String, String>> messages = new ArrayList<>();
             if (semaphore.tryAcquire()) {
                 pluginRequest.addServerHealthMessage(messages);
-                DockerContainer container = DockerContainer.create(request, settings, docker(settings));
+                DockerContainer container = DockerContainer.create(request, settings, docker(settings), consoleLogAppender);
                 register(container);
                 jobsWaitingForAgentCreation.remove(request.jobIdentifier());
                 return container;
@@ -70,6 +70,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
                 messageToBeAdded.put("message", maxLimitExceededMessage);
                 messages.add(messageToBeAdded);
                 pluginRequest.addServerHealthMessage(messages);
+                consoleLogAppender.accept(maxLimitExceededMessage);
                 LOG.info(maxLimitExceededMessage);
                 return null;
             }

@@ -16,15 +16,20 @@
 
 package cd.go.contrib.elasticagents.docker.executors;
 
-import cd.go.contrib.elasticagents.docker.AgentInstances;
-import cd.go.contrib.elasticagents.docker.DockerContainer;
-import cd.go.contrib.elasticagents.docker.PluginRequest;
-import cd.go.contrib.elasticagents.docker.RequestExecutor;
+import cd.go.contrib.elasticagents.docker.*;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+
+import java.util.Date;
 
 public class CreateAgentRequestExecutor implements RequestExecutor {
+    private static final DateTimeFormatter MESSAGE_PREFIX_FORMATTER = DateTimeFormat.forPattern("'##|'HH:mm:ss.SSS '[go]'");
     private final AgentInstances<DockerContainer> agentInstances;
     private final PluginRequest pluginRequest;
     private final CreateAgentRequest request;
@@ -37,7 +42,20 @@ public class CreateAgentRequestExecutor implements RequestExecutor {
 
     @Override
     public GoPluginApiResponse execute() throws Exception {
-        agentInstances.create(request, pluginRequest);
+        ConsoleLogAppender consoleLogAppender = text -> {
+            final String message = String.format("%s %s\n", LocalTime.now().toString(MESSAGE_PREFIX_FORMATTER), text);
+            pluginRequest.appendToConsoleLog(request.jobIdentifier(), message);
+        };
+
+        consoleLogAppender.accept(String.format("Received request to create a container of %s", request.dockerImage()));
+
+        try {
+            agentInstances.create(request, pluginRequest, consoleLogAppender);
+        } catch (Exception e) {
+            consoleLogAppender.accept(String.format("Failed while creating container: %s", e.getMessage()));
+            throw e;
+        }
+
         return new DefaultGoPluginApiResponse(200);
     }
 
