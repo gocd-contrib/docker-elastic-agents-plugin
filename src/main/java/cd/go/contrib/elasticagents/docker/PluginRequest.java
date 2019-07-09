@@ -107,7 +107,7 @@ public class PluginRequest {
         GoApiResponse response = accessor.submit(request);
 
         if (response.responseCode() != 200) {
-            LOG.error("Failed to append console log for " + jobIdentifier.represent() + " with text: " + text);
+            LOG.error("Failed to append to console log for " + jobIdentifier.represent() + " with text: " + text);
         }
     }
 }

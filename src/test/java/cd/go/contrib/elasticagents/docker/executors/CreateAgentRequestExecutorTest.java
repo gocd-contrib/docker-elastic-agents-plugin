@@ -39,7 +39,7 @@ public class CreateAgentRequestExecutorTest {
         new CreateAgentRequestExecutor(request, agentInstances, pluginRequest).execute();
 
         verify(agentInstances).create(eq(request), eq(pluginRequest), any(ConsoleLogAppender.class));
-        verify(pluginRequest).appendToConsoleLog(eq(jobIdentifier), contains("Received request to create a container of image1"));
+        verify(pluginRequest).appendToConsoleLog(eq(jobIdentifier), contains("Received request to create a container of image1 at "));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class CreateAgentRequestExecutorTest {
             // expected
         }
 
-        verify(pluginRequest).appendToConsoleLog(eq(jobIdentifier), contains("Received request to create a container of image1"));
+        verify(pluginRequest).appendToConsoleLog(eq(jobIdentifier), contains("Received request to create a container of image1 at "));
         verify(pluginRequest).appendToConsoleLog(eq(jobIdentifier), contains("Failed while creating container: Ouch"));
     }
 }

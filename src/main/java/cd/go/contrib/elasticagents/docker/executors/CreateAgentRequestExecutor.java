@@ -20,6 +20,7 @@ import cd.go.contrib.elasticagents.docker.*;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -47,7 +48,7 @@ public class CreateAgentRequestExecutor implements RequestExecutor {
             pluginRequest.appendToConsoleLog(request.jobIdentifier(), message);
         };
 
-        consoleLogAppender.accept(String.format("Received request to create a container of %s", request.dockerImage()));
+        consoleLogAppender.accept(String.format("Received request to create a container of %s at %s", request.dockerImage(), new DateTime().toString("yyyy-MM-dd HH:mm:ss ZZ")));
 
         try {
             agentInstances.create(request, pluginRequest, consoleLogAppender);
