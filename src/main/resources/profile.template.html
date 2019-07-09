@@ -39,7 +39,7 @@
 
     <div class="form_item_block">
         <label ng-class="{'is-invalid-label': GOINPUTNAME[Image].$error.server}">Docker image:<span class='asterix'>*</span></label>
-        <input ng-class="{'is-invalid-input': GOINPUTNAME[Image].$error.server}" type="text" ng-model="Image" ng-required="true" placeholder="alpine:latest"/>
+        <input ng-class="{'is-invalid-input': GOINPUTNAME[Image].$error.server}" type="text" ng-model="Image" ng-required="true" placeholder="gocd/gocd-agent-alpine-3.9:v19.3.0"/>
         <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Image].$error.server}" ng-show="GOINPUTNAME[Image].$error.server">{{GOINPUTNAME[Image].$error.server}}</span>
     </div>
 
@@ -53,14 +53,14 @@
     </div>
 
     <div class="form_item_block">
-        <label ng-class="{'is-invalid-label': GOINPUTNAME[Command].$error.server}">Docker Command: <small>(Enter one parameter per line)</small></label>
-        <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Command].$error.server}" type="text" ng-model="Command" ng-required="true" rows="7" placeholder="ls&#x000A;-al&#x000A;/usr/bin"></textarea>
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[Command].$error.server}">Docker Command: <small>(Enter one parameter per line. Leave empty to use image's default command)</small></label>
+        <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Command].$error.server}" type="text" ng-model="Command" ng-required="true" rows="7" placeholder="/docker-entrypoint.sh&#x000A;param1&#x000A;param2"></textarea>
         <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Command].$error.server}" ng-show="GOINPUTNAME[Command].$error.server">{{GOINPUTNAME[Command].$error.server}}</span>
     </div>
 
     <div class="form_item_block">
-        <label ng-class="{'is-invalid-label': GOINPUTNAME[Environment].$error.server}">Environment Variables <small>(Enter one variable per line)</small></label>
-        <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Environment].$error.server}" type="text" ng-model="Environment" ng-required="true" rows="7" placeholder="JAVA_HOME=/opt/java&#x000A;MAVEN_HOME=/opt/maven"></textarea>
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[Environment].$error.server}">Extra environment Variables <small>(Enter one variable per line)</small></label>
+        <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Environment].$error.server}" type="text" ng-model="Environment" ng-required="true" rows="7" placeholder="MY_ENV_VAR1=value1&#x000A;MY_ENV_VAR2=value2"></textarea>
         <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Environment].$error.server}" ng-show="GOINPUTNAME[Environment].$error.server">{{GOINPUTNAME[Environment].$error.server}}</span>
     </div>
 
@@ -96,9 +96,7 @@
 
     <div class="row">
         <div class="columns end">
-            <label ng-class="{'is-invalid-label': GOINPUTNAME[Hosts].$error.server}">Host entries
-                <small>(Enter one host entry per line)</small>
-            </label>
+            <label ng-class="{'is-invalid-label': GOINPUTNAME[Hosts].$error.server}">Extra Host entries <small>(Enter one host entry per line)</small></label>
             <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Hosts].$error.server}" type="text" ng-model="Hosts" ng-required="true" rows="7"></textarea>
             <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Hosts].$error.server}" ng-show="GOINPUTNAME[Hosts].$error.server">{{GOINPUTNAME[Hosts].$error.server}}</span>
             <label class="form-help-content">

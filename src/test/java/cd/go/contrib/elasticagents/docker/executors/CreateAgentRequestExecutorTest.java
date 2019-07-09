@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2019 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,50 @@
 package cd.go.contrib.elasticagents.docker.executors;
 
 import cd.go.contrib.elasticagents.docker.*;
+import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import org.junit.Test;
 
+import java.util.HashMap;
+
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 public class CreateAgentRequestExecutorTest {
     @Test
     public void shouldAskDockerContainersToCreateAnAgent() throws Exception {
-        CreateAgentRequest request = new CreateAgentRequest();
+        final HashMap<String, String> elasticAgentProfileProperties = new HashMap<>();
+        elasticAgentProfileProperties.put("Image", "image1");
+        final JobIdentifier jobIdentifier = new JobIdentifier("p1", 1L, "l1", "s1", "1", "j1", 1L);
+        CreateAgentRequest request = new CreateAgentRequest("key1", elasticAgentProfileProperties, "env1", jobIdentifier, new HashMap<>());
+
         AgentInstances<DockerContainer> agentInstances = mock(DockerContainers.class);
         PluginRequest pluginRequest = mock(PluginRequest.class);
         new CreateAgentRequestExecutor(request, agentInstances, pluginRequest).execute();
 
-        verify(agentInstances).create(request, pluginRequest);
+        verify(agentInstances).create(eq(request), eq(pluginRequest), any(ConsoleLogAppender.class));
+        verify(pluginRequest).appendToConsoleLog(eq(jobIdentifier), contains("Received request to create a container of image1 at "));
+    }
+
+    @Test
+    public void shouldLogErrorMessageToConsoleIfAgentCreateFails() throws Exception {
+        final HashMap<String, String> elasticAgentProfileProperties = new HashMap<>();
+        elasticAgentProfileProperties.put("Image", "image1");
+        final JobIdentifier jobIdentifier = new JobIdentifier("p1", 1L, "l1", "s1", "1", "j1", 1L);
+        CreateAgentRequest request = new CreateAgentRequest("key1", elasticAgentProfileProperties, "env1", jobIdentifier, new HashMap<>());
+
+        AgentInstances<DockerContainer> agentInstances = mock(DockerContainers.class);
+        PluginRequest pluginRequest = mock(PluginRequest.class);
+        when(agentInstances.create(eq(request), eq(pluginRequest), any(ConsoleLogAppender.class))).thenThrow(new RuntimeException("Ouch!"));
+
+        try {
+            new CreateAgentRequestExecutor(request, agentInstances, pluginRequest).execute();
+            fail("Should have thrown an exception");
+        } catch (RuntimeException e) {
+            // expected
+        }
+
+        verify(pluginRequest).appendToConsoleLog(eq(jobIdentifier), contains("Received request to create a container of image1 at "));
+        verify(pluginRequest).appendToConsoleLog(eq(jobIdentifier), contains("Failed while creating container: Ouch"));
     }
 }

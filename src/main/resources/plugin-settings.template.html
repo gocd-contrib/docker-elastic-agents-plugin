@@ -32,7 +32,7 @@
 
 	<div class="form_item_block">
 		<label>Go Server URL (this is passed to the agents, so don't use <code>localhost</code>):<span
-			class='asterix'>*</span></label>
+			class='asterix'> *</span></label>
 		<input type="text" ng-model="go_server_url" ng-required="true" placeholder="https://ipaddress:8154/go"/>
 		<span class="form_error" ng-show="GOINPUTNAME[go_server_url].$error.server">{{GOINPUTNAME[go_server_url].$error.server}}</span>
 	</div>
@@ -49,19 +49,19 @@
 		</div>
 
 		<div class="form_item_block">
-			<label>Agent auto-register Timeout (in minutes):<span class='asterix'>*</span></label>
+			<label>Agent auto-register Timeout (in minutes):<span class='asterix'> *</span></label>
 			<input type="text" ng-model="auto_register_timeout" ng-required="true"/>
 			<span class="form_error" ng-show="GOINPUTNAME[auto_register_timeout].$error.server">{{GOINPUTNAME[auto_register_timeout].$error.server}}</span>
 		</div>
 
 		<div class="form_item_block">
-			<label>Maximum docker containers to run at any given point in time:<span class='asterix'>*</span></label>
+			<label>Maximum docker containers to run at any given point in time:<span class='asterix'> *</span></label>
 			<input type="text" ng-model="max_docker_containers" ng-required="true"/>
 			<span class="form_error" ng-show="GOINPUTNAME[max_docker_containers].$error.server">{{GOINPUTNAME[max_docker_containers].$error.server}}</span>
 		</div>
 
 		<div class="form_item_block">
-			<input type="checkbox" ng-model="pull_on_container_create" id="pull_on_container_create" ng-true-value="true" ng-false-value="false"/>
+			<input type="checkbox" ng-model="pull_on_container_create" id="pull_on_container_create" ng-init="pull_on_container_create = pull_on_container_create || false" ng-true-value="true" ng-false-value="false"/>
 			<label for="pull_on_container_create">Always pull image before creating the container</label>
 			<span class="form_error" ng-show="GOINPUTNAME[pull_on_container_create].$error.server">{{GOINPUTNAME[pull_on_container_create].$error.server}}</span>
 		</div>
@@ -69,8 +69,8 @@
 	<fieldset>
 		<legend>Docker client configuration</legend>
 		<div class="form_item_block">
-			<label>Docker URI:<span class='asterix'>*</span></label>
-			<input type="text" ng-model="docker_uri" ng-required="true"/>
+			<label>Docker URI:<span class='asterix'> *</span></label>
+			<input type="text" ng-model="docker_uri" ng-required="true" placeholder="For Docker running locally, try unix:///var/run/docker.sock"/>
 			<span class="form_error" ng-show="GOINPUTNAME[docker_uri].$error.server">{{GOINPUTNAME[docker_uri].$error.server}}</span>
 		</div>
 
@@ -96,7 +96,7 @@
 	<fieldset>
 		<legend>Docker registry settings</legend>
 		<div class="form_item_block">
-			<input type="checkbox" ng-model="enable_private_registry_authentication" id="enable_private_registry_authentication" ng-true-value="true" ng-false-value="false"/>
+			<input type="checkbox" ng-model="enable_private_registry_authentication" id="enable_private_registry_authentication" ng-init="enable_private_registry_authentication = enable_private_registry_authentication || false" ng-true-value="true" ng-false-value="false"/>
 			<label for="enable_private_registry_authentication">Use Private Registry</label>
 			<span class="form_error" ng-show="GOINPUTNAME[enable_private_registry_authentication].$error.server">{{GOINPUTNAME[enable_private_registry_authentication].$error.server}}</span>
 		</div>

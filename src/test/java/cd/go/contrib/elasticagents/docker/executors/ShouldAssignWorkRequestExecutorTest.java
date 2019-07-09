@@ -48,7 +48,7 @@ public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
         properties.put("Command", "/bin/sleep\n5");
         ClusterProfileProperties clusterProfiles = createClusterProfiles();
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment, jobIdentifier, clusterProfiles), pluginRequest);
+        instance = agentInstances.create(new CreateAgentRequest(UUID.randomUUID().toString(), properties, environment, jobIdentifier, clusterProfiles), pluginRequest, mock(ConsoleLogAppender.class));
         containers.add(instance.name());
     }
 
