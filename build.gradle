@@ -24,11 +24,11 @@ gocdPlugin {
   name = 'Docker Elastic Agent Plugin'
   description = 'Docker Based Elastic Agent Plugins for GoCD'
   vendorName = 'ThoughtWorks, Inc.'
-  vendorUrl = 'https://github.com/gocd-contrib/docker-elastic-agents'
+  vendorUrl = 'https://github.com/gocd-contrib/docker-elastic-agents-plugin'
 
   githubRepo {
     owner = System.getenv('GITHUB_USER') ?: 'bob'
-    repo = 'docker-elastic-agents'
+    repo = 'docker-elastic-agents-plugin'
     token = System.getenv('GITHUB_TOKEN') ?: 'bad-token'
   }
 
