@@ -18,7 +18,6 @@ package cd.go.contrib.elasticagents.docker.requests;
 
 import cd.go.contrib.elasticagents.docker.RequestExecutor;
 import cd.go.contrib.elasticagents.docker.executors.ClusterProfileValidateRequestExecutor;
-import cd.go.contrib.elasticagents.docker.executors.ProfileValidateRequestExecutor;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

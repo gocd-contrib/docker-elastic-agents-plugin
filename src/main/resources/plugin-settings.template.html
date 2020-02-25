@@ -33,7 +33,7 @@
 	<div class="form_item_block">
 		<label>Go Server URL (this is passed to the agents, so don't use <code>localhost</code>):<span
 			class='asterix'> *</span></label>
-		<input type="text" ng-model="go_server_url" ng-required="true" placeholder="https://ipaddress:8154/go"/>
+		<input type="text" ng-model="go_server_url" ng-required="true" placeholder="http://ipaddress:8153/go"/>
 		<span class="form_error" ng-show="GOINPUTNAME[go_server_url].$error.server">{{GOINPUTNAME[go_server_url].$error.server}}</span>
 	</div>
 

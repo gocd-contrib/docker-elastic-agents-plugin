@@ -52,7 +52,7 @@ public class AgentStatusReportRequest {
         return jobIdentifier;
     }
 
-    public AgentStatusReportExecutor executor(PluginRequest pluginRequest, DockerContainers dockerContainers) throws IOException {
+    public AgentStatusReportExecutor executor(PluginRequest pluginRequest, DockerContainers dockerContainers) {
         return new AgentStatusReportExecutor(this, pluginRequest, dockerContainers, ViewBuilder.instance());
     }
 

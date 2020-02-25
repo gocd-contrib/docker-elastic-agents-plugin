@@ -64,7 +64,7 @@ public class GetClusterProfileMetadataExecutor implements RequestExecutor {
 
     @Override
 
-    public GoPluginApiResponse execute() throws Exception {
+    public GoPluginApiResponse execute() {
         return new DefaultGoPluginApiResponse(200, GSON.toJson(FIELDS));
     }
 }

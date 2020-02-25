@@ -36,21 +36,21 @@ public class GoServerURLMetadataTest {
     public void shouldCheckIfStringIsValidUrl() {
         String result = goServerURLMetadata.doValidate("foobar");
 
-        assertThat(result, is("Go Server URL must be a valid URL (https://example.com:8154/go)"));
+        assertThat(result, is("Go Server URL must be a valid URL (http://example.com:8153/go)"));
     }
 
     @Test
     public void shouldCheckIfSchemeIsValid() {
         String result = goServerURLMetadata.doValidate("example.com");
 
-        assertThat(result, is("Go Server URL must be a valid URL (https://example.com:8154/go)"));
+        assertThat(result, is("Go Server URL must be a valid URL (http://example.com:8153/go)"));
     }
 
     @Test
     public void shouldCheckIfSchemeIsHTTPS() {
-        String result = goServerURLMetadata.doValidate("http://example.com");
+        String result = goServerURLMetadata.doValidate("ftp://example.com");
 
-        assertThat(result, is("Go Server URL must be a valid HTTPs URL (https://example.com:8154/go)"));
+        assertThat(result, is("Go Server URL must use http or https protocol"));
     }
 
     @Test
@@ -67,10 +67,10 @@ public class GoServerURLMetadataTest {
     @Test
     public void shouldCheckIfUrlEndsWithContextGo() {
         String result = goServerURLMetadata.doValidate("https://example.com:8154/");
-        assertThat(result, is("Go Server URL must be a valid URL ending with '/go' (https://example.com:8154/go)"));
+        assertThat(result, is("Go Server URL must be a valid URL ending with '/go' (http://example.com:8153/go)"));
 
-        result = goServerURLMetadata.doValidate("https://example.com:8154/crimemastergogo");
-        assertThat(result, is("Go Server URL must be a valid URL ending with '/go' (https://example.com:8154/go)"));
+        result = goServerURLMetadata.doValidate("http://example.com:8153/crimemastergogo");
+        assertThat(result, is("Go Server URL must be a valid URL ending with '/go' (http://example.com:8153/go)"));
     }
 
     @Test

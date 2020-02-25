@@ -19,6 +19,7 @@ package cd.go.contrib.elasticagents.docker.executors;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -40,15 +41,15 @@ public class GoServerURLMetadata extends Metadata {
         try {
             uriBuilder = new URIBuilder(input);
         } catch (URISyntaxException e) {
-            return GO_SERVER_URL_DISPLAY_VALUE + " must be a valid URL (https://example.com:8154/go)";
+            return GO_SERVER_URL_DISPLAY_VALUE + " must be a valid URL (http://example.com:8153/go)";
         }
 
         if (isBlank(uriBuilder.getScheme())) {
-            return GO_SERVER_URL_DISPLAY_VALUE + " must be a valid URL (https://example.com:8154/go)";
+            return GO_SERVER_URL_DISPLAY_VALUE + " must be a valid URL (http://example.com:8153/go)";
         }
 
-        if (!uriBuilder.getScheme().equalsIgnoreCase("https")) {
-            return GO_SERVER_URL_DISPLAY_VALUE + " must be a valid HTTPs URL (https://example.com:8154/go)";
+        if (!Arrays.asList("http", "https").contains(uriBuilder.getScheme())) {
+            return GO_SERVER_URL_DISPLAY_VALUE + " must use http or https protocol";
         }
 
         if (uriBuilder.getHost().equalsIgnoreCase("localhost") || uriBuilder.getHost().equalsIgnoreCase("127.0.0.1")) {
@@ -56,7 +57,7 @@ public class GoServerURLMetadata extends Metadata {
         }
 
         if (!(uriBuilder.getPath().endsWith("/go") || uriBuilder.getPath().endsWith("/go/"))) {
-            return GO_SERVER_URL_DISPLAY_VALUE + " must be a valid URL ending with '/go' (https://example.com:8154/go)";
+            return GO_SERVER_URL_DISPLAY_VALUE + " must be a valid URL ending with '/go' (http://example.com:8153/go)";
         }
 
         return null;

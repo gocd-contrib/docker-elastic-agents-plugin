@@ -28,7 +28,7 @@ public class GetPluginSettingsIconExecutor implements RequestExecutor {
     private static final Gson GSON = new Gson();
 
     @Override
-    public GoPluginApiResponse execute() throws Exception {
+    public GoPluginApiResponse execute() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("content_type", "image/svg+xml");
         jsonObject.addProperty("data", Base64.encodeBase64String(Util.readResourceBytes("/docker-plain.svg")));

@@ -29,8 +29,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 import java.util.Objects;
 
-import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
-
 public class MigrateConfigurationRequest {
     public static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)

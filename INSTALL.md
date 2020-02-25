@@ -38,7 +38,7 @@ The cluster profile settings are used to provide cluster level configurations fo
 
     | Field Name                      | Mandatory | Description                                                                                                                                                                                     |
     |---------------------------------|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-    | **Go server url**               | Yes       | GoCD server url(`https://YOUR_HOST_OR_IP_ADDRESS:8154/go`). The docker elastic agent will use this URL to register itself with GoCD. <br/>The GoCD hostname or ip must resolve in your container. Don't use `localhost` or `127.0.0.1` |
+    | **Go server url**               | Yes       | GoCD server url(`http://YOUR_HOST_OR_IP_ADDRESS:8153/go`). The docker elastic agent will use this URL to register itself with GoCD. <br/>The GoCD hostname or ip must resolve in your container. Don't use `localhost` or `127.0.0.1` |
     | **Environment variables**       | No        | The environment variable for docker container |
     | **Agent auto-register timeout** | Yes       | Agent auto-register timeout(in minutes). Plugin will kill the agent container if it fails to register within provided time limits |
     | **Maximum docker containers**   | Yes       | Maximum docker containers to run at any given point in time. Plugin will not create more container when running container count reached to specified limits |

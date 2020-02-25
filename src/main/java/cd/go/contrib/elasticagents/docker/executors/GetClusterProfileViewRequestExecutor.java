@@ -27,7 +27,7 @@ public class GetClusterProfileViewRequestExecutor implements RequestExecutor {
     private static final Gson GSON = new Gson();
 
     @Override
-    public GoPluginApiResponse execute() throws Exception {
+    public GoPluginApiResponse execute() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("template", Util.readResource("/plugin-settings.template.html"));
         DefaultGoPluginApiResponse defaultGoPluginApiResponse = new DefaultGoPluginApiResponse(200, GSON.toJson(jsonObject));

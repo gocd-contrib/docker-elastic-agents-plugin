@@ -1,6 +1,5 @@
 package cd.go.contrib.elasticagents.docker.requests;
 
-import cd.go.contrib.elasticagents.docker.ClusterProfile;
 import cd.go.contrib.elasticagents.docker.ClusterProfileProperties;
 import cd.go.contrib.elasticagents.docker.DockerContainers;
 import cd.go.contrib.elasticagents.docker.executors.ClusterStatusReportExecutor;
@@ -39,7 +38,7 @@ public class ClusterStatusReportRequest {
         return GSON.fromJson(json, ClusterStatusReportRequest.class);
     }
 
-    public ClusterStatusReportExecutor executor(DockerContainers dockerContainers) throws IOException {
+    public ClusterStatusReportExecutor executor(DockerContainers dockerContainers) {
         return new ClusterStatusReportExecutor(this, dockerContainers, ViewBuilder.instance());
     }
 

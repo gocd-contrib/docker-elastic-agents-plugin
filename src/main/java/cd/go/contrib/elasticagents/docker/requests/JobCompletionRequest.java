@@ -28,8 +28,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Map;
 
-import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
-
 public class JobCompletionRequest {
 
     private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
