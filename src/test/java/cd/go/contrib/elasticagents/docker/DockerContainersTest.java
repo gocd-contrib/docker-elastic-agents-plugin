@@ -231,4 +231,20 @@ public class DockerContainersTest extends BaseTest {
         assertThat(agentStatusReport.getElasticAgentId(), is(container.name()));
         assertThat(agentStatusReport.getJobIdentifier(), is(request.jobIdentifier()));
     }
+
+    @Test
+    public void shouldForceRefreshAgentInstancesAfterTimeout() throws Exception {
+
+        DockerContainers dockerContainers = new DockerContainers();
+        ClusterProfileProperties profileProperties = createClusterProfiles();
+        dockerContainers.refreshAll(profileProperties);
+
+        DockerContainer container = DockerContainer.create(request, clusterProfile, docker, consoleLogAppender);
+        containers.add(container.name());
+
+        dockerContainers.forceNextRefresh();
+
+        dockerContainers.refreshAll(profileProperties);
+        assertEquals(dockerContainers.find(container.name()), container);
+    }
 }
