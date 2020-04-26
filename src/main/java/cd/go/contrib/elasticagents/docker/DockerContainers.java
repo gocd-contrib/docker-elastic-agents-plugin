@@ -31,7 +31,11 @@ import org.joda.time.Period;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
@@ -40,10 +44,18 @@ import static cd.go.contrib.elasticagents.docker.utils.Util.readableSize;
 public class DockerContainers implements AgentInstances<DockerContainer> {
     private final Map<String, DockerContainer> instances = new ConcurrentHashMap<>();
     private List<JobIdentifier> jobsWaitingForAgentCreation = new ArrayList<>();
-    private boolean refreshed;
+    private AtomicBoolean refreshed = new AtomicBoolean(false);
+    private final int FORCE_REFRESH_TIMEOUT_MINUTES = 60;
+
     public Clock clock = Clock.DEFAULT;
 
     final Semaphore semaphore = new Semaphore(0, true);
+
+    private final ScheduledExecutorService timerService = Executors.newSingleThreadScheduledExecutor();
+
+    public DockerContainers() {
+        scheduleForceRefresh();
+    }
 
     @Override
     public DockerContainer create(CreateAgentRequest request, PluginRequest pluginRequest, ConsoleLogAppender consoleLogAppender) throws Exception {
@@ -77,10 +89,18 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
         }
     }
 
+    private void scheduleForceRefresh() {
+        timerService.scheduleAtFixedRate(this::forceNextRefresh, 0, FORCE_REFRESH_TIMEOUT_MINUTES, TimeUnit.MINUTES);
+    }
+
     private void doWithLockOnSemaphore(Runnable runnable) {
         synchronized (semaphore) {
             runnable.run();
         }
+    }
+
+    protected void forceNextRefresh() {
+        refreshed.set(false);
     }
 
     @Override
@@ -125,24 +145,22 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
             if (instance == null) {
                 continue;
             }
-
             if (clock.now().isAfter(instance.createdAt().plus(settings.getAutoRegisterPeriod()))) {
                 oldAgents.add(agent);
             }
         }
-
         return new Agents(oldAgents);
     }
 
     @Override
     public void refreshAll(ClusterProfileProperties clusterProfileProperties) throws Exception {
-        if (!refreshed) {
+        if (!refreshed.get()){
             DockerClient docker = docker(clusterProfileProperties);
             List<Container> containers = docker.listContainers(DockerClient.ListContainersParam.withLabel(Constants.CREATED_BY_LABEL_KEY, Constants.PLUGIN_ID));
             for (Container container : containers) {
                 register(DockerContainer.fromContainerInfo(docker.inspectContainer(container.id())));
             }
-            refreshed = true;
+            refreshed.set(true);
         }
     }
 
