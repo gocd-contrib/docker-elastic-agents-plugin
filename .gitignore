@@ -8,3 +8,4 @@ build
 .tags1
 out/
 src/main/resources-generated/
+**/.DS_Store
