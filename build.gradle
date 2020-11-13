@@ -19,8 +19,8 @@ apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-help
 
 gocdPlugin {
   id = 'cd.go.contrib.elastic-agent.docker'
-  pluginVersion = '3.1.0'
-  goCdVersion = '19.3.0'
+  pluginVersion = '3.2.0'
+  goCdVersion = '20.9.0'
   name = 'Docker Elastic Agent Plugin'
   description = 'Docker Based Elastic Agent Plugins for GoCD'
   vendorName = 'ThoughtWorks, Inc.'
