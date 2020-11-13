@@ -8,16 +8,96 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  test-on-17_06_2-ce:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: 15
-    - name: Test with Gradle
-      run: ./gradlew assemble check
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Set up docker 17.06.2-ce
+        run: |
+          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
+          source ~/.dvm/dvm.sh; dvm install 17.06.2-ce
+          source ~/.dvm/dvm.sh; dvm use 17.06.2-ce && docker swarm init && docker version
+      - name: Build with Gradle
+        run: ./gradlew assemble check
+  test-on-17_09_1-ce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Set up docker 17.09.1-ce
+        run: |
+          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
+          source ~/.dvm/dvm.sh; dvm install 17.09.1-ce
+          source ~/.dvm/dvm.sh; dvm use 17.09.1-ce && docker swarm init && docker version
+      - name: Build with Gradle
+        run: ./gradlew assemble check
+  test-on-17_12_1-ce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Set up docker 17.12.1-ce
+        run: |
+          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
+          source ~/.dvm/dvm.sh; dvm install 17.12.1-ce
+          source ~/.dvm/dvm.sh; dvm use 17.12.1-ce && docker swarm init && docker version
+      - name: Build with Gradle
+        run: ./gradlew assemble check
+  test-on-18_03_1-ce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Set up docker 18.03.1-ce
+        run: |
+          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
+          source ~/.dvm/dvm.sh; dvm install 18.03.1-ce
+          source ~/.dvm/dvm.sh; dvm use 18.03.1-ce && docker swarm init && docker version
+      - name: Build with Gradle
+        run: ./gradlew assemble check
+  test-on-18_06_3-ce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Set up docker 18.06.3-ce
+        run: |
+          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
+        source ~/.dvm/dvm.sh; dvm install 18.06.3-ce
+        source ~/.dvm/dvm.sh; dvm use 18.06.3-ce && docker swarm init && docker version
+      - name: Build with Gradle
+        run: ./gradlew assemble check
+  test-on-18_09_6:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Set up docker 18.09.6
+        run: |
+          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
+          source ~/.dvm/dvm.sh; dvm install 18.09.6
+          source ~/.dvm/dvm.sh; dvm use 18.09.6 && docker swarm init && docker version
+      - name: Build with Gradle
+        run: ./gradlew assemble check
   previewGithubRelease:
     needs: test
     runs-on: ubuntu-latest
@@ -25,12 +105,12 @@ jobs:
       GITHUB_USER:  "gocd-contrib"
       GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: 15
-    - name: Test with Gradle
-      run: ./gradlew githubRelease
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Test with Gradle
+        run: ./gradlew githubRelease
