@@ -79,8 +79,8 @@ jobs:
       - name: Set up docker 18.06.3-ce
         run: |
           curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
-        source ~/.dvm/dvm.sh; dvm install 18.06.3-ce
-        source ~/.dvm/dvm.sh; dvm use 18.06.3-ce && docker swarm init && docker version
+          source ~/.dvm/dvm.sh; dvm install 18.06.3-ce
+          source ~/.dvm/dvm.sh; dvm use 18.06.3-ce && docker swarm init && docker version
       - name: Build with Gradle
         run: ./gradlew assemble check
   test-on-18_09_6:
