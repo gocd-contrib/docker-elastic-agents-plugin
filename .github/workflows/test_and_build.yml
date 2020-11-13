@@ -99,7 +99,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assemble check
   previewGithubRelease:
-    needs: test
+    needs: [test-on-17_06_2-ce, test-on-17_09_1-ce, test-on-17_12_1-ce, test-on-18_03_1-ce, test-on-18_06_3-ce, test-on-18_09_6]
     runs-on: ubuntu-latest
     env:
       GITHUB_USER:  "gocd-contrib"
