@@ -112,7 +112,7 @@ Thanks to @konpa for the [docker icon](https://raw.githubusercontent.com/konpa/d
 ## License
 
 ```plain
-Copyright 2019, ThoughtWorks, Inc.
+Copyright 2022 Thoughtworks, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

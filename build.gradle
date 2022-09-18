@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2022 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ gocdPlugin {
   goCdVersion = '20.9.0'
   name = 'Docker Elastic Agent Plugin'
   description = 'Docker Based Elastic Agent Plugins for GoCD'
-  vendorName = 'ThoughtWorks, Inc.'
+  vendorName = 'Thoughtworks, Inc.'
   vendorUrl = 'https://github.com/gocd-contrib/docker-elastic-agents-plugin'
 
   githubRepo {

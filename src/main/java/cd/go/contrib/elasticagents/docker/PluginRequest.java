@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2022 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,17 @@
 
 package cd.go.contrib.elasticagents.docker;
 
-import com.google.gson.Gson;
 import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.request.DefaultGoApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoApiResponse;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static cd.go.contrib.elasticagents.docker.Constants.*;
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
