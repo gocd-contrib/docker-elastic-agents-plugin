@@ -2,7 +2,7 @@ package cd.go.contrib.elasticagents.docker.requests;
 
 import cd.go.contrib.elasticagents.docker.utils.JobIdentifierMother;
 import com.google.gson.JsonObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;

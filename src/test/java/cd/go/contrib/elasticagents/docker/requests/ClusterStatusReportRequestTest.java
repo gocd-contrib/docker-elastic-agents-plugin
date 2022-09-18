@@ -1,7 +1,7 @@
 package cd.go.contrib.elasticagents.docker.requests;
 
 import com.google.gson.JsonObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 

@@ -1,7 +1,7 @@
 package cd.go.contrib.elasticagents.docker.models;
 
 import cd.go.contrib.elasticagents.docker.utils.JobIdentifierMother;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

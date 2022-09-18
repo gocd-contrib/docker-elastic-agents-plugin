@@ -1,14 +1,14 @@
 package cd.go.contrib.elasticagents.docker.validator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static cd.go.contrib.elasticagents.docker.executors.GetProfileMetadataExecutor.MAX_MEMORY;
 import static cd.go.contrib.elasticagents.docker.executors.GetProfileMetadataExecutor.RESERVED_MEMORY;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MemorySettingsProfileValidatorTest {
     @Test

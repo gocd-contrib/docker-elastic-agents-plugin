@@ -18,13 +18,13 @@ package cd.go.contrib.elasticagents.docker;
 
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import cd.go.contrib.elasticagents.docker.requests.JobCompletionRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 public class ClusterProfilePropertiesTest {
 

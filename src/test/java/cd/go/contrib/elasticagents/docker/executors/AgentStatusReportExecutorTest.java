@@ -12,11 +12,11 @@ import cd.go.contrib.elasticagents.docker.views.ViewBuilder;
 import com.google.gson.JsonObject;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import freemarker.template.Template;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AgentStatusReportExecutorTest {
 
     @Mock
@@ -41,7 +41,7 @@ public class AgentStatusReportExecutorTest {
     private Map<String, String> clusterProfileConfigurations;
     private ClusterProfileProperties clusterProfile;
 
-    @Before
+    @BeforeEach
     public void setup() {
         clusterProfileConfigurations = Collections.singletonMap("go_server_url", "http://go-server-url/go");
         clusterProfile = ClusterProfileProperties.fromConfiguration(clusterProfileConfigurations);
