@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 ThoughtWorks, Inc.
+ * Copyright 2022 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ gocdPlugin {
   goCdVersion = '20.9.0'
   name = 'Docker Elastic Agent Plugin'
   description = 'Docker Based Elastic Agent Plugins for GoCD'
-  vendorName = 'ThoughtWorks, Inc.'
+  vendorName = 'Thoughtworks, Inc.'
   vendorUrl = 'https://github.com/gocd-contrib/docker-elastic-agents-plugin'
 
   githubRepo {
@@ -40,40 +40,53 @@ gocdPlugin {
 
 group = 'cd.go.contrib'
 version = gocdPlugin.fullVersion(project)
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+
 repositories {
-  jcenter()
+  mavenCentral()
   mavenLocal()
 }
 
-sourceSets {
-  test {
-    java {
-      compileClasspath += configurations.compileOnly
-      runtimeClasspath += configurations.compileOnly
-    }
-  }
+java {
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+}
+
+ext {
+  deps = [
+    gocdPluginApi: 'cd.go.plugin:go-plugin-api:22.2.0',
+    junit        : 'org.junit.jupiter:junit-jupiter-api:5.9.0',
+    mockito      : 'org.mockito:mockito-core:4.8.0',
+  ]
+
+  versions = project.ext.deps.collectEntries { lib, libGav -> [lib, libGav.split(':').last()] }
 }
 
 dependencies {
-  compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '19.5.0'
+  compileOnly project.deps.gocdPluginApi
+  implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.1'
+  implementation group: 'com.spotify', name: 'docker-client', version: '8.16.0'
+  implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
+  implementation group: 'joda-time', name: 'joda-time', version: '2.11.1'
+  implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+  implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.31'
 
-  compile group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
-  compile group: 'com.spotify', name: 'docker-client', version: '8.16.0'
-  compile group: 'com.google.guava', name: 'guava', version: '23.0'
-  compile group: 'joda-time', name: 'joda-time', version: '2.10.10'
-  compile group: 'commons-io', name: 'commons-io', version: '2.6'
-  compile group: 'org.freemarker', name: 'freemarker', version: '2.3.30'
+  testImplementation group: 'cd.go.plugin', name: 'go-plugin-api', version: project.versions.gocdPluginApi
+  testImplementation project.deps.junit
+  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: project.versions.junit
+  testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: project.versions.junit
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.23.1'
+  testImplementation project.deps.mockito
+  testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: project.versions.mockito
+  testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
+  testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.1'
+}
 
-  testCompile group: 'junit', name: 'junit', version: '4.13.1'
-  testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.2'
-  testCompile group: 'org.mockito', name: 'mockito-core', version: '3.6.28'
-  testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
+test {
+  useJUnitPlatform()
 }
 
 jar {
-  from(configurations.compile) {
+  from(configurations.runtimeClasspath) {
     into "lib/"
   }
 

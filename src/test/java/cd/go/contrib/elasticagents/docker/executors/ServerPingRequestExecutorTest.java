@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 ThoughtWorks, Inc.
+ * Copyright 2022 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ import cd.go.contrib.elasticagents.docker.models.JobIdentifier;
 import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import cd.go.contrib.elasticagents.docker.requests.ServerPingRequest;
 import org.joda.time.Period;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 
 import java.util.*;
 
 import static cd.go.contrib.elasticagents.docker.Agent.ConfigState.Disabled;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
 
 public class ServerPingRequestExecutorTest extends BaseTest {
@@ -45,7 +45,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         verifyNoMoreInteractions(pluginRequest);
 
         final Collection<Agent> values = agents.agents();
-        HashMap<String, DockerContainers> dockerContainers = new HashMap<String, DockerContainers>() {{
+        HashMap<String, DockerContainers> dockerContainers = new HashMap<>() {{
             put(createClusterProfiles().uuid(), agentInstances);
         }};
 
@@ -54,7 +54,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
     }
 
     private ArgumentMatcher<Collection<Agent>> collectionMatches(final Collection<Agent> values) {
-        return new ArgumentMatcher<Collection<Agent>>() {
+        return new ArgumentMatcher<>() {
             @Override
             public boolean matches(Collection<Agent> argument) {
                 return new ArrayList<>(argument).equals(new ArrayList<>(values));
@@ -73,7 +73,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         when(serverPingRequest.allClusterProfileProperties()).thenReturn(Arrays.asList(createClusterProfiles()));
         when(pluginRequest.listAgents()).thenReturn(agents);
         verifyNoMoreInteractions(pluginRequest);
-        HashMap<String, DockerContainers> dockerContainers = new HashMap<String, DockerContainers>() {{
+        HashMap<String, DockerContainers> dockerContainers = new HashMap<>() {{
             put(createClusterProfiles().uuid(), agentInstances);
         }};
 
@@ -98,7 +98,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         DockerContainer container = agentInstances.create(new CreateAgentRequest(null, properties, null, new JobIdentifier(), createClusterProfiles()), pluginRequest, mock(ConsoleLogAppender.class));
         containers.add(container.name());
 
-        HashMap<String, DockerContainers> dockerContainers = new HashMap<String, DockerContainers>() {{
+        HashMap<String, DockerContainers> dockerContainers = new HashMap<>() {{
             put(createClusterProfiles().uuid(), agentInstances);
         }};
 
@@ -116,7 +116,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
         verifyNoMoreInteractions(pluginRequest);
 
         DockerContainers agentInstances = new DockerContainers();
-        HashMap<String, DockerContainers> dockerContainers = new HashMap<String, DockerContainers>() {{
+        HashMap<String, DockerContainers> dockerContainers = new HashMap<>() {{
             put(createClusterProfiles().uuid(), agentInstances);
         }};
 

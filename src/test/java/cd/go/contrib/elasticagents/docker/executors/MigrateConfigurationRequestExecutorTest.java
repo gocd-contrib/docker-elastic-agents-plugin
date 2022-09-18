@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 ThoughtWorks, Inc.
+ * Copyright 2022 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,17 @@ import cd.go.contrib.elasticagents.docker.ElasticAgentProfile;
 import cd.go.contrib.elasticagents.docker.PluginSettings;
 import cd.go.contrib.elasticagents.docker.requests.MigrateConfigurationRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
 
 public class MigrateConfigurationRequestExecutorTest {
 
@@ -41,7 +41,7 @@ public class MigrateConfigurationRequestExecutorTest {
     private ElasticAgentProfile elasticAgentProfile;
     private HashMap<String, String> properties;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         pluginSettings = new PluginSettings();
         pluginSettings.setGoServerUrl("https://127.0.0.1:8154/go");

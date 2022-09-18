@@ -2,11 +2,11 @@ package cd.go.contrib.elasticagents.docker.executors;
 
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class GetCapabilitiesExecutorTest {
 

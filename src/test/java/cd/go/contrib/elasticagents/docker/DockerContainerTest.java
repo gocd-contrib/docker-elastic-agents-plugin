@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 ThoughtWorks, Inc.
+ * Copyright 2022 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,36 +24,35 @@ import com.google.common.collect.ImmutableList;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.ImageNotFoundException;
 import com.spotify.docker.client.messages.ContainerInfo;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 public class DockerContainerTest extends BaseTest {
 
     private CreateAgentRequest request;
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
     private JobIdentifier jobIdentifier;
     private ConsoleLogAppender consoleLogAppender;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         HashMap<String, String> properties = new HashMap<>();
         properties.put("Image", "alpine");
         properties.put("Command", "/bin/sleep\n5");
         jobIdentifier = new JobIdentifier("up42", 2L, "foo", "stage", "1", "job", 1L);
-        request = new CreateAgentRequest("key", properties, "production", jobIdentifier, Collections.EMPTY_MAP);
+        request = new CreateAgentRequest("key", properties, "production", jobIdentifier, Collections.emptyMap());
         consoleLogAppender = mock(ConsoleLogAppender.class);
     }
 
@@ -72,7 +71,7 @@ public class DockerContainerTest extends BaseTest {
             docker.removeImage(imageName, true, false);
         } catch (ImageNotFoundException ignore) {
         }
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier, Collections.EMPTY_MAP), createClusterProfiles(), docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
         containers.add(container.name());
 
         assertNotNull(docker.inspectImage(imageName));
@@ -82,19 +81,18 @@ public class DockerContainerTest extends BaseTest {
     @Test
     public void shouldRaiseExceptionWhenImageIsNotFoundInDockerRegistry() throws Exception {
         String imageName = "ubuntu:does-not-exist";
-        thrown.expect(ImageNotFoundException.class);
-        thrown.expectMessage(containsString("Image not found: " + imageName));
-        DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier, Collections.EMPTY_MAP), createClusterProfiles(), docker, consoleLogAppender);
+        assertThatThrownBy(() -> DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender))
+                .isInstanceOf(ImageNotFoundException.class)
+                .hasMessageContaining("Image not found: " + imageName);
     }
 
     @Test
     public void shouldNotCreateContainerIfTheImageIsNotProvided() throws Exception {
-        CreateAgentRequest request = new CreateAgentRequest("key", new HashMap<>(), "production", jobIdentifier, Collections.EMPTY_MAP);
+        CreateAgentRequest request = new CreateAgentRequest("key", new HashMap<>(), "production", jobIdentifier, Collections.emptyMap());
 
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Must provide `Image` attribute.");
-
-        DockerContainer.create(request, createClusterProfiles(), docker, consoleLogAppender);
+        assertThatThrownBy(() -> DockerContainer.create(request, createClusterProfiles(), docker, consoleLogAppender))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Must provide `Image` attribute.");;
     }
 
     @Test
@@ -105,7 +103,7 @@ public class DockerContainerTest extends BaseTest {
 
         PluginSettings clusterProfiles = createClusterProfiles();
         clusterProfiles.setEnvironmentVariables("GLOBAL=something");
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), clusterProfiles, docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), clusterProfiles, docker, consoleLogAppender);
         containers.add(container.name());
 
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
@@ -124,7 +122,7 @@ public class DockerContainerTest extends BaseTest {
 
         PluginSettings clusterProfiles = createClusterProfiles();
         clusterProfiles.setEnvironmentVariables("GLOBAL=something");
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), clusterProfiles, docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), clusterProfiles, docker, consoleLogAppender);
         containers.add(container.name());
 
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
@@ -140,7 +138,7 @@ public class DockerContainerTest extends BaseTest {
         Map<String, String> properties = new HashMap<>();
         properties.put("Image", "busybox:latest");
 
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), createClusterProfiles(), docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
         containers.add(container.name());
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
         assertThat(containerInfo.config().env(), hasItem("GO_EA_AUTO_REGISTER_KEY=key"));
@@ -155,7 +153,7 @@ public class DockerContainerTest extends BaseTest {
         properties.put("Image", "busybox:latest");
         properties.put("Command", "cat\n/etc/hosts\n/etc/group");
 
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), createClusterProfiles(), docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
         containers.add(container.name());
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
         assertThat(containerInfo.config().cmd(), is(Arrays.asList("cat", "/etc/hosts", "/etc/group")));
@@ -191,7 +189,7 @@ public class DockerContainerTest extends BaseTest {
         properties.put("Hosts", "127.0.0.2\tbaz \n192.168.5.1\tfoo\tbar\n127.0.0.1  gocd.local ");
         properties.put("Command", "cat\n/etc/hosts");
 
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), createClusterProfiles(), docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
 
         containers.add(container.name());
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
@@ -215,7 +213,7 @@ public class DockerContainerTest extends BaseTest {
     public void shouldGetContainerStatusReport() throws Exception {
         Map<String, String> properties = new HashMap<>();
         properties.put("Image", "busybox:latest");
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), createClusterProfiles(), docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
         containers.add(container.name());
 
         ContainerStatusReport containerStatusReport = container.getContainerStatusReport(docker);
@@ -224,7 +222,7 @@ public class DockerContainerTest extends BaseTest {
         assertThat(containerStatusReport.getElasticAgentId(), is(container.name()));
         assertThat(containerStatusReport.getImage(), is("busybox:latest"));
         assertThat(containerStatusReport.getJobIdentifier(), is(jobIdentifier));
-        assertThat(containerStatusReport.getState(), equalToIgnoringCase("running"));
+        assertThat(containerStatusReport.getState(), equalToIgnoringCase("exited"));
     }
 
     @Test
@@ -233,7 +231,7 @@ public class DockerContainerTest extends BaseTest {
         properties.put("Image", "busybox:latest");
         properties.put("Command", "ls");
         properties.put("Environment", "A=B\nC=D");
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), createClusterProfiles(), docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
         containers.add(container.name());
 
         AgentStatusReport agentStatusReport = container.getAgentStatusReport(docker);
@@ -254,7 +252,7 @@ public class DockerContainerTest extends BaseTest {
         PluginSettings clusterProfiles = createClusterProfiles();
         clusterProfiles.setPullOnContainerCreate(true);
 
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier, Collections.EMPTY_MAP), clusterProfiles, docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier, Collections.emptyMap()), clusterProfiles, docker, consoleLogAppender);
         assertContainerExist(container.name());
         containers.add(container.name());
 
@@ -270,7 +268,7 @@ public class DockerContainerTest extends BaseTest {
         properties.put("MaxMemory", "10M");
 
         PluginSettings clusterProfiles = createClusterProfiles();
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), clusterProfiles, docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), clusterProfiles, docker, consoleLogAppender);
         containers.add(container.name());
 
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
@@ -291,7 +289,7 @@ public class DockerContainerTest extends BaseTest {
         properties.put("MaxMemory", "");
 
         PluginSettings clusterProfiles = createClusterProfiles();
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), clusterProfiles, docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), clusterProfiles, docker, consoleLogAppender);
         containers.add(container.name());
 
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
@@ -307,7 +305,7 @@ public class DockerContainerTest extends BaseTest {
         properties.put("Cpus", ".75");
 
         PluginSettings clusterProfiles = createClusterProfiles();
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), clusterProfiles, docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), clusterProfiles, docker, consoleLogAppender);
         containers.add(container.name());
 
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
@@ -328,7 +326,7 @@ public class DockerContainerTest extends BaseTest {
         properties.put("Mounts", "/:/A\n/:/B:ro");
 
         PluginSettings clusterProfiles = createClusterProfiles();
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.EMPTY_MAP), clusterProfiles, docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), clusterProfiles, docker, consoleLogAppender);
         containers.add(container.name());
 
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
