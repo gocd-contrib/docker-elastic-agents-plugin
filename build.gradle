@@ -74,7 +74,7 @@ dependencies {
   testImplementation project.deps.junit
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: project.versions.junit
   testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: project.versions.junit
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.23.1'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.0'
   testImplementation project.deps.mockito
   testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: project.versions.mockito
   testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
