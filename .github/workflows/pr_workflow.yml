@@ -13,8 +13,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 15
-          distribution: adopt
+          java-version: 17
+          distribution: temurin
       - name: Set up docker 17.06.2-ce
         run: |
           curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
@@ -29,8 +29,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 15
-          distribution: adopt
+          java-version: 17
+          distribution: temurin
       - name: Set up docker 17.09.1-ce
         run: |
           curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
@@ -45,8 +45,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 15
-          distribution: adopt
+          java-version: 17
+          distribution: temurin
       - name: Set up docker 17.12.1-ce
         run: |
           curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
@@ -61,8 +61,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 15
-          distribution: adopt
+          java-version: 17
+          distribution: temurin
       - name: Set up docker 18.03.1-ce
         run: |
           curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
@@ -77,8 +77,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 15
-          distribution: adopt
+          java-version: 17
+          distribution: temurin
       - name: Set up docker 18.06.3-ce
         run: |
           curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
@@ -93,8 +93,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 15
-          distribution: adopt
+          java-version: 17
+          distribution: temurin
       - name: Set up docker 18.09.6
         run: |
           curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
