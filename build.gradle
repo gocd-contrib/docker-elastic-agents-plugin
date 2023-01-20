@@ -68,7 +68,7 @@ dependencies {
   implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
   implementation group: 'joda-time', name: 'joda-time', version: '2.12.2'
   implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
-  implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.31'
+  implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.32'
 
   testImplementation group: 'cd.go.plugin', name: 'go-plugin-api', version: project.versions.gocdPluginApi
   testImplementation project.deps.junit
