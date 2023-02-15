@@ -41,7 +41,9 @@ public enum Request {
 
     REQUEST_CAPABILITIES(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".get-capabilities"),
 
-    REQUEST_MIGRATE_CONFIGURATION(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".migrate-config");
+    REQUEST_MIGRATE_CONFIGURATION(Constants.ELASTIC_AGENT_REQUEST_PREFIX + ".migrate-config"),
+
+    REQUEST_UNHANDLED("Unknown Request");
 
     private final String requestName;
 
@@ -58,11 +60,10 @@ public enum Request {
             }
         }
 
-        return null;
+        return REQUEST_UNHANDLED;
     }
 
     private static class Constants {
         public static final String ELASTIC_AGENT_REQUEST_PREFIX = "cd.go.elastic-agent";
-        public static final String GO_PLUGIN_SETTINGS_PREFIX = "go.plugin-settings";
     }
 }
