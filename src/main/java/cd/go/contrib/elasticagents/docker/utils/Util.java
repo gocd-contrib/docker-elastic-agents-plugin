@@ -17,7 +17,6 @@
 package cd.go.contrib.elasticagents.docker.utils;
 
 import cd.go.contrib.elasticagents.docker.executors.GetClusterProfileViewRequestExecutor;
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
@@ -68,12 +67,7 @@ public class Util {
             return Collections.emptyList();
         }
 
-        return Collections2.transform(Arrays.asList(lines.split("[\r\n]+")), new Function<String, String>() {
-            @Override
-            public String apply(String input) {
-                return input.trim();
-            }
-        });
+        return Collections2.transform(Arrays.asList(lines.split("[\r\n]+")), String::trim);
     }
 
     public static String readableSize(long size) {

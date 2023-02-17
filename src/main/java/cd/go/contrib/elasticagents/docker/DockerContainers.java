@@ -92,12 +92,7 @@ public class DockerContainers implements AgentInstances<DockerContainer> {
             LOG.warn("Requested to terminate an instance that does not exist " + agentId);
         }
 
-        doWithLockOnSemaphore(new Runnable() {
-            @Override
-            public void run() {
-                semaphore.release();
-            }
-        });
+        doWithLockOnSemaphore(semaphore::release);
 
         synchronized (instances) {
             instances.remove(agentId);

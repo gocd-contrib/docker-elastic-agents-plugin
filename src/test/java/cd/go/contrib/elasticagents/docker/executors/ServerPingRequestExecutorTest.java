@@ -54,12 +54,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
     }
 
     private ArgumentMatcher<Collection<Agent>> collectionMatches(final Collection<Agent> values) {
-        return new ArgumentMatcher<>() {
-            @Override
-            public boolean matches(Collection<Agent> argument) {
-                return new ArrayList<>(argument).equals(new ArrayList<>(values));
-            }
-        };
+        return argument -> new ArrayList<>(argument).equals(new ArrayList<>(values));
     }
 
     @Test
