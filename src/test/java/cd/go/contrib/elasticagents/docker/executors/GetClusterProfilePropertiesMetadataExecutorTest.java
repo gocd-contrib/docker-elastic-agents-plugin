@@ -93,7 +93,7 @@ public class GetClusterProfilePropertiesMetadataExecutorTest {
                 "  }," +
                 "  {" +
                 "      \"key\":\"private_registry_username\"," +
-                "      \"metadata\":{\"required\":false,\"secure\":true}" +
+                "      \"metadata\":{\"required\":false,\"secure\":false}" +
                 "  }," +
                 "  {" +
                 "      \"key\":\"private_registry_password\"," +
