@@ -39,7 +39,7 @@ public class GetClusterProfileMetadataExecutor implements RequestExecutor {
     public static final Metadata ENABLE_PRIVATE_REGISTRY_AUTHENTICATION = new Metadata("enable_private_registry_authentication", false, false);
     public static final Metadata PRIVATE_REGISTRY_SERVER = new Metadata("private_registry_server", false, false);
     public static final Metadata PRIVATE_REGISTRY_CUSTOM_CREDENTIALS = new Metadata("private_registry_custom_credentials", false, false);
-    public static final Metadata PRIVATE_REGISTRY_USERNAME = new Metadata("private_registry_username", false, true);
+    public static final Metadata PRIVATE_REGISTRY_USERNAME = new Metadata("private_registry_username", false, false);
     public static final Metadata PRIVATE_REGISTRY_PASSWORD = new Metadata("private_registry_password", false, true);
     public static final Metadata PULL_ON_CONTAINER_CREATE = new Metadata("pull_on_container_create", false, false);
 
