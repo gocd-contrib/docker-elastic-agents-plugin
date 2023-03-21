@@ -9,6 +9,7 @@ Table of Contents
     - [Configure a Cluster Profile](#configure-a-cluster-profile)
     - [Create an Elastic Profile](#create-an-elastic-profile)
     - [Configure a Job to use an Elastic Agent Profile](#configure-a-job-to-use-an-elastic-agent-profile)
+    - [Connecting to a remote docker daemon secured with TLS](#connecting-to-a-remote-docker-daemon-secured-with-tls)
 
 ## Requirements
 
@@ -42,11 +43,11 @@ The cluster profile settings are used to provide cluster level configurations fo
     | **Environment variables**       | No        | The environment variable for docker container |
     | **Agent auto-register timeout** | Yes       | Agent auto-register timeout(in minutes). Plugin will kill the agent container if it fails to register within provided time limits |
     | **Maximum docker containers**   | Yes       | Maximum docker containers to run at any given point in time. Plugin will not create more container when running container count reached to specified limits |
-    | **Docker URI**                  | Yes       | Docker swarm cluster uri. <br/>If your Go Server is running on local machine then use(for mac and linux) — `unix:///var/run/docker.sock` |
-    | **Docker CA Certificate**       | No        | Docker swarm cluster CA certificate |
-    | **Docker Client Key**           | No        | Docker swarm cluster client key |
-    | **Docker Client Certificate**   | No        | Docker swarm cluster client certificate |
-    | **Private Docker Registry**     | Yes       | Optionally specify the private docker registry settings |
+    | **Docker URI**                  | Yes       | Docker daemon uri. <br/>If your Go Server is running on local machine then use(for mac and linux) — `unix:///var/run/docker.sock`. Otherwise, refer to [Connecting to a remote docker daemon secured with TLS](#connecting-to-a-remote-docker-daemon-secured-with-tls) |
+    | **Docker CA Certificate**       | No        | Docker CA certificate, refer to [Connecting to a remote docker daemon secured with TLS](#connecting-to-a-remote-docker-daemon-secured-with-tls)|
+    | **Docker Client Key**           | No        | Docker client key, to refer to [Connecting to a remote docker daemon secured with TLS](#connecting-to-a-remote-docker-daemon-secured-with-tls) |
+    | **Docker Client Certificate**   | No        | Docker client certificate, refer to [Connecting to a remote docker daemon secured with TLS](#connecting-to-a-remote-docker-daemon-secured-with-tls) |
+    | **Private Docker Registry**     | Yes       | Optionally specify the private docker registry settings, either by inputting custom credentials on the GoCD admin UI, or by creating a docker configuration file in `$HOME/.docker/config.json` that is accessible by GoCD server. Please note that currently, regardless of whether you choose to input custom credentials or use a docker configuration file, the `private_registry_username` and `private_registry_password` fields will still show up, but masked, in the cluster configuration UI |
 
 ### Create an elastic profile
 
@@ -67,6 +68,8 @@ The cluster profile settings are used to provide cluster level configurations fo
     | **Docker image**          | Yes       | GoCD elastic agent docker image name. Pre build GoCD agent docker images are available [here](https://www.gocd.org/download/#docker)                                                            |
     | **Docker Command**        | No        | Commands that you want to execute on container start. <br/>*_Note: This will override the existing docker entry-point defined in docker image._*                                                     |
     | **Environment Variables** | No        | Environment variables for container. This will overrides the environment variables defined in cluster profile.(enter each per line)                                                             |
+    | **Resource Constraints (Reserved Memory, Max Memory, CPUs)** | No | Resource allocation and limits for agent containers |
+    | **Volume Mounts** | No | Any volumes you want to mount from the host machine onto your agent containers, in the format of `source-path:dest-path[:ro]` on each line (eg. you might want to mount a `.ssh` folder containing SSH keys on your host machine inside the agent container, so the agent can pull from your preferred VCS with SSH) |
     | **Host entries**          | No        | This allows users to add host entries in `/etc/hosts`(enter each per line)                                                                                                                      |
 
 
@@ -96,3 +99,11 @@ The cluster profile settings are used to provide cluster level configurations fo
 [6]: images/quick-edit.png  "Quick edit"
 [7]: images/configure-job.png  "Configure a job"
 [8]: images/cluster-profiles/docker-client-settings.png "Cluster Profile docker client settings" 
+
+### Connecting to a remote docker daemon secured with TLS
+
+If you would like to run elastic agents on a separate machine from GoCD server, you can configure the agent machine to allow remote access to its docker daemon socket, following the [official Docker documentation](https://docs.docker.com/config/daemon/remote-access/).
+
+You must make sure that the IP and exposed port of the docker daemon is accessible from GoCD server (ie. any firewall/security group rules are configured correctly to allow incoming traffic from GoCD server to the docker daemon socket). You can test network connectivity from your GoCD server with a tool like netcat, eg.: `nc -vz <docker-daemon-machine-IP-or-hostname> 2375`.
+
+It is recommended that a docker daemon socket exposed remotely be secured with TLS. You may follow the steps in the [official Docker documentation](https://docs.docker.com/engine/security/protect-access/#use-tls-https-to-protect-the-docker-daemon-socket) for generating the required CA, server, and client cert and keys. The CA cert, server cert and key, and `--tlsverify` flag must be passed to the docker daemon on start-up, while the CA and client cert and key must be added to your cluster profile configuration under **Docker CA Certificate**, **Docker Client cert** and **Docker Client key**. These will be used by GoCD server to carry out a TLS handshake with the remote docker daemon. If any of these values are incorrectly configured, you will see TLS/SSL handshake errors in your GoCD server logs.
