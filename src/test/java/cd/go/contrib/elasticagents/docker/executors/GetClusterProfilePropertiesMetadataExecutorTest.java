@@ -73,7 +73,7 @@ public class GetClusterProfilePropertiesMetadataExecutorTest {
                 "  }," +
                 "  {" +
                 "      \"key\":\"docker_client_key\"," +
-                "      \"metadata\":{\"required\":false,\"secure\":false}" +
+                "      \"metadata\":{\"required\":false,\"secure\":true}" +
                 "  }," +
                 "  {" +
                 "      \"key\":\"docker_client_cert\"," +
@@ -93,7 +93,7 @@ public class GetClusterProfilePropertiesMetadataExecutorTest {
                 "  }," +
                 "  {" +
                 "      \"key\":\"private_registry_username\"," +
-                "      \"metadata\":{\"required\":false,\"secure\":false}" +
+                "      \"metadata\":{\"required\":false,\"secure\":true}" +
                 "  }," +
                 "  {" +
                 "      \"key\":\"private_registry_password\"," +
