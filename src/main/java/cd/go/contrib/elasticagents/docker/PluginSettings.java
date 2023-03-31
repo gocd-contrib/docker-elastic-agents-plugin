@@ -78,7 +78,7 @@ public class PluginSettings {
 
     @Expose
     @SerializedName("enable_private_registry_authentication")
-    private boolean useDockerAuthInfo;
+    private boolean enablePrivateRegistryAuthentication;
 
     @Expose
     @SerializedName("private_registry_custom_credentials")
@@ -112,7 +112,8 @@ public class PluginSettings {
             return false;
         if (dockerClientKey != null ? !dockerClientKey.equals(that.dockerClientKey) : that.dockerClientKey != null)
             return false;
-        if (useDockerAuthInfo != that.useDockerAuthInfo) return false;
+        if (enablePrivateRegistryAuthentication != that.enablePrivateRegistryAuthentication)
+            return false;
         if(privateRegistryServer != null ? !privateRegistryServer.equals(that.privateRegistryServer) : that.privateRegistryServer != null)
             return false;
         if (useCustomRegistryCredentials != that.useCustomRegistryCredentials) return false;
@@ -134,7 +135,7 @@ public class PluginSettings {
         result = 31 * result + (dockerClientCert != null ? dockerClientCert.hashCode() : 0);
         result = 31 * result + (dockerClientKey != null ? dockerClientKey.hashCode() : 0);
         result = 31 * result + (autoRegisterPeriod != null ? autoRegisterPeriod.hashCode() : 0);
-        result = 31 * result + (useDockerAuthInfo?1:0);
+        result = 31 * result + (enablePrivateRegistryAuthentication?1:0);
         result = 31 * result + (privateRegistryServer != null ? privateRegistryServer.hashCode() : 0);
         result = 31 * result + (useCustomRegistryCredentials? 1 : 0);
         result = 31 * result + (privateRegistryPassword != null ? privateRegistryPassword.hashCode() : 0);
@@ -201,8 +202,8 @@ public class PluginSettings {
         return privateRegistryPassword;
     }
 
-    public Boolean useDockerAuthInfo() {
-        return Boolean.valueOf(useDockerAuthInfo);
+    public Boolean enablePrivateRegistryAuthentication() {
+        return Boolean.valueOf(enablePrivateRegistryAuthentication);
     }
 
     public Boolean useCustomRegistryCredentials() {
@@ -255,7 +256,7 @@ public class PluginSettings {
                 ", privateRegistryServer='" + privateRegistryServer + '\'' +
                 ", privateRegistryUsername='" + privateRegistryUsername + '\'' +
                 ", privateRegistryPassword='" + privateRegistryPassword + '\'' +
-                ", useDockerAuthInfo=" + useDockerAuthInfo +
+                ", enablePrivateRegistryAuthentication=" + enablePrivateRegistryAuthentication +
                 ", useCustomRegistryCredentials=" + useCustomRegistryCredentials +
                 ", pullOnContainerCreate=" + pullOnContainerCreate +
                 ", autoRegisterPeriod=" + autoRegisterPeriod +

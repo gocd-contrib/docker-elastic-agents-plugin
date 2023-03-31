@@ -56,7 +56,7 @@ public class DockerClientFactory {
             setupCerts(pluginSettings, builder);
         }
 
-        if (pluginSettings.useDockerAuthInfo()) {
+        if (pluginSettings.enablePrivateRegistryAuthentication()) {
             RegistryAuth auth;
             if (pluginSettings.useCustomRegistryCredentials()) {
                 auth = RegistryAuth.builder()
