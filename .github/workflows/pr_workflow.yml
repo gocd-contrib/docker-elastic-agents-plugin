@@ -24,7 +24,7 @@ jobs:
       - name: Set up docker ${{ matrix.docker-version }}
         run: |
           curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
-          source ~/.dvm/dvm.sh; dvm install ${{ matrix.docker-version }} || dvm list-remote
+          source ~/.dvm/dvm.sh; dvm install ${{ matrix.docker-version }}
           source ~/.dvm/dvm.sh; dvm use ${{ matrix.docker-version }} && docker version
       - name: Build with Gradle
         run: ./gradlew assemble check
