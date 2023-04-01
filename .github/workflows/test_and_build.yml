@@ -8,8 +8,14 @@ on:
     branches: [ master ]
 
 jobs:
-  test-on-17_06_2-ce:
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        docker-version: # See https://endoflife.date/docker-engine
+          - 19.03.15  # EOL 08-Jan-2021
+          - 20.10.23  # EOL ?
+          - 23.0.2   # EOL ?
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
@@ -17,95 +23,15 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
-      - name: Set up docker 17.06.2-ce
+      - name: Set up docker ${{ matrix.docker-version }}
         run: |
           curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
-          source ~/.dvm/dvm.sh; dvm install 17.06.2-ce
-          source ~/.dvm/dvm.sh; dvm use 17.06.2-ce && docker swarm init && docker version
-      - name: Build with Gradle
-        run: ./gradlew assemble check
-  test-on-17_09_1-ce:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Set up docker 17.09.1-ce
-        run: |
-          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
-          source ~/.dvm/dvm.sh; dvm install 17.09.1-ce
-          source ~/.dvm/dvm.sh; dvm use 17.09.1-ce && docker swarm init && docker version
-      - name: Build with Gradle
-        run: ./gradlew assemble check
-  test-on-17_12_1-ce:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Set up docker 17.12.1-ce
-        run: |
-          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
-          source ~/.dvm/dvm.sh; dvm install 17.12.1-ce
-          source ~/.dvm/dvm.sh; dvm use 17.12.1-ce && docker swarm init && docker version
-      - name: Build with Gradle
-        run: ./gradlew assemble check
-  test-on-18_03_1-ce:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Set up docker 18.03.1-ce
-        run: |
-          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
-          source ~/.dvm/dvm.sh; dvm install 18.03.1-ce
-          source ~/.dvm/dvm.sh; dvm use 18.03.1-ce && docker swarm init && docker version
-      - name: Build with Gradle
-        run: ./gradlew assemble check
-  test-on-18_06_3-ce:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Set up docker 18.06.3-ce
-        run: |
-          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
-          source ~/.dvm/dvm.sh; dvm install 18.06.3-ce
-          source ~/.dvm/dvm.sh; dvm use 18.06.3-ce && docker swarm init && docker version
-      - name: Build with Gradle
-        run: ./gradlew assemble check
-  test-on-18_09_6:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Set up docker 18.09.6
-        run: |
-          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
-          source ~/.dvm/dvm.sh; dvm install 18.09.6
-          source ~/.dvm/dvm.sh; dvm use 18.09.6 && docker swarm init && docker version
+          source ~/.dvm/dvm.sh; dvm install ${{ matrix.docker-version }} || dvm list-remote
+          source ~/.dvm/dvm.sh; dvm use ${{ matrix.docker-version }} && docker version
       - name: Build with Gradle
         run: ./gradlew assemble check
   previewGithubRelease:
-    needs: [test-on-17_06_2-ce, test-on-17_09_1-ce, test-on-17_12_1-ce, test-on-18_03_1-ce, test-on-18_06_3-ce, test-on-18_09_6]
+    needs: test
     runs-on: ubuntu-latest
     env:
       GITHUB_USER:  "gocd-contrib"
