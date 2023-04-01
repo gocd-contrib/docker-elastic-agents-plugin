@@ -21,14 +21,15 @@ import com.spotify.docker.client.DockerCertificates;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.messages.RegistryAuth;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static cd.go.contrib.elasticagents.docker.DockerPlugin.LOG;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -85,15 +86,18 @@ public class DockerClientFactory {
         }
 
         Path certificateDir = Files.createTempDirectory(UUID.randomUUID().toString());
-        File tempDirectory = certificateDir.toFile();
 
         try {
-            FileUtils.writeStringToFile(new File(tempDirectory, DockerCertificates.DEFAULT_CA_CERT_NAME), pluginSettings.getDockerCACert(), StandardCharsets.UTF_8);
-            FileUtils.writeStringToFile(new File(tempDirectory, DockerCertificates.DEFAULT_CLIENT_CERT_NAME), pluginSettings.getDockerClientCert(), StandardCharsets.UTF_8);
-            FileUtils.writeStringToFile(new File(tempDirectory, DockerCertificates.DEFAULT_CLIENT_KEY_NAME), pluginSettings.getDockerClientKey(), StandardCharsets.UTF_8);
+            Files.writeString(certificateDir.resolve(DockerCertificates.DEFAULT_CA_CERT_NAME), pluginSettings.getDockerCACert(), StandardCharsets.UTF_8);
+            Files.writeString(certificateDir.resolve(DockerCertificates.DEFAULT_CLIENT_CERT_NAME), pluginSettings.getDockerClientCert(), StandardCharsets.UTF_8);
+            Files.writeString(certificateDir.resolve(DockerCertificates.DEFAULT_CLIENT_KEY_NAME), pluginSettings.getDockerClientKey(), StandardCharsets.UTF_8);
             builder.dockerCertificates(new DockerCertificates(certificateDir));
         } finally {
-            FileUtils.deleteDirectory(tempDirectory);
+            try (Stream<Path> path = Files.walk(certificateDir)) {
+                path.sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            }
         }
     }
 }
