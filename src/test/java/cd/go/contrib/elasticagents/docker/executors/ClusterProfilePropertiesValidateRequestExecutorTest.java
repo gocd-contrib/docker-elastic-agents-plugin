@@ -42,8 +42,6 @@ public class ClusterProfilePropertiesValidateRequestExecutorTest {
                 mandatoryFieldsBaseErrorString +
                 "]\n";
 
-        System.out.println(expectedStr);
-
         JSONAssert.assertEquals(expectedStr, json, JSONCompareMode.NON_EXTENSIBLE);
     }
 
@@ -61,7 +59,7 @@ public class ClusterProfilePropertiesValidateRequestExecutorTest {
 
     @Test
     public void shouldComplainWhenUserSwitchesToDockerConfigWithoutClearingCustomCredentials() throws Exception {
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<>();
         properties.put("enable_private_registry_authentication", "true");
         properties.put("private_registry_custom_credentials", "false");
         properties.put("private_registry_username", "some username");

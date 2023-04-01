@@ -21,9 +21,9 @@ import cd.go.contrib.elasticagents.docker.requests.ClusterProfileValidateRequest
 import com.google.gson.Gson;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
-import org.apache.commons.lang.StringUtils;
 
 import static cd.go.contrib.elasticagents.docker.executors.GetClusterProfileMetadataExecutor.FIELDS;
 
@@ -36,14 +36,9 @@ public class ClusterProfileValidateRequestExecutor implements RequestExecutor {
         this.request = request;
     }
 
-    private String getRequestProperty(String key) {
-        return request.getProperties().get(key);
-    }
-
     @Override
     public GoPluginApiResponse execute() {
-        ArrayList<Map<String, String>> result = new ArrayList<>();
-
+        List<Map<String, String>> result = new ArrayList<>();
         List<String> knownFields = new ArrayList<>();
 
         for (Metadata field : FIELDS) {
@@ -60,10 +55,7 @@ public class ClusterProfileValidateRequestExecutor implements RequestExecutor {
 
         if (!set.isEmpty()) {
             for (String key : set) {
-                LinkedHashMap<String, String> validationError = new LinkedHashMap<>();
-                validationError.put("key", key);
-                validationError.put("message", "Is an unknown property");
-                result.add(validationError);
+                result.add(Map.of("key", key, "message", "Is an unknown property"));
             }
         }
 
@@ -72,39 +64,43 @@ public class ClusterProfileValidateRequestExecutor implements RequestExecutor {
         return DefaultGoPluginApiResponse.success(GSON.toJson(result));
     }
 
-    private ArrayList<Map<String, String>> validateNoDanglingPrivateRegistryCredentials() {
-        ArrayList<Map<String, String>> result = new ArrayList<>();
+    private List<Map<String, String>> validateNoDanglingPrivateRegistryCredentials() {
+        List<Map<String, String>> result = new ArrayList<>();
 
         String enablePrivateRegistryAuthentication = getRequestProperty("enable_private_registry_authentication");
         String privateRegistryCustomCredentials = getRequestProperty("private_registry_custom_credentials");
-        boolean usePrivateRegistry = enablePrivateRegistryAuthentication == null ? false : enablePrivateRegistryAuthentication.equals("true");
-        boolean useCustomRegistryCredentials = privateRegistryCustomCredentials == null ? false : privateRegistryCustomCredentials.equals("true");
+        boolean usePrivateRegistry = "true".equals(enablePrivateRegistryAuthentication);
+        boolean useCustomRegistryCredentials = "true".equals(privateRegistryCustomCredentials);
         boolean privateRegistryUsernameIsPresent = !StringUtils.isBlank(getRequestProperty("private_registry_username"));
         boolean privateRegistryPasswordIsPresent = !StringUtils.isBlank(getRequestProperty("private_registry_password"));
 
         if (usePrivateRegistry && !useCustomRegistryCredentials) {
             if (privateRegistryPasswordIsPresent || privateRegistryUsernameIsPresent) {
-                HashMap<String, String> validationError = new HashMap<>();
-                validationError.put("key", "enable_private_registry_authentication");
-                validationError.put("message", "Please clear your private registry credentials before switching from custom credentials to using the docker configuration file.");
-                result.add(validationError);
+                result.add(Map.of(
+                        "key", "enable_private_registry_authentication",
+                        "message", "Please clear your private registry credentials before switching from custom credentials to using the docker configuration file."
+                ));
             }
 
             if (privateRegistryUsernameIsPresent) {
-                HashMap<String, String> validationError = new HashMap<>();
-                validationError.put("key", "private_registry_username");
-                validationError.put("message", "Please clear your private registry username before switching from custom credentials to using the docker configuration file.");
-                result.add(validationError);
+                result.add(Map.of(
+                        "key", "private_registry_username",
+                        "message", "Please clear your private registry username before switching from custom credentials to using the docker configuration file."
+                ));
             }
 
             if (privateRegistryPasswordIsPresent) {
-                HashMap<String, String> validationError = new HashMap<>();
-                validationError.put("key", "private_registry_password");
-                validationError.put("message", "Please clear your private registry password before switching from custom credentials to using the docker configuration file.");
-                result.add(validationError);
+                result.add(Map.of(
+                        "key", "private_registry_password",
+                        "message", "Please clear your private registry password before switching from custom credentials to using the docker configuration file."));
             }
         }
 
         return result;
     }
+
+    private String getRequestProperty(String key) {
+        return request.getProperties().get(key);
+    }
+
 }
