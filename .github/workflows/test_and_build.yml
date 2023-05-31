@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         docker-version: # See https://endoflife.date/docker-engine
-          - 20.10.25  # EOL ?
+          - 20.10.24 # EOL ?
           - 23.0.6   # EOL ?
           - 24.0.2   # EOL ?
     steps:
