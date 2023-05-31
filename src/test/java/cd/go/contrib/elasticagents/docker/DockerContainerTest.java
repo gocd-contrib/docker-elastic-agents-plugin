@@ -165,7 +165,7 @@ public class DockerContainerTest extends BaseTest {
     @Test
     public void shouldTerminateAnExistingContainerAndRemoveAssociatedVolumes() throws Exception {
         HashMap<String, String> properties = new HashMap<>();
-        properties.put("Image", "gocd/gocd-agent-docker-dind:v23.1.0");
+        properties.put("Image", "docker:dind"); // Container with implicit anonymous VOLUME
         properties.put("Command", "/bin/sleep\n5");
         request = new CreateAgentRequest("key", properties, "production", jobIdentifier, Collections.emptyMap());
 
