@@ -84,7 +84,7 @@ public class DockerContainer {
         try {
             LOG.debug("Terminating instance " + this.name());
             docker.stopContainer(name, 2);
-            docker.removeContainer(name);
+            docker.removeContainer(name, DockerClient.RemoveContainerParam.removeVolumes());
         } catch (ContainerNotFoundException ignore) {
             LOG.warn("Cannot terminate a container that does not exist " + name);
         }

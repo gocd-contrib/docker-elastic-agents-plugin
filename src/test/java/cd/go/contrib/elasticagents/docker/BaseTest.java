@@ -18,8 +18,11 @@ package cd.go.contrib.elasticagents.docker;
 
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerCertificates;
+import com.spotify.docker.client.DockerClient.ListVolumesParam;
 import com.spotify.docker.client.exceptions.ContainerNotFoundException;
 import com.spotify.docker.client.exceptions.DockerException;
+import com.spotify.docker.client.exceptions.VolumeNotFoundException;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -82,4 +85,8 @@ public abstract class BaseTest {
         assertNotNull(docker.inspectContainer(id));
     }
 
+    protected void assertVolumeDoesNotExist(String volumeName) throws DockerException, InterruptedException {
+        assertThatThrownBy(() -> docker.inspectVolume(volumeName))
+                .isInstanceOf(VolumeNotFoundException.class);
+    }
 }
