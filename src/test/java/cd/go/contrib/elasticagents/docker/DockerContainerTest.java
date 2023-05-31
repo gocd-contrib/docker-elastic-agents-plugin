@@ -163,13 +163,22 @@ public class DockerContainerTest extends BaseTest {
     }
 
     @Test
-    public void shouldTerminateAnExistingContainer() throws Exception {
-        DockerContainer container = DockerContainer.create(request, createClusterProfiles(), docker, consoleLogAppender);
-        containers.add(container.name());
+    public void shouldTerminateAnExistingContainerAndRemoveAssociatedVolumes() throws Exception {
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("Image", "gocd/gocd-agent-docker-dind:v23.1.0");
+        properties.put("Command", "/bin/sleep\n5");
+        request = new CreateAgentRequest("key", properties, "production", jobIdentifier, Collections.emptyMap());
 
+        DockerContainer container = DockerContainer.create(request, createClusterProfiles(), docker,
+                consoleLogAppender);
+        String containerName = container.name();
+        String volumeName = docker.inspectContainer(containerName).mounts().get(0).name();
+
+        containers.add(containerName);
         container.terminate(docker);
 
-        assertContainerDoesNotExist(container.name());
+        assertContainerDoesNotExist(containerName);
+        assertVolumeDoesNotExist(volumeName);
     }
 
     @Test
