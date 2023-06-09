@@ -71,7 +71,7 @@ dependencies {
     implementation('commons-io:commons-io:2.12.0' ) {
       because 'spotify docker-client uses an outdated version'
     }
-    implementation('com.github.jnr:jnr-unixsocket:0.38.19' ) {
+    implementation('com.github.jnr:jnr-unixsocket:0.38.20' ) {
       because 'spotify docker-client uses an outdated version'
     }
   }
