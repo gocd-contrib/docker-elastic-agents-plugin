@@ -68,7 +68,7 @@ dependencies {
   compileOnly project.deps.gocdPluginApi
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
   implementation group: 'com.spotify', name: 'docker-client', version: '8.16.0'
-  implementation group: 'com.google.guava', name: 'guava', version: '32.1.1-jre'
+  implementation group: 'com.google.guava', name: 'guava', version: '32.1.2-jre'
 
   components {
     // workaround for Guava metadata declaring dependencies that are not needed at runtime
