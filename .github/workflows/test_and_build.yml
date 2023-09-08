@@ -17,7 +17,7 @@ jobs:
           - 23.0.6   # EOL ?
           - 24.0.2   # EOL ?
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -37,7 +37,7 @@ jobs:
       GITHUB_USER:  "gocd-contrib"
       GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up JDK
