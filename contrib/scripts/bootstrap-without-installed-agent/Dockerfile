@@ -6,7 +6,7 @@ FROM ...
 # yum install java-1.8.0-openjdk-headless git
 
 # download tini to ensure that an init process exists
-ADD https://github.com/krallin/tini/releases/download/v0.14.0/tini /tini
+ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini /tini
 RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
 
