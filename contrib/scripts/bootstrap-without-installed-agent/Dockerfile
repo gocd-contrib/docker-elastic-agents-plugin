@@ -1,9 +1,7 @@
 FROM ...
 
-# GoCD agent needs the jdk and git/svn/mercurial...
-# Uncomment one of the lines below to ensure that openjdk is installed.
-# apt-get install openjdk-8-jre-headless git
-# yum install java-1.8.0-openjdk-headless git
+# GoCD agent needs the jdk 17 and appropriate binaries for your SCM (git/svn/mercurial)
+# Add then here by the appropriate package manager
 
 # download tini to ensure that an init process exists
 ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini /tini
