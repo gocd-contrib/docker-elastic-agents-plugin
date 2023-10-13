@@ -58,7 +58,7 @@ java {
 ext {
   deps = [
     gocdPluginApi: 'cd.go.plugin:go-plugin-api:23.3.0',
-    mockito      : 'org.mockito:mockito-core:5.5.0',
+    mockito      : 'org.mockito:mockito-core:5.6.0',
   ]
 
   versions = project.ext.deps.collectEntries { lib, libGav -> [lib, libGav.split(':').last()] }
