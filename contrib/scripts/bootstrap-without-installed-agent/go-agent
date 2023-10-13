@@ -62,10 +62,9 @@ while true; do
   agent_launcher_md5=$(get_checksum "${checksums}" 'Agent-Launcher-Content-MD5')
 
   echo "Launching the GoCD Agent, and waiting for it to exit..."
-  RUN_CMD=(java -Dcruise.console.publish.interval=10 \
+  RUN_CMD=(java \
             -Xms128m \
             -Xmx256m \
-            -Djava.security.egd=file:/dev/./urandom \
             -Dagent.plugins.md5="${plugins_md5}" \
             -Dagent.binary.md5="${agent_md5}" \
             -Dagent.launcher.md5="${agent_launcher_md5}" \
