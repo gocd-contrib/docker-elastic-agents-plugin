@@ -15,8 +15,8 @@ RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
 
 # ensure that the container logs on stdout
-ADD log4j.properties /var/lib/go-agent/log4j.properties
-ADD log4j.properties /var/lib/go-agent/go-agent-log4j.properties
+ADD agent-launcher-logback-include.xml /var/lib/go-agent/config/agent-launcher-logback-include.xml
+ADD agent-logback-include.xml /var/lib/go-agent/config/agent-logback-include.xml
 
 ADD go-agent /go-agent
 RUN chmod 755 /go-agent

@@ -14,8 +14,8 @@ ENTRYPOINT ["/tini", "--"]
 RUN adduser go go -h /go -S -D
 
 # ensure that the container logs on stdout
-ADD log4j.properties /go/log4j.properties
-ADD log4j.properties /go/go-agent-log4j.properties
+ADD agent-launcher-logback-include.xml /go/config/agent-launcher-logback-include.xml
+ADD agent-logback-include.xml /go/config/agent-logback-include.xml
 
 ADD go-agent /go-agent
 RUN chmod 755 /go-agent
