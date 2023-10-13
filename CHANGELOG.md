@@ -1,3 +1,7 @@
+### 3.0.0 onwards
+
+See https://github.com/gocd-contrib/docker-elastic-agents-plugin/releases
+
 ## 2.2.0 - 2018-11-21
 
 - Updated plugin libraries
