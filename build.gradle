@@ -53,7 +53,7 @@ java {
 
 ext {
   deps = [
-    gocdPluginApi: 'cd.go.plugin:go-plugin-api:23.4.0',
+    gocdPluginApi: 'cd.go.plugin:go-plugin-api:23.5.0',
     mockito      : 'org.mockito:mockito-core:5.8.0',
   ]
 
