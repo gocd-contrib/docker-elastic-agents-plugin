@@ -11,9 +11,10 @@ jobs:
     strategy:
       matrix:
         docker-version: # See https://endoflife.date/docker-engine
-          - 20.10.24 # EOL 2023-12-10
-          - 23.0.6   # EOL ?
-          - 24.0.6   # EOL ?
+          - "20.10" # 2020-12 --> EOL 2023-12-10
+          - "23.0"  # 2023-02 --> EOL ?
+          - "24.0"  # 2023-05 --> EOL ?
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -21,10 +22,9 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
-      - name: Set up docker ${{ matrix.docker-version }}
-        run: |
-          curl -sL https://howtowhale.github.io/dvm/downloads/latest/install.sh | sh
-          source ~/.dvm/dvm.sh; dvm install ${{ matrix.docker-version }}
-          source ~/.dvm/dvm.sh; dvm use ${{ matrix.docker-version }} && docker version
+      - name: Set up Docker
+        uses: docker-practice/actions-setup-docker@master
+        with:
+          docker_version: ${{ matrix.docker-version }}
       - name: Build with Gradle
         run: ./gradlew assemble check
