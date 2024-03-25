@@ -77,9 +77,6 @@ import java.util.Date;
       throw new NullPointerException("Null created");
     }
     this.created = created;
-    if (container == null) {
-      throw new NullPointerException("Null container");
-    }
     this.container = container;
     if (containerConfig == null) {
       throw new NullPointerException("Null containerConfig");
@@ -228,7 +225,7 @@ import java.util.Date;
            && (this.parent.equals(that.parent()))
            && (this.comment.equals(that.comment()))
            && (this.created.equals(that.created()))
-           && (this.container.equals(that.container()))
+           && ((this.container == null) ? (that.container() == null) : this.container.equals(that.container()))
            && (this.containerConfig.equals(that.containerConfig()))
            && (this.dockerVersion.equals(that.dockerVersion()))
            && (this.author.equals(that.author()))
