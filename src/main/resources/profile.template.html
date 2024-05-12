@@ -39,7 +39,7 @@
 
     <div class="form_item_block">
         <label ng-class="{'is-invalid-label': GOINPUTNAME[Image].$error.server}">Docker image:<span class='asterix'>*</span></label>
-        <input ng-class="{'is-invalid-input': GOINPUTNAME[Image].$error.server}" type="text" ng-model="Image" ng-required="true" placeholder="gocd/gocd-agent-alpine-3.19:v23.5.0"/>
+        <input ng-class="{'is-invalid-input': GOINPUTNAME[Image].$error.server}" type="text" ng-model="Image" ng-required="true" placeholder="gocd/gocd-agent-wolfi:v24.1.0"/>
         <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Image].$error.server}" ng-show="GOINPUTNAME[Image].$error.server">{{GOINPUTNAME[Image].$error.server}}</span>
     </div>
 
