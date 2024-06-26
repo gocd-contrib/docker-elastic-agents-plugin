@@ -19,7 +19,7 @@ jobs:
           - "25.0"  # 2024-01 --> EOL ?
           - "26.0"  # 2024-03 --> EOL ?
           - "26.1"  # 2024-04 --> EOL ?
-          - "27.0"  # 2024-04 --> EOL ?
+          - "27.0"  # 2024-06 --> EOL ?
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
