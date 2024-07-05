@@ -101,7 +101,7 @@ dependencies {
   testImplementation project.deps.mockito
   testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: project.versions.mockito
   testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
-  testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.1'
+  testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.3'
 }
 
 test {
