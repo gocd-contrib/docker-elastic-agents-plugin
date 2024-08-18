@@ -11,9 +11,7 @@ jobs:
     strategy:
       matrix:
         docker-version: # See https://endoflife.date/docker-engine
-          - "20.10" # 2020-12 --> EOL 2023-12-10
           - "23.0"  # 2023-02 --> EOL ?
-          - "24.0"  # 2023-05 --> EOL ?
           - "25.0"  # 2024-01 --> EOL ?
           - "26.1"  # 2024-04 --> EOL ?
           - "27.1"  # 2024-07 --> EOL ?
