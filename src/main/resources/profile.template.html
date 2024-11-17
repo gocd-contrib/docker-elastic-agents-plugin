@@ -94,6 +94,12 @@
         <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Mounts].$error.server}" ng-show="GOINPUTNAME[Mounts].$error.server">{{GOINPUTNAME[Mounts].$error.server}}</span>
     </div>
 
+    <div class="form_item_block">
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[Networks].$error.server}">Network attachments <small>(Enter one network name per line. Leave empty to use the default network)</small></label>
+        <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Networks].$error.server}" type="text" ng-model="Networks" ng-required="true" rows="3" placeholder="gocd-net&#x000A;other-net"></textarea>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Networks].$error.server}" ng-show="GOINPUTNAME[Networks].$error.server">{{GOINPUTNAME[Networks].$error.server}}</span>
+    </div>
+
     <div class="row">
         <div class="columns end">
             <label ng-class="{'is-invalid-label': GOINPUTNAME[Hosts].$error.server}">Extra Host entries <small>(Enter one host entry per line)</small></label>
