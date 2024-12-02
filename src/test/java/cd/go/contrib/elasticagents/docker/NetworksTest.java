@@ -3,7 +3,6 @@ package cd.go.contrib.elasticagents.docker;
 import com.spotify.docker.client.messages.Network;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,8 +15,8 @@ public class NetworksTest {
 
     @Test
     public void shouldReturnNullWhenNetworkConfigIsNotProvided() {
-        assertNull(Networks.fromString(null, Collections.emptyList()));
-        assertNull(Networks.fromString("", Collections.emptyList()));
+        assertNull(Networks.firstMatching(null, Collections.emptyList()));
+        assertNull(Networks.firstMatching("", Collections.emptyList()));
     }
 
     @Test
@@ -29,7 +28,7 @@ public class NetworksTest {
         List<Network> networks = new ArrayList<>();
         networks.add(network);
 
-        String result = Networks.fromString("gocd-net", networks);
+        String result = Networks.firstMatching("gocd-net", networks);
 
         assertNotNull(result);
         assertEquals("gocd-net", result);
@@ -38,10 +37,10 @@ public class NetworksTest {
     @Test
     public void shouldThrowExceptionWhenNetworkDoesNotExist() {
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            Networks.fromString("gocd-net", Collections.emptyList());
+            Networks.firstMatching("gocd-net", Collections.emptyList());
         });
 
-        assertEquals("Network with name `gocd-net` does not exist.", exception.getMessage());
+        assertEquals("Networks [gocd-net] do not exist.", exception.getMessage());
     }
 
     @Test

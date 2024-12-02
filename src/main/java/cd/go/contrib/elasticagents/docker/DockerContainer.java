@@ -144,7 +144,7 @@ public class DockerContainer {
             hostBuilder.appendBinds(Util.splitIntoLinesAndTrimSpaces(volumeMounts));
         }
         if (networks != null) {
-            String networkMode = Networks.fromString(networks, docker.listNetworks());
+            String networkMode = Networks.firstMatching(networks, docker.listNetworks());
             if (networkMode != null) {
                 hostBuilder.networkMode(networkMode);
             }

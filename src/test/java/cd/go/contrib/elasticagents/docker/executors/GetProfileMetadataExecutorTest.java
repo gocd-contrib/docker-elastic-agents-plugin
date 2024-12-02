@@ -69,13 +69,6 @@ public class GetProfileMetadataExecutorTest {
                 "    }\n" +
                 "  },\n" +
                 "  {\n" +
-                "    \"key\": \"Networks\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
                 "    \"key\": \"ReservedMemory\",\n" +
                 "    \"metadata\": {\n" +
                 "      \"required\": false,\n" +
@@ -98,6 +91,13 @@ public class GetProfileMetadataExecutorTest {
                 "  },\n" +
                 "  {\n" +
                 "    \"key\": \"Mounts\",\n" +
+                "    \"metadata\": {\n" +
+                "      \"required\": false,\n" +
+                "      \"secure\": false\n" +
+                "    }\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"key\": \"Networks\",\n" +
                 "    \"metadata\": {\n" +
                 "      \"required\": false,\n" +
                 "      \"secure\": false\n" +
