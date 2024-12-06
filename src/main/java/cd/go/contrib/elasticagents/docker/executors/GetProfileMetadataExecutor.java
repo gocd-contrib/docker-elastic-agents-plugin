@@ -36,6 +36,7 @@ public class GetProfileMetadataExecutor implements RequestExecutor {
     public static final Metadata MAX_MEMORY = new MemoryMetadata("MaxMemory");
     public static final Metadata CPUS = new CpusMetadata("Cpus");
     public static final Metadata MOUNTS = new Metadata("Mounts");
+    public static final Metadata NETWORKS = new Metadata("Networks", false, false);
     public static final Metadata HOSTS = new HostMetadata();
     public static final Metadata PRIVILEGED = new Metadata("Privileged", false, false);
 
@@ -49,6 +50,7 @@ public class GetProfileMetadataExecutor implements RequestExecutor {
         FIELDS.add(MAX_MEMORY);
         FIELDS.add(CPUS);
         FIELDS.add(MOUNTS);
+        FIELDS.add(NETWORKS);
         FIELDS.add(HOSTS);
         FIELDS.add(PRIVILEGED);
     }

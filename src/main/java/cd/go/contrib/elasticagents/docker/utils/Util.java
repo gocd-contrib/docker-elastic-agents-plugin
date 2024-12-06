@@ -27,10 +27,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -62,12 +60,12 @@ public class Util {
         }
     }
 
-    public static Collection<String> splitIntoLinesAndTrimSpaces(String lines) {
+    public static List<String> splitIntoLinesAndTrimSpaces(String lines) {
         if (isBlank(lines)) {
             return Collections.emptyList();
         }
 
-        return Collections2.transform(Arrays.asList(lines.split("[\r\n]+")), String::trim);
+        return Arrays.stream(lines.split("[\r\n]+")).map(String::trim).collect(Collectors.toList());
     }
 
     public static String readableSize(long size) {

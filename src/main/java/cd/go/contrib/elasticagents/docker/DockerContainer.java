@@ -122,6 +122,7 @@ public class DockerContainer {
         }
 
         final String hostConfig = request.properties().get("Hosts");
+        final String networks = request.properties().get("Networks");
         final String reservedMemory = request.properties().get("ReservedMemory");
         final String maxMemory = request.properties().get("MaxMemory");
         final String cpus = request.properties().get("Cpus");
@@ -142,6 +143,12 @@ public class DockerContainer {
         if (volumeMounts != null) {
             hostBuilder.appendBinds(Util.splitIntoLinesAndTrimSpaces(volumeMounts));
         }
+        if (networks != null) {
+            String networkMode = Networks.firstMatching(networks, docker.listNetworks());
+            if (networkMode != null) {
+                hostBuilder.networkMode(networkMode);
+            }
+        }
 
         ContainerConfig containerConfig = containerConfigBuilder
                 .image(imageName)
@@ -159,6 +166,11 @@ public class DockerContainer {
         LOG.debug("Created container " + containerName);
         consoleLogAppender.accept(String.format("Starting container: %s", containerName));
         docker.startContainer(containerName);
+        Collection<String> additionalNetworks = Networks.getAdditionalNetworks(networks);
+        for (String network : additionalNetworks) {
+            docker.connectToNetwork(container.id(), network);
+            consoleLogAppender.accept(String.format("Connected container %s to additional network: %s", containerName, network));
+        }
         consoleLogAppender.accept(String.format("Started container: %s", containerName));
         LOG.debug("container " + containerName + " started");
         return new DockerContainer(id, containerName, request.jobIdentifier(), containerInfo.created(), request.properties(), request.environment());

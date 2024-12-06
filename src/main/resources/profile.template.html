@@ -39,7 +39,7 @@
 
     <div class="form_item_block">
         <label ng-class="{'is-invalid-label': GOINPUTNAME[Image].$error.server}">Docker image:<span class='asterix'>*</span></label>
-        <input ng-class="{'is-invalid-input': GOINPUTNAME[Image].$error.server}" type="text" ng-model="Image" ng-required="true" placeholder="gocd/gocd-agent-wolfi:v24.1.0"/>
+        <input ng-class="{'is-invalid-input': GOINPUTNAME[Image].$error.server}" type="text" ng-model="Image" ng-required="true" placeholder="gocd/gocd-agent-wolfi:v24.4.0"/>
         <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Image].$error.server}" ng-show="GOINPUTNAME[Image].$error.server">{{GOINPUTNAME[Image].$error.server}}</span>
     </div>
 
@@ -92,6 +92,12 @@
         <label ng-class="{'is-invalid-label': GOINPUTNAME[Mounts].$error.server}">Volume Mounts <small>(Enter one volume mount per line: <i>source:dest[:ro]</i>)</small></label>
         <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Mounts].$error.server}" type="text" ng-model="Mounts" ng-required="true" rows="4" placeholder="/var/run/docker.sock:/var/run/docker.sock"></textarea>
         <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Mounts].$error.server}" ng-show="GOINPUTNAME[Mounts].$error.server">{{GOINPUTNAME[Mounts].$error.server}}</span>
+    </div>
+
+    <div class="form_item_block">
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[Networks].$error.server}">Network attachments <small>(Enter one network name per line. Leave empty to use the default network)</small></label>
+        <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Networks].$error.server}" type="text" ng-model="Networks" ng-required="true" rows="3" placeholder="gocd-net&#x000A;other-net"></textarea>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Networks].$error.server}" ng-show="GOINPUTNAME[Networks].$error.server">{{GOINPUTNAME[Networks].$error.server}}</span>
     </div>
 
     <div class="row">
