@@ -13,10 +13,10 @@ jobs:
     strategy:
       matrix:
         docker-version: # See https://endoflife.date/docker-engine
-          - "23"  # 2023-02 --> EOL ?
-          - "25"  # 2024-01 --> EOL ?
-          - "26"  # 2024-04 --> EOL ?
-          - "27"  # 2024-07 --> EOL ?
+          - "v23.0.6"  # 2023-02 --> EOL ?
+          - "v25.0.5"  # 2024-01 --> EOL ?
+          - "v26.1.4"  # 2024-04 --> EOL ?
+          - "v27.4.1"  # 2024-07 --> EOL ?
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
@@ -26,9 +26,9 @@ jobs:
           java-version: 17
           distribution: temurin
       - name: Set up Docker
-        uses: docker-practice/actions-setup-docker@master
+        uses: docker/setup-docker-action@v4
         with:
-          docker_version: ${{ matrix.docker-version }}
+          version: ${{ matrix.docker-version }}
       - name: Build with Gradle
         run: ./gradlew assemble check
   previewGithubRelease:
