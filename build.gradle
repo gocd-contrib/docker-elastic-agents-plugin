@@ -80,7 +80,7 @@ dependencies {
     })
   }
 
-  implementation group: 'joda-time', name: 'joda-time', version: '2.13.0'
+  implementation group: 'joda-time', name: 'joda-time', version: '2.13.1'
   implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.34'
   constraints {
     implementation('commons-io:commons-io:2.18.0' ) {
