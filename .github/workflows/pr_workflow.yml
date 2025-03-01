@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        docker-version: # See https://endoflife.date/docker-engine
+        docker-version: # See https://endoflife.date/docker-engine / https://download.docker.com/linux/static/stable/x86_64/
           - "v23.0.6"  # 2023-02 --> EOL ?
           - "v25.0.5"  # 2024-01 --> EOL ?
           - "v27.5.1"  # 2025-01 --> EOL ?
