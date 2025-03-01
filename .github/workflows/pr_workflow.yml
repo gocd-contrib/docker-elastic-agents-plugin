@@ -11,8 +11,8 @@ jobs:
     strategy:
       matrix:
         docker-version: # See https://endoflife.date/docker-engine
-          - "v23.0.16"  # 2023-02 --> EOL ?
-          - "v25.0.8"  # 2024-01 --> EOL ?
+          - "v23.0.6"  # 2023-02 --> EOL ?
+          - "v25.0.5"  # 2024-01 --> EOL ?
           - "v27.5.1"  # 2025-01 --> EOL ?
           - "v28.0.1"  # 2025-02 --> EOL ?
       fail-fast: false
