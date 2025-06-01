@@ -54,7 +54,7 @@ java {
 ext {
   deps = [
     gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.2.0',
-    mockito      : 'org.mockito:mockito-core:5.17.0',
+    mockito      : 'org.mockito:mockito-core:5.18.0',
   ]
 
   versions = project.ext.deps.collectEntries { lib, libGav -> [lib, libGav.split(':').last()] }
@@ -92,7 +92,7 @@ dependencies {
   }
 
   testImplementation project.deps.gocdPluginApi
-  testImplementation platform('org.junit:junit-bom:5.12.2')
+  testImplementation platform('org.junit:junit-bom:5.13.0')
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api'
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params'
   testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
