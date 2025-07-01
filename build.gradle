@@ -92,7 +92,7 @@ dependencies {
   }
 
   testImplementation project.deps.gocdPluginApi
-  testImplementation platform('org.junit:junit-bom:5.13.0')
+  testImplementation platform('org.junit:junit-bom:5.13.2')
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api'
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params'
   testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
