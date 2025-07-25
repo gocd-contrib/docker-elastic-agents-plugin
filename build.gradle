@@ -90,6 +90,7 @@ dependencies {
       because 'spotify docker-client uses an outdated version'
     }
   }
+  implementation(platform('com.fasterxml.jackson:jackson-bom:2.19.2')) // because 'spotify docker-client uses an outdated version'
 
   testImplementation project.deps.gocdPluginApi
   testImplementation platform('org.junit:junit-bom:5.13.2')
