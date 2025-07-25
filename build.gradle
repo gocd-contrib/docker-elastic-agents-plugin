@@ -83,12 +83,26 @@ dependencies {
   implementation group: 'joda-time', name: 'joda-time', version: '2.14.0'
   implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.34'
   constraints {
-    implementation('commons-io:commons-io:2.19.0' ) {
+    implementation('commons-io:commons-io:2.19.0') {
       because 'spotify docker-client uses an outdated version'
     }
-    implementation('com.github.jnr:jnr-unixsocket:0.38.23' ) {
+    implementation('org.apache.commons:commons-compress:1.27.1') {
       because 'spotify docker-client uses an outdated version'
     }
+    implementation('org.apache.httpcomponents:httpclient:4.5.14') {
+      because 'spotify docker-client uses an outdated version'
+    }
+    implementation('com.github.jnr:jnr-unixsocket:0.38.23') {
+      because 'spotify docker-client uses an outdated version'
+    }
+  }
+  modules {
+    module('org.bouncycastle:bcpkix-jdk15on') {
+      replacedBy('org.bouncycastle:bcpkix-jdk18on', "Everything can go via the JDK 1.8+ BouncyCastle version")
+    }
+  }
+  implementation('org.bouncycastle:bcpkix-jdk18on:1.81') {
+    because 'spotify docker-client uses an outdated version'
   }
   implementation(platform('com.fasterxml.jackson:jackson-bom:2.19.2')) // because 'spotify docker-client uses an outdated version'
 
