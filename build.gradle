@@ -57,8 +57,8 @@ tasks.withType(JavaCompile).configureEach {
 
 ext {
   deps = [
-    gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.2.0',
-    mockito      : 'org.mockito:mockito-core:5.18.0',
+    gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.3.0',
+    mockito      : 'org.mockito:mockito-core:5.20.0',
   ]
 
   versions = project.ext.deps.collectEntries { lib, libGav -> [lib, libGav.split(':').last()] }
@@ -66,9 +66,9 @@ ext {
 
 dependencies {
   compileOnly project.deps.gocdPluginApi
-  implementation group: 'com.google.code.gson', name: 'gson', version: '2.13.1'
+  implementation group: 'com.google.code.gson', name: 'gson', version: '2.13.2'
   implementation group: 'com.spotify', name: 'docker-client', version: '8.16.0'
-  implementation group: 'com.google.guava', name: 'guava', version: '33.4.8-jre'
+  implementation group: 'com.google.guava', name: 'guava', version: '33.5.0-jre'
 
   components {
     // workaround for Guava metadata declaring dependencies that are not needed at runtime
@@ -87,13 +87,13 @@ dependencies {
   implementation group: 'joda-time', name: 'joda-time', version: '2.14.0'
   implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.34'
   constraints {
-    implementation('commons-io:commons-io:2.19.0') {
+    implementation('commons-io:commons-io:2.20.0') {
       because 'spotify docker-client uses an outdated version'
     }
-    implementation('org.apache.commons:commons-compress:1.27.1') {
+    implementation('org.apache.commons:commons-compress:1.28.0') {
       because 'spotify docker-client uses an outdated version'
     }
-    implementation('org.apache.commons:commons-lang3:3.18.0') {
+    implementation('org.apache.commons:commons-lang3:3.19.0') {
       because 'spotify docker-client uses an outdated version'
     }
     implementation('org.apache.httpcomponents:httpclient:4.5.14') {
@@ -108,18 +108,18 @@ dependencies {
       replacedBy('org.bouncycastle:bcpkix-jdk18on', "Everything can go via the JDK 1.8+ BouncyCastle version")
     }
   }
-  implementation('org.bouncycastle:bcpkix-jdk18on:1.81') {
+  implementation('org.bouncycastle:bcpkix-jdk18on:1.82') {
     because 'spotify docker-client uses an outdated version'
   }
-  implementation(platform('com.fasterxml.jackson:jackson-bom:2.19.2')) // because 'spotify docker-client uses an outdated version'
+  implementation(platform('com.fasterxml.jackson:jackson-bom:2.20.0')) // because 'spotify docker-client uses an outdated version'
 
   testImplementation project.deps.gocdPluginApi
-  testImplementation platform('org.junit:junit-bom:5.13.2')
+  testImplementation platform('org.junit:junit-bom:6.0.0')
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api'
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params'
   testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
   testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher'
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.3'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.6'
   testImplementation project.deps.mockito
   testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: project.versions.mockito
   testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '3.0'
