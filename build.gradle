@@ -66,9 +66,9 @@ ext {
 
 dependencies {
   compileOnly project.deps.gocdPluginApi
-  implementation group: 'com.google.code.gson', name: 'gson', version: '2.13.2'
-  implementation group: 'com.spotify', name: 'docker-client', version: '8.16.0'
-  implementation group: 'com.google.guava', name: 'guava', version: '33.5.0-jre'
+  implementation 'com.google.code.gson:gson:2.13.2'
+  implementation 'com.spotify:docker-client:8.16.0'
+  implementation 'com.google.guava:guava:33.5.0-jre'
 
   components {
     // workaround for Guava metadata declaring dependencies that are not needed at runtime
@@ -84,8 +84,8 @@ dependencies {
     })
   }
 
-  implementation group: 'joda-time', name: 'joda-time', version: '2.14.0'
-  implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.34'
+  implementation 'joda-time:joda-time:2.14.0'
+  implementation 'org.freemarker:freemarker:2.3.34'
   constraints {
     implementation('commons-io:commons-io:2.20.0') {
       because 'spotify docker-client uses an outdated version'
@@ -115,15 +115,15 @@ dependencies {
 
   testImplementation project.deps.gocdPluginApi
   testImplementation platform('org.junit:junit-bom:6.0.0')
-  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api'
-  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params'
-  testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
-  testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher'
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.6'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api'
+  testImplementation 'org.junit.jupiter:junit-jupiter-params'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  testImplementation 'org.assertj:assertj-core:3.27.6'
   testImplementation project.deps.mockito
-  testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: project.versions.mockito
-  testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '3.0'
-  testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.3'
+  testImplementation "org.mockito:mockito-junit-jupiter:${project.versions.mockito}"
+  testImplementation 'org.hamcrest:hamcrest:3.0'
+  testImplementation 'org.skyscreamer:jsonassert:1.5.3'
 }
 
 test {
