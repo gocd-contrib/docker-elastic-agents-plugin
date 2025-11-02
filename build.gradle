@@ -15,38 +15,38 @@
  */
 
 plugins {
-  id 'java'
+    id 'java'
 }
 apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
 
 gocdPlugin {
-  id = 'cd.go.contrib.elastic-agent.docker'
-  pluginVersion = '4.0.0'
-  goCdVersion = '22.1.0'
-  name = 'Docker Elastic Agent Plugin'
-  description = 'Docker Based Elastic Agent Plugins for GoCD'
-  vendorName = 'Thoughtworks, Inc.'
-  vendorUrl = 'https://github.com/gocd-contrib/docker-elastic-agents-plugin'
+    id = 'cd.go.contrib.elastic-agent.docker'
+    pluginVersion = '4.0.0'
+    goCdVersion = '22.1.0'
+    name = 'Docker Elastic Agent Plugin'
+    description = 'Docker Based Elastic Agent Plugins for GoCD'
+    vendorName = 'Thoughtworks, Inc.'
+    vendorUrl = 'https://github.com/gocd-contrib/docker-elastic-agents-plugin'
 
-  githubRepo {
-    owner = System.getenv('GITHUB_USER') ?: 'bob'
-    repo = 'docker-elastic-agents-plugin'
-    token = System.getenv('GITHUB_TOKEN') ?: 'bad-token'
-  }
+    githubRepo {
+        owner = System.getenv('GITHUB_USER') ?: 'bob'
+        repo = 'docker-elastic-agents-plugin'
+        token = System.getenv('GITHUB_TOKEN') ?: 'bad-token'
+    }
 
-  pluginProject = project
+    pluginProject = project
 
-  prerelease = !"No".equalsIgnoreCase(System.getenv('PRERELEASE'))
-  prereleaseDryrun = !"Yes".equalsIgnoreCase(System.getenv('PRERELEASE'))
-  assetsToRelease = [project.tasks.jar]
+    prerelease = !"No".equalsIgnoreCase(System.getenv('PRERELEASE'))
+    prereleaseDryrun = !"Yes".equalsIgnoreCase(System.getenv('PRERELEASE'))
+    assetsToRelease = [project.tasks.jar]
 }
 
 group = 'cd.go.contrib'
 version = gocdPlugin.fullVersion(project)
 
 repositories {
-  mavenCentral()
-  mavenLocal()
+    mavenCentral()
+    mavenLocal()
 }
 
 java {
@@ -59,86 +59,100 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 ext {
-  deps = [
-    gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.3.0',
-    mockito      : 'org.mockito:mockito-core:5.20.0',
-  ]
+    deps = [
+        gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.3.0',
+        mockito      : 'org.mockito:mockito-core:5.20.0',
+        slf4j        : 'org.slf4j:slf4j-api:2.0.17',
+    ]
 
-  versions = project.ext.deps.collectEntries { lib, libGav -> [lib, libGav.split(':').last()] }
+    versions = project.ext.deps.collectEntries { lib, libGav -> [lib, libGav.split(':').last()] }
 }
 
 dependencies {
-  compileOnly project.deps.gocdPluginApi
-  implementation 'com.google.code.gson:gson:2.13.2'
-  implementation 'com.spotify:docker-client:8.16.0'
-  implementation 'com.google.guava:guava:33.5.0-jre'
+    compileOnly project.deps.gocdPluginApi
+    implementation 'com.google.code.gson:gson:2.13.2'
+    implementation 'com.spotify:docker-client:8.16.0'
 
-  components {
-    // workaround for Guava metadata declaring dependencies that are not needed at runtime
-    // see https://github.com/google/guava/pull/6606
-    withModule('com.google.guava:guava', { details ->
-      details.allVariants {
-        withDependencies {
-          removeAll {
-            it.name in [ "listenablefuture", "jspecify", "error_prone_annotations", "j2objc-annotations" ]
-          }
+    implementation 'joda-time:joda-time:2.14.0'
+    implementation 'org.freemarker:freemarker:2.3.34'
+
+    // Control/upgrade Spotify docker-client transitive dependencies
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.20.1')
+    implementation platform('org.glassfish.jersey:jersey-bom:2.25')
+    constraints {
+        implementation('commons-io:commons-io:2.20.0') {
+            because "spotify docker-client uses an older version"
         }
-      }
-    })
-  }
+        implementation('org.apache.commons:commons-compress:1.28.0') {
+            because "spotify docker-client uses an older version"
+        }
+        implementation('org.apache.commons:commons-lang3:3.19.0') {
+            because 'spotify docker-client uses an outdated version'
+        }
+        implementation('com.google.guava:guava:33.5.0-jre') {
+            because "spotify docker-client uses an older version"
+        }
+        implementation('org.apache.httpcomponents:httpclient:4.5.14') {
+            because 'spotify docker-client uses an outdated version'
+        }
+        implementation('com.github.jnr:jnr-unixsocket:0.38.24') {
+            because 'spotify docker-client uses an older version'
+        }
+        implementation(project.deps.slf4j) {
+            because 'spotify docker-client uses an older version'
+        }
+    }
 
-  implementation 'joda-time:joda-time:2.14.0'
-  implementation 'org.freemarker:freemarker:2.3.34'
-  constraints {
-    implementation('commons-io:commons-io:2.20.0') {
-      because 'spotify docker-client uses an outdated version'
+    components {
+        // workaround for Guava metadata declaring dependencies that are not needed at runtime
+        // see https://github.com/google/guava/pull/6606
+        withModule('com.google.guava:guava', { details ->
+            details.allVariants {
+                withDependencies {
+                    removeAll {
+                        it.name in ["listenablefuture", "jspecify", "error_prone_annotations", "j2objc-annotations"]
+                    }
+                }
+            }
+        })
     }
-    implementation('org.apache.commons:commons-compress:1.28.0') {
-      because 'spotify docker-client uses an outdated version'
-    }
-    implementation('org.apache.commons:commons-lang3:3.19.0') {
-      because 'spotify docker-client uses an outdated version'
-    }
-    implementation('org.apache.httpcomponents:httpclient:4.5.14') {
-      because 'spotify docker-client uses an outdated version'
-    }
-    implementation('com.github.jnr:jnr-unixsocket:0.38.24') {
-      because 'spotify docker-client uses an outdated version'
-    }
-  }
-  modules {
-    module('org.bouncycastle:bcpkix-jdk15on') {
-      replacedBy('org.bouncycastle:bcpkix-jdk18on', "Everything can go via the JDK 1.8+ BouncyCastle version")
-    }
-  }
-  implementation('org.bouncycastle:bcpkix-jdk18on:1.82') {
-    because 'spotify docker-client uses an outdated version'
-  }
-  implementation(platform('com.fasterxml.jackson:jackson-bom:2.20.1')) // because 'spotify docker-client uses an outdated version'
 
-  testImplementation project.deps.gocdPluginApi
-  testImplementation platform('org.junit:junit-bom:6.0.1')
-  testImplementation 'org.junit.jupiter:junit-jupiter-api'
-  testImplementation 'org.junit.jupiter:junit-jupiter-params'
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-  testImplementation 'org.assertj:assertj-core:3.27.6'
-  testImplementation project.deps.mockito
-  testImplementation "org.mockito:mockito-junit-jupiter:${project.versions.mockito}"
-  testImplementation 'org.hamcrest:hamcrest:3.0'
-  testImplementation 'org.skyscreamer:jsonassert:1.5.3'
+    modules {
+        module('commons-logging:commons-logging') {
+            replacedBy('org.slf4j:jcl-over-slf4j', "Everything should go via SLF4J")
+        }
+        module('org.bouncycastle:bcpkix-jdk15on') {
+            replacedBy('org.bouncycastle:bcpkix-jdk18on', "Everything can go via the JDK 1.8+ BouncyCastle version")
+        }
+    }
+    implementation('org.bouncycastle:bcpkix-jdk18on:1.82') {
+        because 'spotify docker-client uses an outdated version'
+    }
+    implementation "org.slf4j:jcl-over-slf4j:${project.versions.slf4j}"
+
+    testImplementation project.deps.gocdPluginApi
+    testImplementation platform('org.junit:junit-bom:6.0.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.assertj:assertj-core:3.27.6'
+    testImplementation project.deps.mockito
+    testImplementation "org.mockito:mockito-junit-jupiter:${project.versions.mockito}"
+    testImplementation 'org.hamcrest:hamcrest:3.0'
+    testImplementation 'org.skyscreamer:jsonassert:1.5.3'
 }
 
 test {
-  useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 jar {
-  from(configurations.runtimeClasspath) {
-    into "lib/"
-  }
+    from(configurations.runtimeClasspath) {
+        into "lib/"
+    }
 
-  from(sourceSets.main.java) {
-    into "/"
-  }
+    from(sourceSets.main.java) {
+        into "/"
+    }
 }
