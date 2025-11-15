@@ -64,6 +64,14 @@ public class DockerContainerIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    public void shouldCreateContainerFromBuildkitCreatedAgentImage() throws Exception {
+        String sampleBuildkitCreatedImage = "gocd/gocd-agent-wolfi:v25.3.0";
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Map.of("Image", sampleBuildkitCreatedImage), "production", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
+        containers.add(container.name());
+        assertContainerExist(container.name());
+    }
+
+    @Test
     public void shouldPullAnImageWhenOneDoesNotExist() throws Exception {
         String imageName = "busybox:latest";
 
@@ -71,7 +79,7 @@ public class DockerContainerIntegrationTest extends BaseIntegrationTest {
             docker.removeImage(imageName, true, false);
         } catch (ImageNotFoundException ignore) {
         }
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Map.of("Image", imageName), "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
         containers.add(container.name());
 
         assertNotNull(docker.inspectImage(imageName));
@@ -81,7 +89,7 @@ public class DockerContainerIntegrationTest extends BaseIntegrationTest {
     @Test
     public void shouldRaiseExceptionWhenImageIsNotFoundInDockerRegistry() throws Exception {
         String imageName = "ubuntu:does-not-exist";
-        assertThatThrownBy(() -> DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender))
+        assertThatThrownBy(() -> DockerContainer.create(new CreateAgentRequest("key", Map.of("Image", imageName), "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender))
                 .isInstanceOf(ImageNotFoundException.class)
                 .hasMessageContaining("Image not found: " + imageName);
     }
@@ -261,7 +269,7 @@ public class DockerContainerIntegrationTest extends BaseIntegrationTest {
         PluginSettings clusterProfiles = createClusterProfiles();
         clusterProfiles.setPullOnContainerCreate(true);
 
-        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Collections.singletonMap("Image", imageName), "prod", jobIdentifier, Collections.emptyMap()), clusterProfiles, docker, consoleLogAppender);
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Map.of("Image", imageName), "prod", jobIdentifier, Collections.emptyMap()), clusterProfiles, docker, consoleLogAppender);
         assertContainerExist(container.name());
         containers.add(container.name());
 

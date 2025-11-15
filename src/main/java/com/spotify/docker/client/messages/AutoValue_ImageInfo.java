@@ -65,27 +65,12 @@ import java.util.Date;
       throw new NullPointerException("Null id");
     }
     this.id = id;
-    if (parent == null) {
-      throw new NullPointerException("Null parent");
-    }
     this.parent = parent;
-    if (comment == null) {
-      throw new NullPointerException("Null comment");
-    }
     this.comment = comment;
-    if (created == null) {
-      throw new NullPointerException("Null created");
-    }
     this.created = created;
     this.container = container;
     this.containerConfig = containerConfig;
-    if (dockerVersion == null) {
-      throw new NullPointerException("Null dockerVersion");
-    }
     this.dockerVersion = dockerVersion;
-    if (author == null) {
-      throw new NullPointerException("Null author");
-    }
     this.author = author;
     if (config == null) {
       throw new NullPointerException("Null config");
