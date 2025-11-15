@@ -2,7 +2,7 @@ package cd.go.contrib.elasticagents.docker;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,7 +22,7 @@ public class CpusSpecificationTest {
 
     @Test
     public void cpusParsedWithErrors() {
-        assertEquals(Collections.singletonList("Invalid float number: 0,3"), new CpusSpecification("0,3").getErrors());
-        assertEquals(Collections.singletonList("Invalid float number: abc"), new CpusSpecification("abc").getErrors());
+        assertEquals(List.of("Invalid float number: 0,3"), new CpusSpecification("0,3").getErrors());
+        assertEquals(List.of("Invalid float number: abc"), new CpusSpecification("abc").getErrors());
     }
 }

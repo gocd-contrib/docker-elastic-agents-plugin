@@ -3,7 +3,7 @@ package cd.go.contrib.elasticagents.docker.requests;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,7 +19,7 @@ public class ClusterStatusReportRequestTest {
 
         ClusterStatusReportRequest clusterStatusReportRequest = ClusterStatusReportRequest.fromJSON(jsonObject.toString());
 
-        ClusterStatusReportRequest expected = new ClusterStatusReportRequest(Collections.singletonMap("go_server_url", "https://go-server/go"));
+        ClusterStatusReportRequest expected = new ClusterStatusReportRequest(Map.of("go_server_url", "https://go-server/go"));
         assertThat(clusterStatusReportRequest, is(expected));
     }
 }

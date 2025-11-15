@@ -1,15 +1,15 @@
 package cd.go.contrib.elasticagents.docker;
 
 import com.spotify.docker.client.messages.Network;
-
 import org.junit.jupiter.api.Test;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class NetworksTest {
 

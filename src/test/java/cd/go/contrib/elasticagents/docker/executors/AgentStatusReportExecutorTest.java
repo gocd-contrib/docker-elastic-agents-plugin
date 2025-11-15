@@ -43,7 +43,7 @@ public class AgentStatusReportExecutorTest {
 
     @BeforeEach
     public void setup() {
-        clusterProfileConfigurations = Collections.singletonMap("go_server_url", "http://go-server-url/go");
+        clusterProfileConfigurations = Map.of("go_server_url", "http://go-server-url/go");
         clusterProfile = ClusterProfileProperties.fromConfiguration(clusterProfileConfigurations);
     }
 

@@ -20,7 +20,6 @@ import cd.go.contrib.elasticagents.docker.requests.CreateAgentRequest;
 import cd.go.contrib.elasticagents.docker.requests.JobCompletionRequest;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,7 +29,7 @@ public class ClusterProfilePropertiesTest {
 
     @Test
     public void shouldGenerateSameUUIDForClusterProfileProperties() {
-        Map<String, String> clusterProfileConfigurations = Collections.singletonMap("go_server_url", "http://go-server-url/go");
+        Map<String, String> clusterProfileConfigurations = Map.of("go_server_url", "http://go-server-url/go");
         ClusterProfileProperties clusterProfileProperties = ClusterProfileProperties.fromConfiguration(clusterProfileConfigurations);
 
         assertThat(clusterProfileProperties.uuid(), is(clusterProfileProperties.uuid()));

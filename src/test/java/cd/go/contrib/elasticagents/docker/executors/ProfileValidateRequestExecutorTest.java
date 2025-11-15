@@ -22,11 +22,12 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.util.Collections;
+import java.util.Map;
 
 public class ProfileValidateRequestExecutorTest {
     @Test
     public void shouldBarfWhenUnknownKeysArePassed() throws Exception {
-        ProfileValidateRequestExecutor executor = new ProfileValidateRequestExecutor(new ProfileValidateRequest(Collections.singletonMap("foo", "bar")));
+        ProfileValidateRequestExecutor executor = new ProfileValidateRequestExecutor(new ProfileValidateRequest(Map.of("foo", "bar")));
         String json = executor.execute().responseBody();
         JSONAssert.assertEquals("[{\"message\":\"Image must not be blank.\",\"key\":\"Image\"},{\"key\":\"foo\",\"message\":\"Is an unknown property\"}]", json, JSONCompareMode.NON_EXTENSIBLE);
     }

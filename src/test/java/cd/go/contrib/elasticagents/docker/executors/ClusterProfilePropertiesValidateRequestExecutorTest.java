@@ -48,7 +48,7 @@ public class ClusterProfilePropertiesValidateRequestExecutorTest {
     @Test
     public void shouldBarfWhenUnknownKeysArePassed() throws Exception {
         ClusterProfileValidateRequestExecutor executor = new ClusterProfileValidateRequestExecutor(
-                new ClusterProfileValidateRequest(Collections.singletonMap("foo", "bar")));
+                new ClusterProfileValidateRequest(Map.of("foo", "bar")));
         String json = executor.execute().responseBody();
         String expectedStr = "[" +
                 mandatoryFieldsBaseErrorString +

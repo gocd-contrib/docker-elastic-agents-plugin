@@ -2,7 +2,7 @@ package cd.go.contrib.elasticagents.docker;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,10 +18,10 @@ public class MemorySpecificationTest {
 
     @Test
     public void memorySpecificationParsingErrors() {
-        assertEquals(Collections.singletonList("Invalid size: 5K. Wrong size unit"), new MemorySpecification("5K").getErrors());
-        assertEquals(Collections.singletonList("Invalid size: 5"), new MemorySpecification("5").getErrors());
-        assertEquals(Collections.singletonList("Invalid size: A"), new MemorySpecification("A").getErrors());
-        assertEquals(Collections.singletonList("Invalid size: .3M"), new MemorySpecification(".3M").getErrors());
-        assertEquals(Collections.singletonList("Invalid size: 1,3M"), new MemorySpecification("1,3M").getErrors());
+        assertEquals(List.of("Invalid size: 5K. Wrong size unit"), new MemorySpecification("5K").getErrors());
+        assertEquals(List.of("Invalid size: 5"), new MemorySpecification("5").getErrors());
+        assertEquals(List.of("Invalid size: A"), new MemorySpecification("A").getErrors());
+        assertEquals(List.of("Invalid size: .3M"), new MemorySpecification(".3M").getErrors());
+        assertEquals(List.of("Invalid size: 1,3M"), new MemorySpecification("1,3M").getErrors());
     }
 }
