@@ -64,6 +64,13 @@ public class DockerContainerIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    public void shouldCreateContainerFromGoCdAgentImage() throws Exception {
+        DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", Map.of("Image", "gocd/gocd-agent-wolfi:v25.3.0"), "production", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
+        containers.add(container.name());
+        assertContainerExist(container.name());
+    }
+
+    @Test
     public void shouldPullAnImageWhenOneDoesNotExist() throws Exception {
         String imageName = "busybox:latest";
 
