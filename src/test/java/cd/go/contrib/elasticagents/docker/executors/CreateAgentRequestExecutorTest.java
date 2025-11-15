@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 public class CreateAgentRequestExecutorTest {
@@ -51,14 +51,11 @@ public class CreateAgentRequestExecutorTest {
 
         AgentInstances<DockerContainer> agentInstances = mock(DockerContainers.class);
         PluginRequest pluginRequest = mock(PluginRequest.class);
-        when(agentInstances.create(eq(request), eq(pluginRequest), any(ConsoleLogAppender.class))).thenThrow(new RuntimeException("Ouch!"));
+        RuntimeException toThrow = new RuntimeException("Ouch!");
+        when(agentInstances.create(eq(request), eq(pluginRequest), any(ConsoleLogAppender.class))).thenThrow(toThrow);
 
-        try {
-            new CreateAgentRequestExecutor(request, agentInstances, pluginRequest).execute();
-            fail("Should have thrown an exception");
-        } catch (RuntimeException e) {
-            // expected
-        }
+        assertThatThrownBy(() -> new CreateAgentRequestExecutor(request, agentInstances, pluginRequest).execute())
+                .isSameAs(toThrow);
 
         verify(pluginRequest).appendToConsoleLog(eq(jobIdentifier), contains("Received request to create a container of image1 at "));
         verify(pluginRequest).appendToConsoleLog(eq(jobIdentifier), contains("Failed while creating container: Ouch"));
