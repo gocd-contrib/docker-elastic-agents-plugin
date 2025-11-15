@@ -27,9 +27,9 @@ import com.spotify.docker.client.messages.ContainerInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-public class DockerContainerTest extends BaseTest {
+public class DockerContainerIntegrationTest extends BaseIntegrationTest {
 
     private CreateAgentRequest request;
 
@@ -156,7 +156,7 @@ public class DockerContainerTest extends BaseTest {
         DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
         containers.add(container.name());
         ContainerInfo containerInfo = docker.inspectContainer(container.name());
-        assertThat(containerInfo.config().cmd(), is(Arrays.asList("cat", "/etc/hosts", "/etc/group")));
+        assertThat(containerInfo.config().cmd(), is(List.of("cat", "/etc/hosts", "/etc/group")));
         String logs = docker.logs(container.name(), DockerClient.LogsParam.stdout()).readFully();
         assertThat(logs, containsString("127.0.0.1")); // from /etc/hosts
         assertThat(logs, containsString("floppy:x:19:")); // from /etc/group

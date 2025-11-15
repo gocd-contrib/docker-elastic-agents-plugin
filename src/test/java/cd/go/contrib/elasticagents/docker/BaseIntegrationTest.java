@@ -18,7 +18,6 @@ package cd.go.contrib.elasticagents.docker;
 
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerCertificates;
-import com.spotify.docker.client.DockerClient.ListVolumesParam;
 import com.spotify.docker.client.exceptions.ContainerNotFoundException;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.exceptions.VolumeNotFoundException;
@@ -36,7 +35,7 @@ import static java.lang.System.getenv;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public abstract class BaseTest {
+public abstract class BaseIntegrationTest {
 
     protected static DefaultDockerClient.Builder builder;
     protected static DefaultDockerClient docker;

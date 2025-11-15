@@ -32,7 +32,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
-public class ShouldAssignWorkRequestExecutorTest extends BaseTest {
+public class ShouldAssignWorkRequestExecutorIntegrationIntegrationTest extends BaseIntegrationTest {
 
     private DockerContainers agentInstances;
     private DockerContainer instance;

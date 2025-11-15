@@ -30,17 +30,17 @@ import static cd.go.contrib.elasticagents.docker.Agent.ConfigState.Disabled;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
 
-public class ServerPingRequestExecutorTest extends BaseTest {
+public class ServerPingRequestExecutorIntegrationTest extends BaseIntegrationTest {
 
     @Test
     public void testShouldDisableIdleAgents() throws Exception {
         String agentId = UUID.randomUUID().toString();
-        final Agents agents = new Agents(Arrays.asList(new Agent(agentId, Agent.AgentState.Idle, Agent.BuildState.Idle, Agent.ConfigState.Enabled)));
+        final Agents agents = new Agents(List.of(new Agent(agentId, Agent.AgentState.Idle, Agent.BuildState.Idle, Agent.ConfigState.Enabled)));
         DockerContainers agentInstances = new DockerContainers();
 
         PluginRequest pluginRequest = mock(PluginRequest.class);
         ServerPingRequest serverPingRequest = mock(ServerPingRequest.class);
-        when(serverPingRequest.allClusterProfileProperties()).thenReturn(Arrays.asList(createClusterProfiles()));
+        when(serverPingRequest.allClusterProfileProperties()).thenReturn(List.of(createClusterProfiles()));
         when(pluginRequest.listAgents()).thenReturn(agents);
         verifyNoMoreInteractions(pluginRequest);
 
@@ -60,12 +60,12 @@ public class ServerPingRequestExecutorTest extends BaseTest {
     @Test
     public void testShouldTerminateDisabledAgents() throws Exception {
         String agentId = UUID.randomUUID().toString();
-        final Agents agents = new Agents(Arrays.asList(new Agent(agentId, Agent.AgentState.Idle, Agent.BuildState.Idle, Disabled)));
+        final Agents agents = new Agents(List.of(new Agent(agentId, Agent.AgentState.Idle, Agent.BuildState.Idle, Disabled)));
         DockerContainers agentInstances = new DockerContainers();
 
         PluginRequest pluginRequest = mock(PluginRequest.class);
         ServerPingRequest serverPingRequest = mock(ServerPingRequest.class);
-        when(serverPingRequest.allClusterProfileProperties()).thenReturn(Arrays.asList(createClusterProfiles()));
+        when(serverPingRequest.allClusterProfileProperties()).thenReturn(List.of(createClusterProfiles()));
         when(pluginRequest.listAgents()).thenReturn(agents);
         verifyNoMoreInteractions(pluginRequest);
         HashMap<String, DockerContainers> dockerContainers = new HashMap<>() {{
@@ -81,7 +81,7 @@ public class ServerPingRequestExecutorTest extends BaseTest {
     public void testShouldTerminateInstancesThatNeverAutoRegistered() throws Exception {
         PluginRequest pluginRequest = mock(PluginRequest.class);
         ServerPingRequest serverPingRequest = mock(ServerPingRequest.class);
-        when(serverPingRequest.allClusterProfileProperties()).thenReturn(Arrays.asList(createClusterProfiles()));
+        when(serverPingRequest.allClusterProfileProperties()).thenReturn(List.of(createClusterProfiles()));
         when(pluginRequest.listAgents()).thenReturn(new Agents());
         verifyNoMoreInteractions(pluginRequest);
 
@@ -106,8 +106,8 @@ public class ServerPingRequestExecutorTest extends BaseTest {
     public void shouldDeleteAgentFromConfigWhenCorrespondingContainerIsNotPresent() throws Exception {
         PluginRequest pluginRequest = mock(PluginRequest.class);
         ServerPingRequest serverPingRequest = mock(ServerPingRequest.class);
-        when(serverPingRequest.allClusterProfileProperties()).thenReturn(Arrays.asList(createClusterProfiles()));
-        when(pluginRequest.listAgents()).thenReturn(new Agents(Arrays.asList(new Agent("foo", Agent.AgentState.Idle, Agent.BuildState.Idle, Agent.ConfigState.Enabled))));
+        when(serverPingRequest.allClusterProfileProperties()).thenReturn(List.of(createClusterProfiles()));
+        when(pluginRequest.listAgents()).thenReturn(new Agents(List.of(new Agent("foo", Agent.AgentState.Idle, Agent.BuildState.Idle, Agent.ConfigState.Enabled))));
         verifyNoMoreInteractions(pluginRequest);
 
         DockerContainers agentInstances = new DockerContainers();
