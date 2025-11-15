@@ -3,8 +3,8 @@ package cd.go.contrib.elasticagents.docker.requests;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -37,6 +37,6 @@ public class ServerPingRequestTest {
         configurations.put("enable_private_registry_authentication", "false");
         configurations.put("private_registry_custom_credentials", "true");
         configurations.put("pull_on_container_create", "false");
-        assertThat(ServerPingRequest.fromJSON(requestBody), is(new ServerPingRequest(Arrays.asList(configurations))));
+        assertThat(ServerPingRequest.fromJSON(requestBody), is(new ServerPingRequest(List.of(configurations))));
     }
 }

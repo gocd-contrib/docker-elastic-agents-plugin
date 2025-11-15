@@ -23,8 +23,8 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -82,8 +82,8 @@ public class MigrateConfigurationRequestTest {
         elasticAgentProfile.setProperties(properties);
 
         assertThat(pluginSettings, is(request.getPluginSettings()));
-        assertThat(Arrays.asList(clusterProfile), is(request.getClusterProfiles()));
-        assertThat(Arrays.asList(elasticAgentProfile), is(request.getElasticAgentProfiles()));
+        assertThat(List.of(clusterProfile), is(request.getClusterProfiles()));
+        assertThat(List.of(elasticAgentProfile), is(request.getElasticAgentProfiles()));
     }
 
     @Test
@@ -97,8 +97,8 @@ public class MigrateConfigurationRequestTest {
         MigrateConfigurationRequest request = MigrateConfigurationRequest.fromJSON(requestBody);
 
         assertThat(new PluginSettings(), is(request.getPluginSettings()));
-        assertThat(Arrays.asList(), is(request.getClusterProfiles()));
-        assertThat(Arrays.asList(), is(request.getElasticAgentProfiles()));
+        assertThat(List.of(), is(request.getClusterProfiles()));
+        assertThat(List.of(), is(request.getElasticAgentProfiles()));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class MigrateConfigurationRequestTest {
         properties.put("some_key2", "some_value2");
         elasticAgentProfile.setProperties(properties);
 
-        MigrateConfigurationRequest request = new MigrateConfigurationRequest(pluginSettings, Arrays.asList(clusterProfile), Arrays.asList(elasticAgentProfile));
+        MigrateConfigurationRequest request = new MigrateConfigurationRequest(pluginSettings, List.of(clusterProfile), List.of(elasticAgentProfile));
 
         String actual = request.toJSON();
 
