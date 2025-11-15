@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         docker-version: # See https://endoflife.date/docker-engine / https://download.docker.com/linux/static/stable/x86_64/
-          - "25.0"  # 2024-01 --> EOL ?
-          - "28.x"  # 2025-02 --> EOL ?
+          - "25.0" # 2024-01 --> EOL ?
+          - "29"   # 2025-11 --> EOL ?
       fail-fast: false
     steps:
       - name: Harden the runner (Audit all outbound calls)
