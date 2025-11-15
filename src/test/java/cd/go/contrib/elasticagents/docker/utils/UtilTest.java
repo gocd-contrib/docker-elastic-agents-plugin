@@ -28,12 +28,13 @@ public class UtilTest {
 
     @Test
     public void shouldSplitIntoLinesAndTrimSpaces() throws Exception {
-        Collection<String> strings = Util.splitIntoLinesAndTrimSpaces("FOO=BAR\n" +
-                "  X=Y\n" +
-                "\n" +
-                "  A=B\r\n" +
-                "\n" +
-                "W=1");
+        Collection<String> strings = Util.splitIntoLinesAndTrimSpaces("""
+                FOO=BAR
+                  X=Y
+                
+                  A=B\r
+                
+                W=1""");
 
         assertThat(strings.size(), is(4));
         assertThat(strings, hasItems("FOO=BAR", "X=Y", "A=B", "W=1"));

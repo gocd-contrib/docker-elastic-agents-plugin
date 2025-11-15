@@ -29,24 +29,25 @@ import static org.hamcrest.Matchers.is;
 public class JobCompletionRequestTest {
     @Test
     public void shouldDeserializeFromJSON() throws Exception {
-        String json = "{\n" +
-                "  \"elastic_agent_id\": \"ea1\",\n" +
-                "  \"elastic_agent_profile_properties\": {\n" +
-                "    \"Image\": \"alpine:latest\"\n" +
-                "  },\n" +
-                "  \"cluster_profile_properties\": {\n" +
-                "    \"go_server_url\": \"https://example.com/go\"\n" +
-                "  },\n" +
-                "  \"job_identifier\": {\n" +
-                "    \"pipeline_name\": \"test-pipeline\",\n" +
-                "    \"pipeline_counter\": 1,\n" +
-                "    \"pipeline_label\": \"Test Pipeline\",\n" +
-                "    \"stage_name\": \"test-stage\",\n" +
-                "    \"stage_counter\": \"1\",\n" +
-                "    \"job_name\": \"test-job\",\n" +
-                "    \"job_id\": 100\n" +
-                "  }\n" +
-                "}";
+        String json = """
+                {
+                  "elastic_agent_id": "ea1",
+                  "elastic_agent_profile_properties": {
+                    "Image": "alpine:latest"
+                  },
+                  "cluster_profile_properties": {
+                    "go_server_url": "https://example.com/go"
+                  },
+                  "job_identifier": {
+                    "pipeline_name": "test-pipeline",
+                    "pipeline_counter": 1,
+                    "pipeline_label": "Test Pipeline",
+                    "stage_name": "test-stage",
+                    "stage_counter": "1",
+                    "job_name": "test-job",
+                    "job_id": 100
+                  }
+                }""";
 
         JobCompletionRequest request = JobCompletionRequest.fromJSON(json);
         JobIdentifier expectedJobIdentifier = new JobIdentifier("test-pipeline", 1L, "Test Pipeline", "test-stage", "1", "test-job", 100L);

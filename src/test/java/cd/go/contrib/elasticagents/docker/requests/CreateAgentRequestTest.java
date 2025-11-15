@@ -31,18 +31,19 @@ public class CreateAgentRequestTest {
 
     @Test
     public void shouldDeserializeFromJSON() throws Exception {
-        String json = "{\n" +
-                "  \"auto_register_key\": \"secret-key\",\n" +
-                "  \"elastic_agent_profile_properties\": {\n" +
-                "    \"key1\": \"value1\",\n" +
-                "    \"key2\": \"value2\"\n" +
-                "  },\n" +
-                "  \"cluster_profile_properties\": {\n" +
-                "    \"go_server_url\": \"https://foo.com/go\",\n" +
-                "    \"docker_uri\": \"unix:///var/run/docker.sock\"\n" +
-                "  },\n" +
-                "  \"environment\": \"prod\"\n" +
-                "}";
+        String json = """
+                {
+                  "auto_register_key": "secret-key",
+                  "elastic_agent_profile_properties": {
+                    "key1": "value1",
+                    "key2": "value2"
+                  },
+                  "cluster_profile_properties": {
+                    "go_server_url": "https://foo.com/go",
+                    "docker_uri": "unix:///var/run/docker.sock"
+                  },
+                  "environment": "prod"
+                }""";
 
         CreateAgentRequest request = CreateAgentRequest.fromJSON(json);
         assertThat(request.autoRegisterKey(), equalTo("secret-key"));

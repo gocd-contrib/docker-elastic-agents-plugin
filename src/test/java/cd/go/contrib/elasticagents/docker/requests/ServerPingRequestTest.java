@@ -12,20 +12,21 @@ import static org.hamcrest.Matchers.is;
 public class ServerPingRequestTest {
     @Test
     public void shouldDeserializeJSONBody() {
-        String requestBody = "{\n " +
-                " \"all_cluster_profile_properties\": [\n    " +
-                "{\n      " +
-                "      \"go_server_url\": \"foo\",\n" +
-                "      \"max_docker_containers\": \"100\",\n" +
-                "      \"docker_uri\": \"dockerURI\",\n" +
-                "      \"auto_register_timeout\": \"1\",\n" +
-                "      \"private_registry_password\": \"foobar\",\n" +
-                "      \"enable_private_registry_authentication\": \"false\",\n" +
-                "      \"private_registry_custom_credentials\": \"true\",\n" +
-                "      \"pull_on_container_create\": \"false\"\n" +
-                "    }\n" +
-                "   ]" +
-                "\n}";
+        String requestBody = """
+                {
+                 "all_cluster_profile_properties": [
+                   {
+                      "go_server_url": "foo",
+                      "max_docker_containers": "100",
+                      "docker_uri": "dockerURI",
+                      "auto_register_timeout": "1",
+                      "private_registry_password": "foobar",
+                      "enable_private_registry_authentication": "false",
+                      "private_registry_custom_credentials": "true",
+                      "pull_on_container_create": "false"
+                    }
+                  ]
+                }""";
 
         HashMap<String, String> configurations = new HashMap<>();
         configurations.put("go_server_url", "foo");

@@ -46,78 +46,79 @@ public class GetProfileMetadataExecutorTest {
         GoPluginApiResponse response = new GetProfileMetadataExecutor().execute();
 
         assertThat(response.responseCode(), is(200));
-        String expectedJSON = "[\n" +
-                "  {\n" +
-                "    \"key\": \"Image\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": true,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Command\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Environment\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"ReservedMemory\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"MaxMemory\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Cpus\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Mounts\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Networks\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Hosts\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Privileged\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  }\n" +
-                "]";
+        String expectedJSON = """
+                [
+                  {
+                    "key": "Image",
+                    "metadata": {
+                      "required": true,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "Command",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "Environment",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "ReservedMemory",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "MaxMemory",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "Cpus",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "Mounts",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "Networks",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "Hosts",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "Privileged",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  }
+                ]""";
 
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
     }

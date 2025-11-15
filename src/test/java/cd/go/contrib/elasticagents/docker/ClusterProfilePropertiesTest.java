@@ -38,40 +38,42 @@ public class ClusterProfilePropertiesTest {
 
     @Test
     public void shouldGenerateSameUUIDForClusterProfilePropertiesAcrossRequests() {
-        String createAgentRequestJSON = "{\n" +
-                "  \"auto_register_key\": \"secret-key\",\n" +
-                "  \"elastic_agent_profile_properties\": {\n" +
-                "    \"key1\": \"value1\",\n" +
-                "    \"key2\": \"value2\"\n" +
-                "  },\n" +
-                "  \"cluster_profile_properties\": {\n" +
-                "    \"go_server_url\": \"https://foo.com/go\",\n" +
-                "    \"docker_uri\": \"unix:///var/run/docker.sock\"\n" +
-                "  },\n" +
-                "  \"environment\": \"prod\"\n" +
-                "}";
+        String createAgentRequestJSON = """
+                {
+                  "auto_register_key": "secret-key",
+                  "elastic_agent_profile_properties": {
+                    "key1": "value1",
+                    "key2": "value2"
+                  },
+                  "cluster_profile_properties": {
+                    "go_server_url": "https://foo.com/go",
+                    "docker_uri": "unix:///var/run/docker.sock"
+                  },
+                  "environment": "prod"
+                }""";
 
         CreateAgentRequest createAgentRequest = CreateAgentRequest.fromJSON(createAgentRequestJSON);
 
-        String jobCompletionRequestJSON = "{\n" +
-                "  \"elastic_agent_id\": \"ea1\",\n" +
-                "  \"elastic_agent_profile_properties\": {\n" +
-                "    \"Image\": \"alpine:latest\"\n" +
-                "  },\n" +
-                "  \"cluster_profile_properties\": {\n" +
-                "    \"go_server_url\": \"https://foo.com/go\", \n" +
-                "    \"docker_uri\": \"unix:///var/run/docker.sock\"\n" +
-                "  },\n" +
-                "  \"job_identifier\": {\n" +
-                "    \"pipeline_name\": \"test-pipeline\",\n" +
-                "    \"pipeline_counter\": 1,\n" +
-                "    \"pipeline_label\": \"Test Pipeline\",\n" +
-                "    \"stage_name\": \"test-stage\",\n" +
-                "    \"stage_counter\": \"1\",\n" +
-                "    \"job_name\": \"test-job\",\n" +
-                "    \"job_id\": 100\n" +
-                "  }\n" +
-                "}";
+        String jobCompletionRequestJSON = """
+                {
+                  "elastic_agent_id": "ea1",
+                  "elastic_agent_profile_properties": {
+                    "Image": "alpine:latest"
+                  },
+                  "cluster_profile_properties": {
+                    "go_server_url": "https://foo.com/go",\s
+                    "docker_uri": "unix:///var/run/docker.sock"
+                  },
+                  "job_identifier": {
+                    "pipeline_name": "test-pipeline",
+                    "pipeline_counter": 1,
+                    "pipeline_label": "Test Pipeline",
+                    "stage_name": "test-stage",
+                    "stage_counter": "1",
+                    "job_name": "test-job",
+                    "job_id": 100
+                  }
+                }""";
 
         JobCompletionRequest jobCompletionRequest = JobCompletionRequest.fromJSON(jobCompletionRequestJSON);
         assertThat(jobCompletionRequest.getClusterProfileProperties().uuid(), is(createAgentRequest.getClusterProfileProperties().uuid()));
