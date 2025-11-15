@@ -1,14 +1,14 @@
 package cd.go.contrib.elasticagents.docker;
 
-import static cd.go.contrib.elasticagents.docker.utils.Util.splitIntoLinesAndTrimSpaces;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import com.spotify.docker.client.messages.Network;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.spotify.docker.client.messages.Network;
+import static cd.go.contrib.elasticagents.docker.utils.Util.splitIntoLinesAndTrimSpaces;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class Networks {
 

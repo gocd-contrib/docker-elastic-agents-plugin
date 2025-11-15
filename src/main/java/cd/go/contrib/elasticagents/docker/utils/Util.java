@@ -17,7 +17,6 @@
 package cd.go.contrib.elasticagents.docker.utils;
 
 import cd.go.contrib.elasticagents.docker.executors.GetClusterProfileViewRequestExecutor;
-import com.google.common.collect.Collections2;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 
@@ -27,7 +26,10 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.StringUtils.isBlank;

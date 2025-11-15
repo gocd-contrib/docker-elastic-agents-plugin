@@ -10,7 +10,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
