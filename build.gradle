@@ -80,13 +80,13 @@ dependencies {
     implementation platform('com.fasterxml.jackson:jackson-bom:2.20.1')
     implementation platform('org.glassfish.jersey:jersey-bom:2.25')
     constraints {
-        implementation('commons-io:commons-io:2.20.0') {
+        implementation('commons-io:commons-io:2.21.0') {
             because "spotify docker-client uses an older version"
         }
         implementation('org.apache.commons:commons-compress:1.28.0') {
             because "spotify docker-client uses an older version"
         }
-        implementation('org.apache.commons:commons-lang3:3.19.0') {
+        implementation('org.apache.commons:commons-lang3:3.20.0') {
             because 'spotify docker-client uses an outdated version'
         }
         implementation('com.google.guava:guava:33.5.0-jre') {
@@ -125,7 +125,7 @@ dependencies {
             replacedBy('org.bouncycastle:bcpkix-jdk18on', "Everything can go via the JDK 1.8+ BouncyCastle version")
         }
     }
-    implementation('org.bouncycastle:bcpkix-jdk18on:1.82') {
+    implementation('org.bouncycastle:bcpkix-jdk18on:1.83') {
         because 'spotify docker-client uses an outdated version'
     }
     implementation "org.slf4j:jcl-over-slf4j:${project.versions.slf4j}"
