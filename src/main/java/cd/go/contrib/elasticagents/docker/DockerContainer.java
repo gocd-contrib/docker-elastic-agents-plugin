@@ -157,13 +157,14 @@ public class DockerContainer {
                 .hostConfig(hostBuilder.build())
                 .build();
 
+        LOG.debug("Creating container " + containerName);
         consoleLogAppender.accept(String.format("Creating container: %s", containerName));
         ContainerCreation container = docker.createContainer(containerConfig, containerName);
         String id = container.id();
 
         ContainerInfo containerInfo = docker.inspectContainer(id);
 
-        LOG.debug("Created container " + containerName);
+        LOG.debug("Starting container " + containerName);
         consoleLogAppender.accept(String.format("Starting container: %s", containerName));
         docker.startContainer(containerName);
         Collection<String> additionalNetworks = Networks.getAdditionalNetworks(networks);
@@ -177,9 +178,7 @@ public class DockerContainer {
     }
 
     private static List<String> environmentFrom(CreateAgentRequest request, PluginSettings settings, String containerName) {
-        Set<String> env = new HashSet<>();
-
-        env.addAll(settings.getEnvironmentVariables());
+        Set<String> env = new HashSet<>(settings.getEnvironmentVariables());
         if (StringUtils.isNotBlank(request.properties().get("Environment"))) {
             env.addAll(splitIntoLinesAndTrimSpaces(request.properties().get("Environment")));
         }
