@@ -183,11 +183,7 @@ public class DockerContainer {
             env.addAll(splitIntoLinesAndTrimSpaces(request.properties().get("Environment")));
         }
 
-        env.addAll(Arrays.asList(
-                "GO_EA_MODE=" + mode(),
-                "GO_EA_SERVER_URL=" + settings.getGoServerUrl()
-        ));
-
+        env.add("GO_EA_SERVER_URL=" + settings.getGoServerUrl());
         env.addAll(request.autoregisterPropertiesAsEnvironmentVars(containerName));
 
         return new ArrayList<>(env);
@@ -212,24 +208,12 @@ public class DockerContainer {
 
         DockerContainer that = (DockerContainer) o;
 
-        return name != null ? name.equals(that.name) : that.name == null;
+        return Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
-    }
-
-    private static String mode() {
-        if ("false".equals(System.getProperty("rails.use.compressed.js"))) {
-            return "dev";
-        }
-
-        if ("true".equalsIgnoreCase(System.getProperty("rails.use.compressed.js"))) {
-            return "prod";
-        }
-
-        return "";
     }
 
     private static String image(Map<String, String> properties) {
