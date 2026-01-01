@@ -60,8 +60,8 @@ tasks.withType(JavaCompile).configureEach {
 
 ext {
     deps = [
-        gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.3.0',
-        mockito      : 'org.mockito:mockito-core:5.20.0',
+        gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.4.0',
+        mockito      : 'org.mockito:mockito-core:5.21.0',
         slf4j        : 'org.slf4j:slf4j-api:2.0.17',
     ]
 
