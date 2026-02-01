@@ -77,7 +77,7 @@ dependencies {
     implementation 'org.freemarker:freemarker:2.3.34'
 
     // Control/upgrade Spotify docker-client transitive dependencies
-    implementation platform('com.fasterxml.jackson:jackson-bom:2.20.1')
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.21.0')
     implementation platform('org.glassfish.jersey:jersey-bom:2.25')
     constraints {
         implementation('commons-io:commons-io:2.21.0') {
@@ -131,7 +131,7 @@ dependencies {
     implementation "org.slf4j:jcl-over-slf4j:${project.versions.slf4j}"
 
     testImplementation project.deps.gocdPluginApi
-    testImplementation platform('org.junit:junit-bom:6.0.1')
+    testImplementation platform('org.junit:junit-bom:6.0.2')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
