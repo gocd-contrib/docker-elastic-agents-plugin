@@ -70,7 +70,9 @@ ext {
 
 dependencies {
     compileOnly project.deps.gocdPluginApi
-    implementation 'com.google.code.gson:gson:2.13.2'
+    implementation('com.google.code.gson:gson:2.13.2') {
+        exclude(module: 'error_prone_annotations') // Not needed at runtime
+    }
     implementation 'com.spotify:docker-client:8.16.0'
 
     implementation 'joda-time:joda-time:2.14.0'
