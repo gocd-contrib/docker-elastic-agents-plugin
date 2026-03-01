@@ -61,7 +61,7 @@ tasks.withType(JavaCompile).configureEach {
 ext {
     deps = [
         gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.4.0',
-        mockito      : 'org.mockito:mockito-core:5.21.0',
+        mockito      : 'org.mockito:mockito-core:5.22.0',
         slf4j        : 'org.slf4j:slf4j-api:2.0.17',
     ]
 
@@ -79,7 +79,7 @@ dependencies {
     implementation 'org.freemarker:freemarker:2.3.34'
 
     // Control/upgrade Spotify docker-client transitive dependencies
-    implementation platform('com.fasterxml.jackson:jackson-bom:2.21.0')
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.21.1')
     implementation platform('org.glassfish.jersey:jersey-bom:2.25')
     constraints {
         implementation('commons-io:commons-io:2.21.0') {
@@ -133,7 +133,7 @@ dependencies {
     implementation "org.slf4j:jcl-over-slf4j:${project.versions.slf4j}"
 
     testImplementation project.deps.gocdPluginApi
-    testImplementation platform('org.junit:junit-bom:6.0.2')
+    testImplementation platform('org.junit:junit-bom:6.0.3')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
