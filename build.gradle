@@ -61,7 +61,7 @@ tasks.withType(JavaCompile).configureEach {
 ext {
     deps = [
         gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.4.0',
-        mockito      : 'org.mockito:mockito-core:5.22.0',
+        mockito      : 'org.mockito:mockito-core:5.23.0',
         slf4j        : 'org.slf4j:slf4j-api:2.0.17',
     ]
 
@@ -75,11 +75,11 @@ dependencies {
     }
     implementation 'com.spotify:docker-client:8.16.0'
 
-    implementation 'joda-time:joda-time:2.14.0'
+    implementation 'joda-time:joda-time:2.14.1'
     implementation 'org.freemarker:freemarker:2.3.34'
 
     // Control/upgrade Spotify docker-client transitive dependencies
-    implementation platform('com.fasterxml.jackson:jackson-bom:2.21.1')
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.21.2')
     implementation platform('org.glassfish.jersey:jersey-bom:2.25')
     constraints {
         implementation('commons-io:commons-io:2.21.0') {
@@ -97,7 +97,7 @@ dependencies {
         implementation('org.apache.httpcomponents:httpclient:4.5.14') {
             because 'spotify docker-client uses an outdated version'
         }
-        implementation('com.github.jnr:jnr-unixsocket:0.38.24') {
+        implementation('com.github.jnr:jnr-unixsocket:0.38.25') {
             because 'spotify docker-client uses an older version'
         }
         implementation(project.deps.slf4j) {
