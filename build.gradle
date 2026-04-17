@@ -127,7 +127,7 @@ dependencies {
             replacedBy('org.bouncycastle:bcpkix-jdk18on', "Everything can go via the JDK 1.8+ BouncyCastle version")
         }
     }
-    implementation('org.bouncycastle:bcpkix-jdk18on:1.83') {
+    implementation('org.bouncycastle:bcpkix-jdk18on:1.84') {
         because 'spotify docker-client uses an outdated version'
     }
     implementation "org.slf4j:jcl-over-slf4j:${project.versions.slf4j}"
