@@ -70,19 +70,19 @@ ext {
 
 dependencies {
     compileOnly project.deps.gocdPluginApi
-    implementation('com.google.code.gson:gson:2.13.2') {
+    implementation('com.google.code.gson:gson:2.14.0') {
         exclude(module: 'error_prone_annotations') // Not needed at runtime
     }
     implementation 'com.spotify:docker-client:8.16.0'
 
-    implementation 'joda-time:joda-time:2.14.1'
+    implementation 'joda-time:joda-time:2.14.2'
     implementation 'org.freemarker:freemarker:2.3.34'
 
     // Control/upgrade Spotify docker-client transitive dependencies
-    implementation platform('com.fasterxml.jackson:jackson-bom:2.21.2')
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.21.3')
     implementation platform('org.glassfish.jersey:jersey-bom:2.25')
     constraints {
-        implementation('commons-io:commons-io:2.21.0') {
+        implementation('commons-io:commons-io:2.22.0') {
             because "spotify docker-client uses an older version"
         }
         implementation('org.apache.commons:commons-compress:1.28.0') {
@@ -91,7 +91,7 @@ dependencies {
         implementation('org.apache.commons:commons-lang3:3.20.0') {
             because 'spotify docker-client uses an outdated version'
         }
-        implementation('com.google.guava:guava:33.5.0-jre') {
+        implementation('com.google.guava:guava:33.6.0-jre') {
             because "spotify docker-client uses an older version"
         }
         implementation('org.apache.httpcomponents:httpclient:4.5.14') {
