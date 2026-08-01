@@ -60,7 +60,7 @@ tasks.withType(JavaCompile).configureEach {
 
 ext {
     deps = [
-        gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.4.0',
+        gocdPluginApi: 'cd.go.plugin:go-plugin-api:26.1.0',
         mockito      : 'org.mockito:mockito-core:5.23.0',
         slf4j        : 'org.slf4j:slf4j-api:2.0.18',
     ]
@@ -75,11 +75,11 @@ dependencies {
     }
     implementation 'com.spotify:docker-client:8.16.0'
 
-    implementation 'joda-time:joda-time:2.14.2'
+    implementation 'joda-time:joda-time:2.14.3'
     implementation 'org.freemarker:freemarker:2.3.34'
 
     // Control/upgrade Spotify docker-client transitive dependencies
-    implementation platform('com.fasterxml.jackson:jackson-bom:2.21.4')
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.22.1')
     implementation platform('org.glassfish.jersey:jersey-bom:2.25')
     constraints {
         implementation('commons-io:commons-io:2.22.0') {
@@ -97,7 +97,7 @@ dependencies {
         implementation('org.apache.httpcomponents:httpclient:4.5.14') {
             because 'spotify docker-client uses an outdated version'
         }
-        implementation('com.github.jnr:jnr-unixsocket:0.39.1') {
+        implementation('com.github.jnr:jnr-unixsocket:0.39.2') {
             because 'spotify docker-client uses an older version'
         }
         implementation(project.deps.slf4j) {
@@ -127,13 +127,13 @@ dependencies {
             replacedBy('org.bouncycastle:bcpkix-jdk18on', "Everything can go via the JDK 1.8+ BouncyCastle version")
         }
     }
-    implementation('org.bouncycastle:bcpkix-jdk18on:1.84') {
+    implementation('org.bouncycastle:bcpkix-jdk18on:1.85') {
         because 'spotify docker-client uses an outdated version'
     }
     implementation "org.slf4j:jcl-over-slf4j:${project.versions.slf4j}"
 
     testImplementation project.deps.gocdPluginApi
-    testImplementation platform('org.junit:junit-bom:6.1.1')
+    testImplementation platform('org.junit:junit-bom:6.1.2')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
