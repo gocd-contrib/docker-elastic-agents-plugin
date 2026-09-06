@@ -233,6 +233,10 @@ public class DockerContainerIntegrationTest extends BaseIntegrationTest {
         DockerContainer container = DockerContainer.create(new CreateAgentRequest("key", properties, "prod", jobIdentifier, Collections.emptyMap()), createClusterProfiles(), docker, consoleLogAppender);
         containers.add(container.name());
 
+        // The default busybox command (sh) exits immediately without a tty, but the daemon may still briefly
+        // report the container as "running"; block until it has actually exited before asserting on state.
+        docker.waitContainer(container.name());
+
         ContainerStatusReport containerStatusReport = container.getContainerStatusReport(docker);
 
         assertThat(containerStatusReport, is(notNullValue()));
